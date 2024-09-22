@@ -7,6 +7,12 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		A173E8812C90BB97005BB0F9 /* StartScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = A173E8802C90BB97005BB0F9 /* StartScreen.swift */; };
+		A1C5604F2C92088100E2A9DD /* FavouriteRoute.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1C5604E2C92088100E2A9DD /* FavouriteRoute.swift */; };
+		A1C560532C920A0C00E2A9DD /* CameraViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1C560522C920A0C00E2A9DD /* CameraViewModel.swift */; };
+		A1C560552C920A8500E2A9DD /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1C560542C920A8500E2A9DD /* ViewController.swift */; };
+		A1C560592C920ACA00E2A9DD /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1C560582C920ACA00E2A9DD /* SceneDelegate.swift */; };
+		A1C5605B2C920AED00E2A9DD /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1C5605A2C920AED00E2A9DD /* AppDelegate.swift */; };
 		A1C891532C73D3E100308657 /* WIPERApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1C891522C73D3E100308657 /* WIPERApp.swift */; };
 		A1C891552C73D3E100308657 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1C891542C73D3E100308657 /* ContentView.swift */; };
 		A1C891572C73D3E200308657 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = A1C891562C73D3E200308657 /* Assets.xcassets */; };
@@ -34,6 +40,12 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		A173E8802C90BB97005BB0F9 /* StartScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StartScreen.swift; sourceTree = "<group>"; };
+		A1C5604E2C92088100E2A9DD /* FavouriteRoute.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FavouriteRoute.swift; sourceTree = "<group>"; };
+		A1C560522C920A0C00E2A9DD /* CameraViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CameraViewModel.swift; sourceTree = "<group>"; };
+		A1C560542C920A8500E2A9DD /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
+		A1C560582C920ACA00E2A9DD /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
+		A1C5605A2C920AED00E2A9DD /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		A1C8914F2C73D3E100308657 /* WIPER.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = WIPER.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		A1C891522C73D3E100308657 /* WIPERApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WIPERApp.swift; sourceTree = "<group>"; };
 		A1C891542C73D3E100308657 /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
@@ -94,9 +106,15 @@
 		A1C891512C73D3E100308657 /* WIPER */ = {
 			isa = PBXGroup;
 			children = (
+				A1C560582C920ACA00E2A9DD /* SceneDelegate.swift */,
+				A1C560542C920A8500E2A9DD /* ViewController.swift */,
+				A1C5604E2C92088100E2A9DD /* FavouriteRoute.swift */,
+				A1C891562C73D3E200308657 /* Assets.xcassets */,
+				A1C560522C920A0C00E2A9DD /* CameraViewModel.swift */,
+				A173E8802C90BB97005BB0F9 /* StartScreen.swift */,
 				A1C891522C73D3E100308657 /* WIPERApp.swift */,
 				A1C891542C73D3E100308657 /* ContentView.swift */,
-				A1C891562C73D3E200308657 /* Assets.xcassets */,
+				A1C5605A2C920AED00E2A9DD /* AppDelegate.swift */,
 				A1C891582C73D3E200308657 /* Preview Content */,
 			);
 			path = WIPER;
@@ -257,8 +275,14 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				A1C5605B2C920AED00E2A9DD /* AppDelegate.swift in Sources */,
+				A1C560552C920A8500E2A9DD /* ViewController.swift in Sources */,
+				A1C560592C920ACA00E2A9DD /* SceneDelegate.swift in Sources */,
 				A1C891552C73D3E100308657 /* ContentView.swift in Sources */,
 				A1C891532C73D3E100308657 /* WIPERApp.swift in Sources */,
+				A173E8812C90BB97005BB0F9 /* StartScreen.swift in Sources */,
+				A1C560532C920A0C00E2A9DD /* CameraViewModel.swift in Sources */,
+				A1C5604F2C92088100E2A9DD /* FavouriteRoute.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -419,6 +443,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = YES;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"WIPER/Preview Content\"";
@@ -448,6 +473,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				ASSETCATALOG_COMPILER_INCLUDE_ALL_APPICON_ASSETS = YES;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"WIPER/Preview Content\"";

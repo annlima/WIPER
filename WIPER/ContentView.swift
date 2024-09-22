@@ -1,24 +1,21 @@
 //
 //  ContentView.swift
-//  WIPER
+//  CameraWiper
 //
-//  Created by Andrea Lima Blanca on 19/08/24.
+//  Created by Andrea Lima Blanca on 04/06/23.
 //
 
 import SwiftUI
 
 struct ContentView: View {
+    @EnvironmentObject var cameraModel: CameraViewModel
     var body: some View {
-        VStack {
-            Image(systemName: "globe")
-                .imageScale(.large)
-                .foregroundStyle(.tint)
-            Text("Hello, world!")
-        }
-        .padding()
+        StartDrivingScreen()
     }
 }
 
-#Preview {
-    ContentView()
+struct ContentView_Previews: PreviewProvider {
+    static var previews: some View {
+        ContentView()
+    }
 }
