@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		A12727D42CA1CAD00060164C /* Menu.swift in Sources */ = {isa = PBXBuildFile; fileRef = A12727D32CA1CAC70060164C /* Menu.swift */; };
 		A173E8812C90BB97005BB0F9 /* StartScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = A173E8802C90BB97005BB0F9 /* StartScreen.swift */; };
 		A1C5604F2C92088100E2A9DD /* FavouriteRoute.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1C5604E2C92088100E2A9DD /* FavouriteRoute.swift */; };
 		A1C560532C920A0C00E2A9DD /* CameraViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1C560522C920A0C00E2A9DD /* CameraViewModel.swift */; };
@@ -45,6 +46,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		A12727D32CA1CAC70060164C /* Menu.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Menu.swift; sourceTree = "<group>"; };
 		A173E8802C90BB97005BB0F9 /* StartScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StartScreen.swift; sourceTree = "<group>"; };
 		A1C5604E2C92088100E2A9DD /* FavouriteRoute.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FavouriteRoute.swift; sourceTree = "<group>"; };
 		A1C560522C920A0C00E2A9DD /* CameraViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CameraViewModel.swift; sourceTree = "<group>"; };
@@ -116,6 +118,7 @@
 		A1C891512C73D3E100308657 /* WIPER */ = {
 			isa = PBXGroup;
 			children = (
+				A12727D32CA1CAC70060164C /* Menu.swift */,
 				A1F0A45F2CA0FF7C00F7FEE8 /* OnboardingViews */,
 				A1F0A4602CA0FF9500F7FEE8 /* MapViews */,
 				A1C891562C73D3E200308657 /* Assets.xcassets */,
@@ -308,6 +311,7 @@
 			files = (
 				A1F0A4622CA100C800F7FEE8 /* Carrousel.swift in Sources */,
 				A1F0A4662CA106DA00F7FEE8 /* CameraManager.swift in Sources */,
+				A12727D42CA1CAD00060164C /* Menu.swift in Sources */,
 				A1C5605B2C920AED00E2A9DD /* AppDelegate.swift in Sources */,
 				A1C560552C920A8500E2A9DD /* ViewController.swift in Sources */,
 				A1C560592C920ACA00E2A9DD /* SceneDelegate.swift in Sources */,

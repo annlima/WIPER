@@ -15,7 +15,7 @@ struct Onboarding: View {
 
     var body: some View {
         if onboardingCompleted{
-            Text("Onboarding Completed")
+            FavoriteRoute()
         }
         else
         {
@@ -117,7 +117,6 @@ struct LocationPermissionTab: View {
     
     var body: some View {
         VStack {
-            // Imagen alineada a la izquierda
             HStack {
                 Image(systemName: "location.fill")
                     .font(.system(size: 190, weight: .bold))
@@ -128,13 +127,12 @@ struct LocationPermissionTab: View {
             .padding(.top, 40)
             
             Text("Permitir acceso a ubicación")
-                .font(.system(size: 48, weight: .bold))
+                .font(.system(size: 60, weight: .bold))
                 .foregroundColor(.white)
-                .padding(.horizontal, 10)
                 .padding(.top, 20)
                 .padding(.bottom, 1)
                 .multilineTextAlignment(.leading)
-            
+                .padding(.horizontal, 40)
             Text("Necesitamos acceso a tu ubicación para darte indicaciones")
                 .font(.system(size: 20))
                 .foregroundColor(.white)
@@ -211,7 +209,7 @@ struct NotificationsTab: View {
             .padding(.top, 40)
             
             Text("Activar notificaciones")
-                .font(.system(size: 48, weight: .bold))
+                .font(.system(size: 55, weight: .bold))
                 .foregroundColor(.white)
                 .padding(.horizontal, 10)
                 .padding(.top, 20)
@@ -272,7 +270,7 @@ struct CameraPermissionTab: View {
             // Imagen alineada a la izquierda
             HStack {
                 Image(systemName: "camera.fill")
-                    .font(.system(size: 190, weight: .bold))
+                    .font(.system(size: 180, weight: .bold))
                     .foregroundColor(.white)
                     .padding(.leading, 20)
                 Spacer()
@@ -280,7 +278,7 @@ struct CameraPermissionTab: View {
             .padding(.top, 40)
             
             Text("Permitir acceso a la cámara")
-                .font(.system(size: 48, weight: .bold))
+                .font(.system(size: 60, weight: .bold))
                 .foregroundColor(.white)
                 .padding(.horizontal, 28)
                 .padding(.top, 20)
@@ -332,32 +330,4 @@ struct CameraPermissionTab: View {
 
 
 
-// MARK: - Reusable View Template
-func tabViewTemplate(imageName: String, title: String, description: String) -> some View {
-    VStack {
-        Spacer()
-        Image(systemName: imageName)
-            .font(.system(size: 190, weight: .bold))
-            .foregroundColor(.white)
-            .padding(.bottom, -20)
 
-        Text(title)
-            .font(.system(size: 48, weight: .bold))
-            .foregroundColor(.white) // Color del texto
-            .padding(.horizontal, 10)
-            .padding(.top, 20) // Espacio reducido arriba del título
-            .padding(.bottom, 1)
-            .multilineTextAlignment(.center)
-        Text(description)
-            .font(.system(size: 20))
-            .foregroundColor(.white) // Color del texto
-            .bold()
-            .multilineTextAlignment(.center)
-            .padding([.trailing, .leading, .bottom], 50)
-        Spacer()
-    }
-    .tabItem {
-        Image(systemName: "circle.fill")
-    
-    }
-}

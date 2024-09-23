@@ -45,7 +45,7 @@ struct StartDrivingScreen: View {
                         .padding(.horizontal, 30)
                     
                     // Start button
-                    NavigationLink(destination: FavoriteRoute()) {
+                    NavigationLink(destination: Onboarding()) {
                         ZStack {
                             LinearGradient(gradient: Gradient(colors: [Color("Color"), Color("Color")]), startPoint: .leading, endPoint: .trailing)
                                 .cornerRadius(20)
