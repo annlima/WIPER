@@ -3,6 +3,7 @@ import MapKit
 import CoreLocation
 
 struct FavoriteRoute: View {
+    @StateObject private var locationManager = LocationManager() // Crear instancia del LocationManager
     @State private var mapRegion = MKCoordinateRegion(center: CLLocationCoordinate2D(latitude: 19.03793, longitude: -98.20346), span: MKCoordinateSpan(latitudeDelta: 0.05, longitudeDelta: 0.05))
     @State private var searchQuery = ""
     @State private var selectedLocation: Location? = nil
@@ -10,19 +11,16 @@ struct FavoriteRoute: View {
     
     @State private var showFavorites = false
     
-    // Coordenada actual del usuario (simulada en este caso)
-    let userLocation = CLLocationCoordinate2D(latitude: 19.03793, longitude: -98.20346)
-    
     struct Location: Identifiable, Equatable {
-            let id = UUID()
-            let name: String
-            let coordinate: CLLocationCoordinate2D
-            
-            // Implementación de Equatable manualmente
-            static func == (lhs: Location, rhs: Location) -> Bool {
-                return lhs.name == rhs.name && lhs.coordinate.latitude == rhs.coordinate.latitude && lhs.coordinate.longitude == rhs.coordinate.longitude
-            }
+        let id = UUID()
+        let name: String
+        let coordinate: CLLocationCoordinate2D
+        
+        // Implementación de Equatable manualmente
+        static func == (lhs: Location, rhs: Location) -> Bool {
+            return lhs.name == rhs.name && lhs.coordinate.latitude == rhs.coordinate.latitude && lhs.coordinate.longitude == rhs.coordinate.longitude
         }
+    }
     
     // Lugares favoritos
     let locations = [
@@ -34,11 +32,16 @@ struct FavoriteRoute: View {
     var body: some View {
         NavigationView {
             ZStack(alignment: .top) {
-                // Mapa de fondo
+                // Actualiza la región del mapa cuando la ubicación del usuario cambie
                 Map(coordinateRegion: $mapRegion, annotationItems: locations + (selectedLocation.map { [$0] } ?? [])) { location in
                     MapMarker(coordinate: location.coordinate, tint: location == selectedLocation ? .blue : .red)
                 }
                 .edgesIgnoringSafeArea(.all)
+                .onChange(of: locationManager.currentLocation) { newLocation in
+                    if let newLocation = newLocation {
+                        mapRegion = MKCoordinateRegion(center: newLocation, span: MKCoordinateSpan(latitudeDelta: 0.05, longitudeDelta: 0.05))
+                    }
+                }
                 
                 // Añadir polilínea para la ruta
                 if let route = route {
@@ -93,7 +96,7 @@ struct FavoriteRoute: View {
                     Spacer()
                 }
             }
-            .navigationBarHidden(true) // Ocultamos la barra de navegación para usar nuestro título personalizado
+            .navigationBarHidden(true)
         }
     }
     
@@ -106,6 +109,11 @@ struct FavoriteRoute: View {
     
     // Función para calcular la ruta entre la ubicación del usuario y el destino
     func calculateRoute(to destination: CLLocationCoordinate2D) {
+        guard let userLocation = locationManager.currentLocation else {
+            print("No se pudo obtener la ubicación actual")
+            return
+        }
+        
         let request = MKDirections.Request()
         let sourcePlacemark = MKPlacemark(coordinate: userLocation)
         let destinationPlacemark = MKPlacemark(coordinate: destination)
@@ -122,6 +130,13 @@ struct FavoriteRoute: View {
                 print("Error al calcular la ruta: \(error?.localizedDescription ?? "Desconocido")")
             }
         }
+    }
+}
+
+// Extender CLLocationCoordinate2D para conformar a Equatable
+extension CLLocationCoordinate2D: Equatable {
+    public static func == (lhs: CLLocationCoordinate2D, rhs: CLLocationCoordinate2D) -> Bool {
+        return lhs.latitude == rhs.latitude && lhs.longitude == rhs.longitude
     }
 }
 

@@ -1,9 +1,3 @@
-//
-//  LocationManager.swift
-//  WIPER
-//
-//  Created by Andrea Lima Blanca on 22/09/24.
-//
 import Foundation
 import CoreLocation
 
@@ -11,14 +5,34 @@ class LocationManager: NSObject, ObservableObject, CLLocationManagerDelegate {
     @Published var authorizationStatus: CLAuthorizationStatus?
     private let locationManager = CLLocationManager()
     @Published var currentLocation: CLLocationCoordinate2D?
-
+    
     override init() {
         super.init()
         locationManager.delegate = self
+        checkAuthorizationStatus()
+    }
+
+    func checkAuthorizationStatus() {
+        authorizationStatus = locationManager.authorizationStatus
+        
+        switch locationManager.authorizationStatus {
+        case .notDetermined:
+            requestLocationAuthorization()
+        case .restricted, .denied:
+            print("Location access denied or restricted")
+        case .authorizedWhenInUse, .authorizedAlways:
+            startLocationUpdates()
+        @unknown default:
+            break
+        }
     }
 
     func requestLocationAuthorization() {
-        locationManager.requestWhenInUseAuthorization()
+        if CLLocationManager.locationServicesEnabled() {
+            locationManager.requestWhenInUseAuthorization()
+        } else {
+            print("Location services are not enabled")
+        }
     }
 
     func startLocationUpdates() {
@@ -27,23 +41,15 @@ class LocationManager: NSObject, ObservableObject, CLLocationManagerDelegate {
 
     func locationManagerDidChangeAuthorization(_ manager: CLLocationManager) {
         authorizationStatus = manager.authorizationStatus
-        switch manager.authorizationStatus {
-        case .notDetermined:
-            // Now, request authorization is moved to an explicit user action, so we don't request it here.
-            break
-        case .restricted, .denied:
-            // Handle restricted or denied cases.
-            break
-        case .authorizedWhenInUse, .authorizedAlways:
-            // Start location updates if permission is given.
+        if manager.authorizationStatus == .authorizedWhenInUse || manager.authorizationStatus == .authorizedAlways {
             startLocationUpdates()
-        @unknown default:
-            break
         }
     }
 
     func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
-        currentLocation = locations.last?.coordinate
+        if let location = locations.last?.coordinate {
+            currentLocation = location
+            print("Current location: \(location.latitude), \(location.longitude)")
+        }
     }
 }
-

@@ -47,6 +47,7 @@
 
 /* Begin PBXFileReference section */
 		A12727D32CA1CAC70060164C /* Menu.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Menu.swift; sourceTree = "<group>"; };
+		A12727D52CA1D4AE0060164C /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		A173E8802C90BB97005BB0F9 /* StartScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StartScreen.swift; sourceTree = "<group>"; };
 		A1C5604E2C92088100E2A9DD /* FavouriteRoute.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FavouriteRoute.swift; sourceTree = "<group>"; };
 		A1C560522C920A0C00E2A9DD /* CameraViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CameraViewModel.swift; sourceTree = "<group>"; };
@@ -118,6 +119,7 @@
 		A1C891512C73D3E100308657 /* WIPER */ = {
 			isa = PBXGroup;
 			children = (
+				A12727D52CA1D4AE0060164C /* Info.plist */,
 				A12727D32CA1CAC70060164C /* Menu.swift */,
 				A1F0A45F2CA0FF7C00F7FEE8 /* OnboardingViews */,
 				A1F0A4602CA0FF9500F7FEE8 /* MapViews */,
@@ -490,6 +492,11 @@
 				DEVELOPMENT_TEAM = D99DB5VWR6;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = WIPER/Info.plist;
+				INFOPLIST_KEY_LSApplicationCategoryType = "";
+				INFOPLIST_KEY_NSCameraUsageDescription = "Necesitamos acceso a tu cámara para indicarte los peligros alrededor";
+				INFOPLIST_KEY_NSLocationAlwaysUsageDescription = "La aplicación necesita acceso a tu ubicación siempre para alertarte de peligros.";
+				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "Necesitamos acceso a tu ubicación para darte indicaciones";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -520,6 +527,11 @@
 				DEVELOPMENT_TEAM = D99DB5VWR6;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = WIPER/Info.plist;
+				INFOPLIST_KEY_LSApplicationCategoryType = "";
+				INFOPLIST_KEY_NSCameraUsageDescription = "Necesitamos acceso a tu cámara para indicarte los peligros alrededor";
+				INFOPLIST_KEY_NSLocationAlwaysUsageDescription = "La aplicación necesita acceso a tu ubicación siempre para alertarte de peligros.";
+				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "Necesitamos acceso a tu ubicación para darte indicaciones";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;

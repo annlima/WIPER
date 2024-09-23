@@ -8,6 +8,7 @@
 import SwiftUI
 
 struct StartDrivingScreen: View {
+    @StateObject private var locationManager = LocationManager()
     @State private var checked = false
     var body: some View {
         NavigationView {
@@ -45,7 +46,8 @@ struct StartDrivingScreen: View {
                         .padding(.horizontal, 30)
                     
                     // Start button
-                    NavigationLink(destination: Onboarding()) {
+                    NavigationLink(destination: Onboarding()
+                        .environmentObject(locationManager)) {
                         ZStack {
                             LinearGradient(gradient: Gradient(colors: [Color("Color"), Color("Color")]), startPoint: .leading, endPoint: .trailing)
                                 .cornerRadius(20)
