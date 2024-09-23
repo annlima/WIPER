@@ -20,6 +20,11 @@
 		A1C891642C73D3E200308657 /* WIPERTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1C891632C73D3E200308657 /* WIPERTests.swift */; };
 		A1C8916E2C73D3E200308657 /* WIPERUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1C8916D2C73D3E200308657 /* WIPERUITests.swift */; };
 		A1C891702C73D3E200308657 /* WIPERUITestsLaunchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1C8916F2C73D3E200308657 /* WIPERUITestsLaunchTests.swift */; };
+		A1F0A45C2CA0FA6800F7FEE8 /* TermsAndConditions.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1F0A45B2CA0FA6000F7FEE8 /* TermsAndConditions.swift */; };
+		A1F0A45E2CA0FD6900F7FEE8 /* SplashScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1F0A45D2CA0FD6400F7FEE8 /* SplashScreen.swift */; };
+		A1F0A4622CA100C800F7FEE8 /* Carrousel.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1F0A4612CA100C200F7FEE8 /* Carrousel.swift */; };
+		A1F0A4642CA1011700F7FEE8 /* LocationManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1F0A4632CA1011400F7FEE8 /* LocationManager.swift */; };
+		A1F0A4662CA106DA00F7FEE8 /* CameraManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1F0A4652CA106D100F7FEE8 /* CameraManager.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -56,6 +61,11 @@
 		A1C891692C73D3E200308657 /* WIPERUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = WIPERUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		A1C8916D2C73D3E200308657 /* WIPERUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WIPERUITests.swift; sourceTree = "<group>"; };
 		A1C8916F2C73D3E200308657 /* WIPERUITestsLaunchTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WIPERUITestsLaunchTests.swift; sourceTree = "<group>"; };
+		A1F0A45B2CA0FA6000F7FEE8 /* TermsAndConditions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TermsAndConditions.swift; sourceTree = "<group>"; };
+		A1F0A45D2CA0FD6400F7FEE8 /* SplashScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SplashScreen.swift; sourceTree = "<group>"; };
+		A1F0A4612CA100C200F7FEE8 /* Carrousel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Carrousel.swift; sourceTree = "<group>"; };
+		A1F0A4632CA1011400F7FEE8 /* LocationManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationManager.swift; sourceTree = "<group>"; };
+		A1F0A4652CA106D100F7FEE8 /* CameraManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CameraManager.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -106,12 +116,11 @@
 		A1C891512C73D3E100308657 /* WIPER */ = {
 			isa = PBXGroup;
 			children = (
-				A1C560582C920ACA00E2A9DD /* SceneDelegate.swift */,
-				A1C560542C920A8500E2A9DD /* ViewController.swift */,
-				A1C5604E2C92088100E2A9DD /* FavouriteRoute.swift */,
+				A1F0A45F2CA0FF7C00F7FEE8 /* OnboardingViews */,
+				A1F0A4602CA0FF9500F7FEE8 /* MapViews */,
 				A1C891562C73D3E200308657 /* Assets.xcassets */,
+				A1F0A4652CA106D100F7FEE8 /* CameraManager.swift */,
 				A1C560522C920A0C00E2A9DD /* CameraViewModel.swift */,
-				A173E8802C90BB97005BB0F9 /* StartScreen.swift */,
 				A1C891522C73D3E100308657 /* WIPERApp.swift */,
 				A1C891542C73D3E100308657 /* ContentView.swift */,
 				A1C5605A2C920AED00E2A9DD /* AppDelegate.swift */,
@@ -143,6 +152,28 @@
 				A1C8916F2C73D3E200308657 /* WIPERUITestsLaunchTests.swift */,
 			);
 			path = WIPERUITests;
+			sourceTree = "<group>";
+		};
+		A1F0A45F2CA0FF7C00F7FEE8 /* OnboardingViews */ = {
+			isa = PBXGroup;
+			children = (
+				A1F0A4612CA100C200F7FEE8 /* Carrousel.swift */,
+				A1F0A45B2CA0FA6000F7FEE8 /* TermsAndConditions.swift */,
+				A173E8802C90BB97005BB0F9 /* StartScreen.swift */,
+				A1F0A45D2CA0FD6400F7FEE8 /* SplashScreen.swift */,
+			);
+			path = OnboardingViews;
+			sourceTree = "<group>";
+		};
+		A1F0A4602CA0FF9500F7FEE8 /* MapViews */ = {
+			isa = PBXGroup;
+			children = (
+				A1F0A4632CA1011400F7FEE8 /* LocationManager.swift */,
+				A1C5604E2C92088100E2A9DD /* FavouriteRoute.swift */,
+				A1C560542C920A8500E2A9DD /* ViewController.swift */,
+				A1C560582C920ACA00E2A9DD /* SceneDelegate.swift */,
+			);
+			path = MapViews;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -275,14 +306,19 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				A1F0A4622CA100C800F7FEE8 /* Carrousel.swift in Sources */,
+				A1F0A4662CA106DA00F7FEE8 /* CameraManager.swift in Sources */,
 				A1C5605B2C920AED00E2A9DD /* AppDelegate.swift in Sources */,
 				A1C560552C920A8500E2A9DD /* ViewController.swift in Sources */,
 				A1C560592C920ACA00E2A9DD /* SceneDelegate.swift in Sources */,
 				A1C891552C73D3E100308657 /* ContentView.swift in Sources */,
 				A1C891532C73D3E100308657 /* WIPERApp.swift in Sources */,
 				A173E8812C90BB97005BB0F9 /* StartScreen.swift in Sources */,
+				A1F0A45C2CA0FA6800F7FEE8 /* TermsAndConditions.swift in Sources */,
+				A1F0A4642CA1011700F7FEE8 /* LocationManager.swift in Sources */,
 				A1C560532C920A0C00E2A9DD /* CameraViewModel.swift in Sources */,
 				A1C5604F2C92088100E2A9DD /* FavouriteRoute.swift in Sources */,
+				A1F0A45E2CA0FD6900F7FEE8 /* SplashScreen.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

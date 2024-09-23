@@ -10,7 +10,7 @@ import SwiftUI
 struct ContentView: View {
     @EnvironmentObject var cameraModel: CameraViewModel
     var body: some View {
-        StartDrivingScreen()
+        SplashScreen()
     }
 }
 
