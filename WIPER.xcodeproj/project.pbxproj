@@ -7,9 +7,11 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		A12727D42CA1CAD00060164C /* Menu.swift in Sources */ = {isa = PBXBuildFile; fileRef = A12727D32CA1CAC70060164C /* Menu.swift */; };
+		A12727DA2CA3303D0060164C /* CameraView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A12727D92CA330390060164C /* CameraView.swift */; };
+		A12727DC2CA331110060164C /* CameraPreview.swift in Sources */ = {isa = PBXBuildFile; fileRef = A12727DB2CA3310D0060164C /* CameraPreview.swift */; };
 		A173E8812C90BB97005BB0F9 /* StartScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = A173E8802C90BB97005BB0F9 /* StartScreen.swift */; };
-		A1C5604F2C92088100E2A9DD /* FavouriteRoute.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1C5604E2C92088100E2A9DD /* FavouriteRoute.swift */; };
+		A19E3AB62CAFB30100267905 /* MainView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A19E3AB52CAFB2FE00267905 /* MainView.swift */; };
+		A1C5604F2C92088100E2A9DD /* FavoriteRoute.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1C5604E2C92088100E2A9DD /* FavoriteRoute.swift */; };
 		A1C560532C920A0C00E2A9DD /* CameraViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1C560522C920A0C00E2A9DD /* CameraViewModel.swift */; };
 		A1C560552C920A8500E2A9DD /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1C560542C920A8500E2A9DD /* ViewController.swift */; };
 		A1C560592C920ACA00E2A9DD /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1C560582C920ACA00E2A9DD /* SceneDelegate.swift */; };
@@ -46,10 +48,12 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		A12727D32CA1CAC70060164C /* Menu.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Menu.swift; sourceTree = "<group>"; };
 		A12727D52CA1D4AE0060164C /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
+		A12727D92CA330390060164C /* CameraView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CameraView.swift; sourceTree = "<group>"; };
+		A12727DB2CA3310D0060164C /* CameraPreview.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CameraPreview.swift; sourceTree = "<group>"; };
 		A173E8802C90BB97005BB0F9 /* StartScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StartScreen.swift; sourceTree = "<group>"; };
-		A1C5604E2C92088100E2A9DD /* FavouriteRoute.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FavouriteRoute.swift; sourceTree = "<group>"; };
+		A19E3AB52CAFB2FE00267905 /* MainView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainView.swift; sourceTree = "<group>"; };
+		A1C5604E2C92088100E2A9DD /* FavoriteRoute.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FavoriteRoute.swift; sourceTree = "<group>"; };
 		A1C560522C920A0C00E2A9DD /* CameraViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CameraViewModel.swift; sourceTree = "<group>"; };
 		A1C560542C920A8500E2A9DD /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
 		A1C560582C920ACA00E2A9DD /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -96,6 +100,17 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		A12727D62CA3261A0060164C /* Camera */ = {
+			isa = PBXGroup;
+			children = (
+				A12727DB2CA3310D0060164C /* CameraPreview.swift */,
+				A12727D92CA330390060164C /* CameraView.swift */,
+				A1F0A4652CA106D100F7FEE8 /* CameraManager.swift */,
+				A1C560522C920A0C00E2A9DD /* CameraViewModel.swift */,
+			);
+			path = Camera;
+			sourceTree = "<group>";
+		};
 		A1C891462C73D3E100308657 = {
 			isa = PBXGroup;
 			children = (
@@ -119,13 +134,12 @@
 		A1C891512C73D3E100308657 /* WIPER */ = {
 			isa = PBXGroup;
 			children = (
+				A19E3AB52CAFB2FE00267905 /* MainView.swift */,
+				A12727D62CA3261A0060164C /* Camera */,
 				A12727D52CA1D4AE0060164C /* Info.plist */,
-				A12727D32CA1CAC70060164C /* Menu.swift */,
 				A1F0A45F2CA0FF7C00F7FEE8 /* OnboardingViews */,
 				A1F0A4602CA0FF9500F7FEE8 /* MapViews */,
 				A1C891562C73D3E200308657 /* Assets.xcassets */,
-				A1F0A4652CA106D100F7FEE8 /* CameraManager.swift */,
-				A1C560522C920A0C00E2A9DD /* CameraViewModel.swift */,
 				A1C891522C73D3E100308657 /* WIPERApp.swift */,
 				A1C891542C73D3E100308657 /* ContentView.swift */,
 				A1C5605A2C920AED00E2A9DD /* AppDelegate.swift */,
@@ -174,7 +188,7 @@
 			isa = PBXGroup;
 			children = (
 				A1F0A4632CA1011400F7FEE8 /* LocationManager.swift */,
-				A1C5604E2C92088100E2A9DD /* FavouriteRoute.swift */,
+				A1C5604E2C92088100E2A9DD /* FavoriteRoute.swift */,
 				A1C560542C920A8500E2A9DD /* ViewController.swift */,
 				A1C560582C920ACA00E2A9DD /* SceneDelegate.swift */,
 			);
@@ -313,7 +327,6 @@
 			files = (
 				A1F0A4622CA100C800F7FEE8 /* Carrousel.swift in Sources */,
 				A1F0A4662CA106DA00F7FEE8 /* CameraManager.swift in Sources */,
-				A12727D42CA1CAD00060164C /* Menu.swift in Sources */,
 				A1C5605B2C920AED00E2A9DD /* AppDelegate.swift in Sources */,
 				A1C560552C920A8500E2A9DD /* ViewController.swift in Sources */,
 				A1C560592C920ACA00E2A9DD /* SceneDelegate.swift in Sources */,
@@ -321,10 +334,13 @@
 				A1C891532C73D3E100308657 /* WIPERApp.swift in Sources */,
 				A173E8812C90BB97005BB0F9 /* StartScreen.swift in Sources */,
 				A1F0A45C2CA0FA6800F7FEE8 /* TermsAndConditions.swift in Sources */,
+				A12727DC2CA331110060164C /* CameraPreview.swift in Sources */,
+				A19E3AB62CAFB30100267905 /* MainView.swift in Sources */,
 				A1F0A4642CA1011700F7FEE8 /* LocationManager.swift in Sources */,
 				A1C560532C920A0C00E2A9DD /* CameraViewModel.swift in Sources */,
-				A1C5604F2C92088100E2A9DD /* FavouriteRoute.swift in Sources */,
+				A1C5604F2C92088100E2A9DD /* FavoriteRoute.swift in Sources */,
 				A1F0A45E2CA0FD6900F7FEE8 /* SplashScreen.swift in Sources */,
+				A12727DA2CA3303D0060164C /* CameraView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

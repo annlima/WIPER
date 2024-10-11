@@ -15,7 +15,7 @@ struct Onboarding: View {
 
     var body: some View {
         if onboardingCompleted{
-            FavoriteRoute()
+            MainView()
         }
         else
         {
