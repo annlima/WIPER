@@ -1,6 +1,7 @@
 import AVFoundation
 import SwiftUI
 
+
 class CameraManager: NSObject, ObservableObject {
     @Published var session = AVCaptureSession()
     @Published var alert = false
@@ -30,10 +31,11 @@ class CameraManager: NSObject, ObservableObject {
                     }
 
                     // Set up video output
+                    self.videoOutput.videoSettings = [kCVPixelBufferPixelFormatTypeKey as String: kCVPixelFormatType_32BGRA]
                     self.videoOutput.setSampleBufferDelegate(cameraViewModel, queue: DispatchQueue(label: "cameraFrameProcessingQueue"))
-                    if self.session.canAddOutput(self.videoOutput) {
-                        self.session.addOutput(self.videoOutput)
-                    }
+                                        if self.session.canAddOutput(self.videoOutput) {
+                                            self.session.addOutput(self.videoOutput)
+                                        }
 
                     self.session.commitConfiguration()
                     completion(.success(()))

@@ -24,18 +24,17 @@ struct Onboarding: View {
                     .edgesIgnoringSafeArea(.all)
                 
                 TabView(selection: $selectedIndex) {
-                    WelcomeTab(selectedIndex: $selectedIndex).tag(0)
-                    CameraPermissionTab(selectedIndex: $selectedIndex).tag(1)
-                    NotificationsTab(selectedIndex: $selectedIndex).tag(2)
-                    LocationPermissionTab().tag(3)
-                    GoTab(onboardingCompleted: $onboardingCompleted).tag(4)
+                    CameraPermissionTab(selectedIndex: $selectedIndex).tag(0)
+                    NotificationsTab(selectedIndex: $selectedIndex).tag(1)
+                    LocationPermissionTab().tag(2)
+                    GoTab(onboardingCompleted: $onboardingCompleted).tag(3)
                 }
                 .tabViewStyle(PageTabViewStyle(indexDisplayMode: .never))
                 
                 VStack {
                     Spacer()
                     HStack(spacing: 8) {
-                        ForEach(0..<5) { index in
+                        ForEach(0..<4) { index in
                             Rectangle()
                                 .frame(width: selectedIndex == index ? 20 : 8, height: 8)
                                 .foregroundColor(selectedIndex == index ? Color.white : Color.gray)
@@ -59,55 +58,6 @@ struct Onboarding_Previews: PreviewProvider {
     }
 }
 
-// MARK: - WelcomeTab
-struct WelcomeTab: View {
-    @Binding var selectedIndex: Int
-    @State private var userName: String = ""
-    
-    var body: some View {
-        VStack {
-            
-            HStack {
-                Image(systemName: "person.crop.square")
-                    .font(.system(size: 190, weight: .bold))
-                    .foregroundColor(.white)
-                    .padding(.leading, 20)
-                Spacer()
-            }
-            .padding(.top, 40)
-            
-            Text("¿Cuál es tu nombre?")
-                .font(.system(size: 60, weight: .bold))
-                .foregroundColor(.white)
-                .padding(.horizontal, 10)
-                .padding(.top, 20)
-                .multilineTextAlignment(.leading)
-            
-            TextField("Escribe tu nombre", text: $userName)
-                .padding() // Espaciado interno
-                .background(Color.white) // Fondo blanco
-                .cornerRadius(10) // Esquinas redondeadas sin borde visible
-                .padding(.horizontal, 40)
-                .foregroundColor(Color("Color"))
-
-            
-            // Botón para confirmar el nombre
-            Button("Continuar") {
-                if !userName.isEmpty {
-                    selectedIndex = 1
-                }
-            }
-            .frame(width: 320, height: 50)
-            .font(.system(size: 20, weight: .bold))
-            .background(Color.white)
-            .foregroundColor(Color("Color"))
-            .cornerRadius(10)
-            .padding(.top, 20)
-            
-            Spacer()
-        }
-    }
-}
 
 
 // MARK: - LocationPermissionTab

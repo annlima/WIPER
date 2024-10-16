@@ -1,8 +1,6 @@
 import AVFoundation
 import Photos
-import Vision
 import SwiftUI
-import CoreML
 
 class CameraViewModel: NSObject, ObservableObject, AVCaptureFileOutputRecordingDelegate, AVCaptureVideoDataOutputSampleBufferDelegate {
     @Published var output = AVCaptureMovieFileOutput()
@@ -11,16 +9,14 @@ class CameraViewModel: NSObject, ObservableObject, AVCaptureFileOutputRecordingD
     @Published var previewUrl: URL?
     @Published var showPreview: Bool = false
     @Published var showSaveDialog: Bool = false
-    @Published var detectedObjects: [DetectedObject] = [] // Detected objects
-
-    var yoloModel: VNCoreMLModel?
-
 
     // Start Recording
     func startRecording(session: AVCaptureSession) {
         let tempURL = NSTemporaryDirectory() + "\(Date()).mov"
+        if !session.outputs.contains(output) {  // Asegúrate de no añadir el output dos veces
+            session.addOutput(output)
+        }
         output.startRecording(to: URL(fileURLWithPath: tempURL), recordingDelegate: self)
-        session.addOutput(output)
         isRecording = true
     }
 
@@ -28,41 +24,6 @@ class CameraViewModel: NSObject, ObservableObject, AVCaptureFileOutputRecordingD
     func stopRecording() {
         output.stopRecording()
         isRecording = false
-    }
-
-    // Process each frame from the camera
-    func captureOutput(_ output: AVCaptureOutput, didOutput sampleBuffer: CMSampleBuffer, from connection: AVCaptureConnection) {
-        guard let pixelBuffer = CMSampleBufferGetImageBuffer(sampleBuffer) else {
-            return
-        }
-
-        // Run YOLO on the pixel buffer
-        detectObjects(in: pixelBuffer)
-    }
-
-    // Perform object detection using YOLO
-    func detectObjects(in pixelBuffer: CVPixelBuffer) {
-        guard let yoloModel = yoloModel else { return }
-
-        let request = VNCoreMLRequest(model: yoloModel) { [weak self] request, error in
-            if let results = request.results as? [VNRecognizedObjectObservation] {
-                DispatchQueue.main.async {
-                    // Map the results to your DetectedObject model and update the UI
-                    self?.detectedObjects = results.map {
-                        DetectedObject(identifier: $0.labels.first?.identifier ?? "",
-                                       confidence: $0.confidence,
-                                       boundingBox: $0.boundingBox)
-                    }
-                }
-            }
-        }
-
-        let handler = VNImageRequestHandler(cvPixelBuffer: pixelBuffer, options: [:])
-        do {
-            try handler.perform([request])
-        } catch {
-            print("Failed to perform detection: \(error.localizedDescription)")
-        }
     }
 
     // Delegate method to handle recording finished
@@ -96,12 +57,4 @@ class CameraViewModel: NSObject, ObservableObject, AVCaptureFileOutputRecordingD
             }
         }
     }
-}
-
-// Model for detected objects
-struct DetectedObject: Identifiable {
-    let id = UUID()
-    let identifier: String
-    let confidence: VNConfidence
-    let boundingBox: CGRect
 }
