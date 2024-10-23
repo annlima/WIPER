@@ -2,31 +2,32 @@ import AVFoundation
 import Photos
 import SwiftUI
 
-class CameraViewModel: NSObject, ObservableObject, AVCaptureFileOutputRecordingDelegate, AVCaptureVideoDataOutputSampleBufferDelegate {
+class CameraViewModel: NSObject, ObservableObject, AVCaptureFileOutputRecordingDelegate {
     @Published var output = AVCaptureMovieFileOutput()
     @Published var isRecording: Bool = false
     @Published var recordedURLs: [URL] = []
     @Published var previewUrl: URL?
-    @Published var showPreview: Bool = false
     @Published var showSaveDialog: Bool = false
 
-    // Start Recording
     func startRecording(session: AVCaptureSession) {
-        let tempURL = NSTemporaryDirectory() + "\(Date()).mov"
-        if !session.outputs.contains(output) {  // Asegúrate de no añadir el output dos veces
+        guard session.isRunning else {
+            print("La sesión no está activa")
+            return
+        }
+        
+        let tempURL = URL(fileURLWithPath: NSTemporaryDirectory()).appendingPathComponent("\(UUID().uuidString).mov")
+        if !session.outputs.contains(output) {
             session.addOutput(output)
         }
-        output.startRecording(to: URL(fileURLWithPath: tempURL), recordingDelegate: self)
+        output.startRecording(to: tempURL, recordingDelegate: self)
         isRecording = true
     }
 
-    // Stop Recording
     func stopRecording() {
         output.stopRecording()
         isRecording = false
     }
 
-    // Delegate method to handle recording finished
     func fileOutput(_ output: AVCaptureFileOutput, didFinishRecordingTo outputFileURL: URL, from connections: [AVCaptureConnection], error: Error?) {
         if let error = error {
             print(error.localizedDescription)
@@ -39,21 +40,27 @@ class CameraViewModel: NSObject, ObservableObject, AVCaptureFileOutputRecordingD
         self.showSaveDialog = true
     }
 
-    // Save video to gallery
     func saveVideoToGallery(url: URL) {
-        PHPhotoLibrary.requestAuthorization { status in
-            if status == .authorized {
+        PHPhotoLibrary.requestAuthorization(for: .addOnly) { status in
+            switch status {
+            case .authorized, .limited:
                 PHPhotoLibrary.shared().performChanges({
                     PHAssetChangeRequest.creationRequestForAssetFromVideo(atFileURL: url)
                 }) { success, error in
-                    if success {
-                        print("Video saved to gallery")
-                    } else {
-                        print("Error saving video to gallery: \(String(describing: error))")
+                    DispatchQueue.main.async {
+                        if success {
+                            print("Video saved to gallery")
+                        } else {
+                            print("Error saving video to gallery: \(String(describing: error))")
+                        }
                     }
                 }
-            } else {
+            case .denied, .restricted:
                 print("Gallery access permission denied")
+            case .notDetermined:
+                print("Gallery access permission not determined")
+            @unknown default:
+                print("Unknown gallery access status")
             }
         }
     }

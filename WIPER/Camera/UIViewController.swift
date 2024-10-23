@@ -11,42 +11,31 @@ class LandscapeCameraViewController: UIViewController {
         guard let session = captureSession else { return }
 
         previewLayer = AVCaptureVideoPreviewLayer(session: session)
-        previewLayer?.videoGravity = .resizeAspectFill  // Ajuste para llenar la pantalla
+        previewLayer?.videoGravity = .resizeAspectFill
         previewLayer?.frame = view.bounds
         if let previewLayer = previewLayer {
             view.layer.addSublayer(previewLayer)
         }
-
-        // Observador para detectar cambios de orientación
         NotificationCenter.default.addObserver(self, selector: #selector(orientationDidChange), name: UIDevice.orientationDidChangeNotification, object: nil)
-
-        // Asegúrate de configurar la orientación correcta en la carga inicial
         updatePreviewLayerOrientation()
     }
-
     deinit {
         NotificationCenter.default.removeObserver(self, name: UIDevice.orientationDidChangeNotification, object: nil)
     }
-
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
         previewLayer?.frame = view.bounds
     }
-
     override var supportedInterfaceOrientations: UIInterfaceOrientationMask {
-        return .landscape // Fijar en landscape
+        return .landscape
     }
-
     override var shouldAutorotate: Bool {
-        return false // No permitir la rotación automática
+        return false
     }
-
-    // Método que se ejecuta cuando cambia la orientación del dispositivo
     @objc func orientationDidChange() {
         updatePreviewLayerOrientation()
     }
 
-    // Ajusta la orientación de la vista previa de la cámara según la orientación del dispositivo
     private func updatePreviewLayerOrientation() {
         guard let connection = previewLayer?.connection else { return }
 

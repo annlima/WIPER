@@ -7,14 +7,21 @@ struct FullScreenCameraView: View {
 
     var body: some View {
         ZStack {
-            CameraView()
+            CameraPreview(captureSession: cameraManager.session)
                 .ignoresSafeArea() // La cámara cubre toda la pantalla
                 .onAppear {
-                    // Bloquear la orientación a landscape cuando la cámara esté activa
-                    lockOrientation(.landscape)
+                    cameraManager.setUp(cameraViewModel: cameraViewModel) { result in
+                        switch result {
+                        case .success():
+                            cameraManager.session.startRunning()
+                        case .failure(let error):
+                            print("Error setting up camera: \(error.localizedDescription)")
+                        }
+                    }
+                    lockOrientation(.landscape) // Bloquear orientación cuando la cámara esté activa
                 }
                 .onDisappear {
-                    // Desbloquear la orientación cuando la cámara se cierre
+                    cameraManager.session.stopRunning()
                     lockOrientation(.all) // Permitir todas las orientaciones después de cerrar la cámara
                 }
             
@@ -54,6 +61,18 @@ struct FullScreenCameraView: View {
                 }
             }
             .padding(.bottom, 30)
+        }
+        .alert(isPresented: $cameraViewModel.showSaveDialog) {
+            Alert(
+                title: Text("Guardar video"),
+                message: Text("¿Deseas guardar el video en la galería?"),
+                primaryButton: .default(Text("Guardar")) {
+                    if let url = cameraViewModel.previewUrl {
+                        cameraViewModel.saveVideoToGallery(url: url)
+                    }
+                },
+                secondaryButton: .cancel(Text("Cancelar"))
+            )
         }
     }
 

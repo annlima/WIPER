@@ -13,6 +13,7 @@ struct MainView: View {
     
     var body: some View {
         TabView(selection: $selectedTab) {
+    
             FavoriteRoute()
                 .tabItem {
                     Image(systemName: "map")
@@ -20,27 +21,31 @@ struct MainView: View {
                 }
                 .tag(0)
                 .onAppear {
-                    setTabBarColor(color: UIColor.systemGray6)
+                    setTabBarColor(color: UIColor.systemGray6) // Fondo sólido para el mapa
                 }
-            Color.clear
+            
+            // Pestaña de la cámara que abre la vista a pantalla completa directamente
+            Color.clear // Esto es necesario para que el TabView funcione correctamente
                 .tabItem {
                     Image(systemName: "camera")
                     Text("Camera")
                 }
                 .tag(1)
                 .onAppear {
-                    showCameraFullScreen = true
-                    setTabBarColor(color: UIColor.clear)
+                    showCameraFullScreen = true // Abre la cámara directamente
+                    setTabBarColor(color: UIColor.clear) // Hacer transparente la barra al ir a la cámara
                 }
                 .fullScreenCover(isPresented: $showCameraFullScreen) {
                     FullScreenCameraView()
                 }
         }
-        .accentColor(Color("Color"))
+        .accentColor(Color("Color")) // Personaliza el color seleccionado de la pestaña
     }
+
+    // Función para cambiar el color de la barra de pestañas
     func setTabBarColor(color: UIColor) {
         let appearance = UITabBarAppearance()
-        appearance.configureWithOpaqueBackground() 
+        appearance.configureWithOpaqueBackground() // Fondo sólido
         appearance.backgroundColor = color
 
         UITabBar.appearance().standardAppearance = appearance

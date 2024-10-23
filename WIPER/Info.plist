@@ -6,5 +6,7 @@
 	<true/>
 	<key>UIInterfaceOrientation</key>
 	<string>$(CURRENT_PROJECT_VERSION)</string>
+	<key>NSPhotoLibraryAddUsageDescription</key>
+	<string>We need access to your photo library to save the recorded videos</string>
 </dict>
 </plist>

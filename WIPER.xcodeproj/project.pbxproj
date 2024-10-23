@@ -10,11 +10,12 @@
 		A12727DA2CA3303D0060164C /* CameraView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A12727D92CA330390060164C /* CameraView.swift */; };
 		A12727DC2CA331110060164C /* CameraPreview.swift in Sources */ = {isa = PBXBuildFile; fileRef = A12727DB2CA3310D0060164C /* CameraPreview.swift */; };
 		A12B83902CC0511A0045BA44 /* UIViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A12B838F2CC051150045BA44 /* UIViewController.swift */; };
-		A12B83922CC052510045BA44 /* FullScreenCameraView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A12B83912CC0524A0045BA44 /* FullScreenCameraView.swift */; };
+		A12B83922CC052510045BA44 /* FullScreenCameraView 2.swift in Sources */ = {isa = PBXBuildFile; fileRef = A12B83912CC0524A0045BA44 /* FullScreenCameraView 2.swift */; };
 		A17336C12CC3143C00AA9A9E /* YOLOv3Tiny.mlpackage in Sources */ = {isa = PBXBuildFile; fileRef = A17336C02CC3143C00AA9A9E /* YOLOv3Tiny.mlpackage */; };
 		A173E8812C90BB97005BB0F9 /* StartScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = A173E8802C90BB97005BB0F9 /* StartScreen.swift */; };
 		A19E3AB62CAFB30100267905 /* MainView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A19E3AB52CAFB2FE00267905 /* MainView.swift */; };
 		A1BA5EA22CC973D800C9CED3 /* EquatableLocation.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1BA5EA12CC973D100C9CED3 /* EquatableLocation.swift */; };
+		A1BA5EA52CC977EA00C9CED3 /* DeviceManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1BA5EA42CC977E700C9CED3 /* DeviceManager.swift */; };
 		A1C5604F2C92088100E2A9DD /* FavoriteRoute.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1C5604E2C92088100E2A9DD /* FavoriteRoute.swift */; };
 		A1C560532C920A0C00E2A9DD /* CameraViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1C560522C920A0C00E2A9DD /* CameraViewModel.swift */; };
 		A1C560552C920A8500E2A9DD /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1C560542C920A8500E2A9DD /* ViewController.swift */; };
@@ -56,11 +57,12 @@
 		A12727D92CA330390060164C /* CameraView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CameraView.swift; sourceTree = "<group>"; };
 		A12727DB2CA3310D0060164C /* CameraPreview.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CameraPreview.swift; sourceTree = "<group>"; };
 		A12B838F2CC051150045BA44 /* UIViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIViewController.swift; sourceTree = "<group>"; };
-		A12B83912CC0524A0045BA44 /* FullScreenCameraView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FullScreenCameraView.swift; sourceTree = "<group>"; };
+		A12B83912CC0524A0045BA44 /* FullScreenCameraView 2.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "FullScreenCameraView 2.swift"; sourceTree = "<group>"; };
 		A17336C02CC3143C00AA9A9E /* YOLOv3Tiny.mlpackage */ = {isa = PBXFileReference; lastKnownFileType = folder.mlpackage; path = YOLOv3Tiny.mlpackage; sourceTree = "<group>"; };
 		A173E8802C90BB97005BB0F9 /* StartScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StartScreen.swift; sourceTree = "<group>"; };
 		A19E3AB52CAFB2FE00267905 /* MainView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainView.swift; sourceTree = "<group>"; };
 		A1BA5EA12CC973D100C9CED3 /* EquatableLocation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EquatableLocation.swift; sourceTree = "<group>"; };
+		A1BA5EA42CC977E700C9CED3 /* DeviceManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeviceManager.swift; sourceTree = "<group>"; };
 		A1C5604E2C92088100E2A9DD /* FavoriteRoute.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FavoriteRoute.swift; sourceTree = "<group>"; };
 		A1C560522C920A0C00E2A9DD /* CameraViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CameraViewModel.swift; sourceTree = "<group>"; };
 		A1C560542C920A8500E2A9DD /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
@@ -111,6 +113,7 @@
 		A12727D62CA3261A0060164C /* Camera */ = {
 			isa = PBXGroup;
 			children = (
+				A12B83912CC0524A0045BA44 /* FullScreenCameraView 2.swift */,
 				A12B838F2CC051150045BA44 /* UIViewController.swift */,
 				A12727DB2CA3310D0060164C /* CameraPreview.swift */,
 				A12727D92CA330390060164C /* CameraView.swift */,
@@ -143,7 +146,7 @@
 		A1C891512C73D3E100308657 /* WIPER */ = {
 			isa = PBXGroup;
 			children = (
-				A12B83912CC0524A0045BA44 /* FullScreenCameraView.swift */,
+				A1BA5EA42CC977E700C9CED3 /* DeviceManager.swift */,
 				A19E3AB52CAFB2FE00267905 /* MainView.swift */,
 				A12727D62CA3261A0060164C /* Camera */,
 				A12727D52CA1D4AE0060164C /* Info.plist */,
@@ -340,7 +343,7 @@
 				A1BA5EA22CC973D800C9CED3 /* EquatableLocation.swift in Sources */,
 				A1F0A4622CA100C800F7FEE8 /* Carrousel.swift in Sources */,
 				A1F0A4662CA106DA00F7FEE8 /* CameraManager.swift in Sources */,
-				A12B83922CC052510045BA44 /* FullScreenCameraView.swift in Sources */,
+				A12B83922CC052510045BA44 /* FullScreenCameraView 2.swift in Sources */,
 				A12B83902CC0511A0045BA44 /* UIViewController.swift in Sources */,
 				A1C5605B2C920AED00E2A9DD /* AppDelegate.swift in Sources */,
 				A1C560552C920A8500E2A9DD /* ViewController.swift in Sources */,
@@ -350,6 +353,7 @@
 				A173E8812C90BB97005BB0F9 /* StartScreen.swift in Sources */,
 				A1F0A45C2CA0FA6800F7FEE8 /* TermsAndConditions.swift in Sources */,
 				A12727DC2CA331110060164C /* CameraPreview.swift in Sources */,
+				A1BA5EA52CC977EA00C9CED3 /* DeviceManager.swift in Sources */,
 				A19E3AB62CAFB30100267905 /* MainView.swift in Sources */,
 				A1F0A4642CA1011700F7FEE8 /* LocationManager.swift in Sources */,
 				A1C560532C920A0C00E2A9DD /* CameraViewModel.swift in Sources */,
