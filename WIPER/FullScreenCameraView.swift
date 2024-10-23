@@ -23,7 +23,7 @@ struct FullScreenCameraView: View {
                     Button(action: {
                         presentationMode.wrappedValue.dismiss() // Cerrar la vista de la cámara
                     }) {
-                        Text("Close")
+                        Text("Cerrar")
                             .padding()
                             .background(Color.black.opacity(0.7))
                             .foregroundColor(.white)

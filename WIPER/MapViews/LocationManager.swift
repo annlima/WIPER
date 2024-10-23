@@ -4,7 +4,7 @@ import CoreLocation
 class LocationManager: NSObject, ObservableObject, CLLocationManagerDelegate {
     @Published var authorizationStatus: CLAuthorizationStatus?
     private let locationManager = CLLocationManager()
-    @Published var currentLocation: CLLocationCoordinate2D?
+    @Published var currentLocation: EquatableLocation?
     
     override init() {
         super.init()
@@ -47,9 +47,8 @@ class LocationManager: NSObject, ObservableObject, CLLocationManagerDelegate {
     }
 
     func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
-        if let location = locations.last?.coordinate {
-            currentLocation = location
-            print("Current location: \(location.latitude), \(location.longitude)")
+        if let location = locations.last {
+            currentLocation = EquatableLocation(coordinate: location.coordinate)
         }
     }
 }

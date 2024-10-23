@@ -1,14 +1,13 @@
 import SwiftUI
 import MapKit
-import CoreLocation
 
 struct FavoriteRoute: View {
-    @StateObject private var locationManager = LocationManager() // Crear instancia del LocationManager
+    @StateObject private var locationManager = LocationManager()
     @State private var mapRegion = MKCoordinateRegion(center: CLLocationCoordinate2D(latitude: 19.03793, longitude: -98.20346), span: MKCoordinateSpan(latitudeDelta: 0.05, longitudeDelta: 0.05))
     @State private var searchQuery = ""
     @State private var selectedLocation: Location? = nil
     @State private var route: MKRoute?
-    @State private var isFollowingUserLocation = true // Nuevo estado para controlar si el mapa sigue la ubicación del usuario
+    @State private var isFollowingUserLocation = true
     @State private var showFavorites = false
     
     struct Location: Identifiable, Equatable {
@@ -31,45 +30,36 @@ struct FavoriteRoute: View {
     var body: some View {
         NavigationView {
             ZStack(alignment: .top) {
-                // Mapa de fondo
-                Map(coordinateRegion: $mapRegion, annotationItems: locations + (selectedLocation.map { [$0] } ?? [])) { location in
+                Map(coordinateRegion: $mapRegion, interactionModes: [.all], showsUserLocation: true, annotationItems: locations + (selectedLocation.map { [$0] } ?? [])) { location in
                     MapMarker(coordinate: location.coordinate, tint: location == selectedLocation ? .blue : .red)
                 }
                 .edgesIgnoringSafeArea(.all)
                 .onChange(of: locationManager.currentLocation) { newLocation in
                     if let newLocation = newLocation, isFollowingUserLocation {
-                        // Solo actualizamos la región si estamos siguiendo la ubicación del usuario
-                        mapRegion = MKCoordinateRegion(center: newLocation, span: MKCoordinateSpan(latitudeDelta: 0.05, longitudeDelta: 0.05))
+                        mapRegion = MKCoordinateRegion(center: newLocation.coordinate, span: MKCoordinateSpan(latitudeDelta: 0.05, longitudeDelta: 0.05))
+                    }
+                }
+                .onAppear {
+                    if let userLocation = locationManager.currentLocation {
+                        mapRegion.center = userLocation.coordinate
                     }
                 }
                 
-                // Mostrar marcador de la ubicación del usuario
-                if let userLocation = locationManager.currentLocation {
-                    Map(coordinateRegion: $mapRegion, annotationItems: [Location(name: "Mi ubicación", coordinate: userLocation)]) { location in
-                        MapMarker(coordinate: location.coordinate, tint: .green)
-                    }
-                    .edgesIgnoringSafeArea(.all)
-                }
-                
-                // Añadir polilínea para la ruta
                 if let route = route {
-                    Map(coordinateRegion: $mapRegion, annotationItems: locations) { location in
-                        MapMarker(coordinate: location.coordinate)
-                    }
-                    .overlay(
-                        MapPolyline(route: route) // Polilínea para la ruta
-                    )
-                    .edgesIgnoringSafeArea(.all)
+                    RouteOverlay(route: route)
+                        .edgesIgnoringSafeArea(.all)
                 }
                 
                 VStack {
                     // Barra de búsqueda y favoritos
                     HStack {
-                        TextField("Buscar destino...", text: $searchQuery)
-                            .padding()
-                            .background(Color.white)
-                            .cornerRadius(10)
-                            .padding(.horizontal)
+                        TextField("Buscar destino...", text: $searchQuery, onCommit: {
+                            searchLocation()
+                        })
+                        .padding()
+                        .background(Color.white)
+                        .cornerRadius(10)
+                        .padding(.horizontal)
                         
                         Button(action: {
                             self.showFavorites.toggle()
@@ -82,7 +72,6 @@ struct FavoriteRoute: View {
                     }
                     .padding(.top, 10)
                     
-                    // Lista de favoritos si está activa
                     if showFavorites {
                         ScrollView {
                             VStack(alignment: .leading) {
@@ -108,15 +97,29 @@ struct FavoriteRoute: View {
         }
     }
     
-    // Seleccionar ubicación y calcular ruta
+    func searchLocation() {
+        let searchRequest = MKLocalSearch.Request()
+        searchRequest.naturalLanguageQuery = searchQuery
+        
+        let search = MKLocalSearch(request: searchRequest)
+        search.start { response, error in
+            if let response = response, let mapItem = response.mapItems.first {
+                let coordinate = mapItem.placemark.coordinate
+                let location = Location(name: mapItem.name ?? "Destino", coordinate: coordinate)
+                self.selectLocation(location)
+            } else {
+                print("Error al buscar la ubicación: \(error?.localizedDescription ?? "Desconocido")")
+            }
+        }
+    }
+    
     func selectLocation(_ location: Location) {
         self.selectedLocation = location
-        self.isFollowingUserLocation = false // Dejamos de seguir la ubicación del usuario
+        self.isFollowingUserLocation = false
         self.mapRegion.center = location.coordinate
         calculateRoute(to: location.coordinate)
     }
     
-    // Función para calcular la ruta entre la ubicación del usuario y el destino
     func calculateRoute(to destination: CLLocationCoordinate2D) {
         guard let userLocation = locationManager.currentLocation else {
             print("No se pudo obtener la ubicación actual")
@@ -124,7 +127,7 @@ struct FavoriteRoute: View {
         }
         
         let request = MKDirections.Request()
-        let sourcePlacemark = MKPlacemark(coordinate: userLocation)
+        let sourcePlacemark = MKPlacemark(coordinate: userLocation.coordinate)
         let destinationPlacemark = MKPlacemark(coordinate: destination)
         
         request.source = MKMapItem(placemark: sourcePlacemark)
@@ -142,38 +145,41 @@ struct FavoriteRoute: View {
     }
 }
 
-// Extender CLLocationCoordinate2D para conformar a Equatable
-extension CLLocationCoordinate2D: Equatable {
-    public static func == (lhs: CLLocationCoordinate2D, rhs: CLLocationCoordinate2D) -> Bool {
-        return lhs.latitude == rhs.latitude && lhs.longitude == rhs.longitude
-    }
-}
-
 // Vista para dibujar la polilínea de la ruta en el mapa
-struct MapPolyline: View {
+struct RouteOverlay: UIViewRepresentable {
     var route: MKRoute
     
-    var body: some View {
-        Path { path in
-            let points = route.polyline.points()
-            for i in 0..<route.polyline.pointCount {
-                let point = points[i]
-                let coordinate = point.coordinate
-                let mapPoint = MKMapPoint(coordinate)
-                
-                if i == 0 {
-                    path.move(to: CGPoint(x: mapPoint.x, y: mapPoint.y))
-                } else {
-                    path.addLine(to: CGPoint(x: mapPoint.x, y: mapPoint.y))
-                }
-            }
-        }
-        .stroke(Color.blue, lineWidth: 5)
+    func makeUIView(context: Context) -> MKMapView {
+        let mapView = MKMapView()
+        mapView.delegate = context.coordinator
+        mapView.addOverlay(route.polyline)
+        return mapView
     }
-}
-
-struct FavoriteRoute_Previews: PreviewProvider {
-    static var previews: some View {
-        FavoriteRoute()
+    
+    func updateUIView(_ uiView: MKMapView, context: Context) {
+        uiView.removeOverlays(uiView.overlays)
+        uiView.addOverlay(route.polyline)
+    }
+    
+    func makeCoordinator() -> Coordinator {
+        Coordinator(self)
+    }
+    
+    class Coordinator: NSObject, MKMapViewDelegate {
+        var parent: RouteOverlay
+        
+        init(_ parent: RouteOverlay) {
+            self.parent = parent
+        }
+        
+        func mapView(_ mapView: MKMapView, rendererFor overlay: MKOverlay) -> MKOverlayRenderer {
+            if let polyline = overlay as? MKPolyline {
+                let renderer = MKPolylineRenderer(polyline: polyline)
+                renderer.strokeColor = .blue
+                renderer.lineWidth = 5
+                return renderer
+            }
+            return MKOverlayRenderer()
+        }
     }
 }

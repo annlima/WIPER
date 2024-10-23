@@ -1,35 +1,50 @@
 import SwiftUI
 
 struct MainView: View {
-    @State private var showCameraFullScreen = false // Estado para manejar la presentación a pantalla completa
+    @State private var showCameraFullScreen = false
+    @State private var selectedTab: Int = 0
+    init() {
+        let appearance = UITabBarAppearance()
+        appearance.configureWithOpaqueBackground()
+        appearance.backgroundColor = UIColor.systemGray6
+        UITabBar.appearance().standardAppearance = appearance
+        UITabBar.appearance().scrollEdgeAppearance = appearance
+    }
     
     var body: some View {
-        TabView {
-            
+        TabView(selection: $selectedTab) {
             FavoriteRoute()
                 .tabItem {
                     Image(systemName: "map")
                     Text("Map")
                 }
-            
-            // Pestaña de la cámara que abre la vista a pantalla completa
-            Button(action: {
-                showCameraFullScreen.toggle()
-            }) {
-                VStack {
+                .tag(0)
+                .onAppear {
+                    setTabBarColor(color: UIColor.systemGray6)
+                }
+            Color.clear
+                .tabItem {
                     Image(systemName: "camera")
                     Text("Camera")
                 }
-            }
-            .fullScreenCover(isPresented: $showCameraFullScreen) {
-                FullScreenCameraView()
-            }
-            .tabItem {
-                Image(systemName: "camera")
-                Text("Camera")
-            }
+                .tag(1)
+                .onAppear {
+                    showCameraFullScreen = true
+                    setTabBarColor(color: UIColor.clear)
+                }
+                .fullScreenCover(isPresented: $showCameraFullScreen) {
+                    FullScreenCameraView()
+                }
         }
-        .accentColor(Color("Color")) // Customize the selected tab color
+        .accentColor(Color("Color"))
+    }
+    func setTabBarColor(color: UIColor) {
+        let appearance = UITabBarAppearance()
+        appearance.configureWithOpaqueBackground() 
+        appearance.backgroundColor = color
+
+        UITabBar.appearance().standardAppearance = appearance
+        UITabBar.appearance().scrollEdgeAppearance = appearance
     }
 }
 

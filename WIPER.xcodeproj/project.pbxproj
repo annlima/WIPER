@@ -11,9 +11,10 @@
 		A12727DC2CA331110060164C /* CameraPreview.swift in Sources */ = {isa = PBXBuildFile; fileRef = A12727DB2CA3310D0060164C /* CameraPreview.swift */; };
 		A12B83902CC0511A0045BA44 /* UIViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A12B838F2CC051150045BA44 /* UIViewController.swift */; };
 		A12B83922CC052510045BA44 /* FullScreenCameraView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A12B83912CC0524A0045BA44 /* FullScreenCameraView.swift */; };
-		A158B68C2CBF0A39008B5768 /* MyImageClassifier 1.mlmodel in Sources */ = {isa = PBXBuildFile; fileRef = A158B68B2CBF0A39008B5768 /* MyImageClassifier 1.mlmodel */; };
+		A17336C12CC3143C00AA9A9E /* YOLOv3Tiny.mlpackage in Sources */ = {isa = PBXBuildFile; fileRef = A17336C02CC3143C00AA9A9E /* YOLOv3Tiny.mlpackage */; };
 		A173E8812C90BB97005BB0F9 /* StartScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = A173E8802C90BB97005BB0F9 /* StartScreen.swift */; };
 		A19E3AB62CAFB30100267905 /* MainView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A19E3AB52CAFB2FE00267905 /* MainView.swift */; };
+		A1BA5EA22CC973D800C9CED3 /* EquatableLocation.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1BA5EA12CC973D100C9CED3 /* EquatableLocation.swift */; };
 		A1C5604F2C92088100E2A9DD /* FavoriteRoute.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1C5604E2C92088100E2A9DD /* FavoriteRoute.swift */; };
 		A1C560532C920A0C00E2A9DD /* CameraViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1C560522C920A0C00E2A9DD /* CameraViewModel.swift */; };
 		A1C560552C920A8500E2A9DD /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1C560542C920A8500E2A9DD /* ViewController.swift */; };
@@ -56,9 +57,10 @@
 		A12727DB2CA3310D0060164C /* CameraPreview.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CameraPreview.swift; sourceTree = "<group>"; };
 		A12B838F2CC051150045BA44 /* UIViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIViewController.swift; sourceTree = "<group>"; };
 		A12B83912CC0524A0045BA44 /* FullScreenCameraView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FullScreenCameraView.swift; sourceTree = "<group>"; };
-		A158B68B2CBF0A39008B5768 /* MyImageClassifier 1.mlmodel */ = {isa = PBXFileReference; lastKnownFileType = file.mlmodel; path = "MyImageClassifier 1.mlmodel"; sourceTree = "<group>"; };
+		A17336C02CC3143C00AA9A9E /* YOLOv3Tiny.mlpackage */ = {isa = PBXFileReference; lastKnownFileType = folder.mlpackage; path = YOLOv3Tiny.mlpackage; sourceTree = "<group>"; };
 		A173E8802C90BB97005BB0F9 /* StartScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StartScreen.swift; sourceTree = "<group>"; };
 		A19E3AB52CAFB2FE00267905 /* MainView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainView.swift; sourceTree = "<group>"; };
+		A1BA5EA12CC973D100C9CED3 /* EquatableLocation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EquatableLocation.swift; sourceTree = "<group>"; };
 		A1C5604E2C92088100E2A9DD /* FavoriteRoute.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FavoriteRoute.swift; sourceTree = "<group>"; };
 		A1C560522C920A0C00E2A9DD /* CameraViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CameraViewModel.swift; sourceTree = "<group>"; };
 		A1C560542C920A8500E2A9DD /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
@@ -177,7 +179,7 @@
 			children = (
 				A1C8916D2C73D3E200308657 /* WIPERUITests.swift */,
 				A1C8916F2C73D3E200308657 /* WIPERUITestsLaunchTests.swift */,
-				A158B68B2CBF0A39008B5768 /* MyImageClassifier 1.mlmodel */,
+				A17336C02CC3143C00AA9A9E /* YOLOv3Tiny.mlpackage */,
 			);
 			path = WIPERUITests;
 			sourceTree = "<group>";
@@ -196,6 +198,7 @@
 		A1F0A4602CA0FF9500F7FEE8 /* MapViews */ = {
 			isa = PBXGroup;
 			children = (
+				A1BA5EA12CC973D100C9CED3 /* EquatableLocation.swift */,
 				A1F0A4632CA1011400F7FEE8 /* LocationManager.swift */,
 				A1C5604E2C92088100E2A9DD /* FavoriteRoute.swift */,
 				A1C560542C920A8500E2A9DD /* ViewController.swift */,
@@ -334,6 +337,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				A1BA5EA22CC973D800C9CED3 /* EquatableLocation.swift in Sources */,
 				A1F0A4622CA100C800F7FEE8 /* Carrousel.swift in Sources */,
 				A1F0A4662CA106DA00F7FEE8 /* CameraManager.swift in Sources */,
 				A12B83922CC052510045BA44 /* FullScreenCameraView.swift in Sources */,
@@ -350,7 +354,6 @@
 				A1F0A4642CA1011700F7FEE8 /* LocationManager.swift in Sources */,
 				A1C560532C920A0C00E2A9DD /* CameraViewModel.swift in Sources */,
 				A1C5604F2C92088100E2A9DD /* FavoriteRoute.swift in Sources */,
-				A158B68C2CBF0A39008B5768 /* MyImageClassifier 1.mlmodel in Sources */,
 				A1F0A45E2CA0FD6900F7FEE8 /* SplashScreen.swift in Sources */,
 				A12727DA2CA3303D0060164C /* CameraView.swift in Sources */,
 			);
@@ -370,6 +373,7 @@
 			files = (
 				A1C891702C73D3E200308657 /* WIPERUITestsLaunchTests.swift in Sources */,
 				A1C8916E2C73D3E200308657 /* WIPERUITests.swift in Sources */,
+				A17336C12CC3143C00AA9A9E /* YOLOv3Tiny.mlpackage in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
