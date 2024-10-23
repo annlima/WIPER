@@ -11,7 +11,6 @@
 		A12727DC2CA331110060164C /* CameraPreview.swift in Sources */ = {isa = PBXBuildFile; fileRef = A12727DB2CA3310D0060164C /* CameraPreview.swift */; };
 		A12B83902CC0511A0045BA44 /* UIViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A12B838F2CC051150045BA44 /* UIViewController.swift */; };
 		A12B83922CC052510045BA44 /* FullScreenCameraView 2.swift in Sources */ = {isa = PBXBuildFile; fileRef = A12B83912CC0524A0045BA44 /* FullScreenCameraView 2.swift */; };
-		A17336C12CC3143C00AA9A9E /* YOLOv3Tiny.mlpackage in Sources */ = {isa = PBXBuildFile; fileRef = A17336C02CC3143C00AA9A9E /* YOLOv3Tiny.mlpackage */; };
 		A173E8812C90BB97005BB0F9 /* StartScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = A173E8802C90BB97005BB0F9 /* StartScreen.swift */; };
 		A19E3AB62CAFB30100267905 /* MainView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A19E3AB52CAFB2FE00267905 /* MainView.swift */; };
 		A1BA5EA22CC973D800C9CED3 /* EquatableLocation.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1BA5EA12CC973D100C9CED3 /* EquatableLocation.swift */; };
@@ -58,7 +57,6 @@
 		A12727DB2CA3310D0060164C /* CameraPreview.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CameraPreview.swift; sourceTree = "<group>"; };
 		A12B838F2CC051150045BA44 /* UIViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIViewController.swift; sourceTree = "<group>"; };
 		A12B83912CC0524A0045BA44 /* FullScreenCameraView 2.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "FullScreenCameraView 2.swift"; sourceTree = "<group>"; };
-		A17336C02CC3143C00AA9A9E /* YOLOv3Tiny.mlpackage */ = {isa = PBXFileReference; lastKnownFileType = folder.mlpackage; path = YOLOv3Tiny.mlpackage; sourceTree = "<group>"; };
 		A173E8802C90BB97005BB0F9 /* StartScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StartScreen.swift; sourceTree = "<group>"; };
 		A19E3AB52CAFB2FE00267905 /* MainView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainView.swift; sourceTree = "<group>"; };
 		A1BA5EA12CC973D100C9CED3 /* EquatableLocation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EquatableLocation.swift; sourceTree = "<group>"; };
@@ -182,7 +180,6 @@
 			children = (
 				A1C8916D2C73D3E200308657 /* WIPERUITests.swift */,
 				A1C8916F2C73D3E200308657 /* WIPERUITestsLaunchTests.swift */,
-				A17336C02CC3143C00AA9A9E /* YOLOv3Tiny.mlpackage */,
 			);
 			path = WIPERUITests;
 			sourceTree = "<group>";
@@ -377,7 +374,6 @@
 			files = (
 				A1C891702C73D3E200308657 /* WIPERUITestsLaunchTests.swift in Sources */,
 				A1C8916E2C73D3E200308657 /* WIPERUITests.swift in Sources */,
-				A17336C12CC3143C00AA9A9E /* YOLOv3Tiny.mlpackage in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
