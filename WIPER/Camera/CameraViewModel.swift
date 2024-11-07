@@ -1,45 +1,37 @@
 import AVFoundation
 import Photos
 import SwiftUI
+import Vision
 
-class CameraViewModel: NSObject, ObservableObject, AVCaptureFileOutputRecordingDelegate {
-    @Published var output = AVCaptureMovieFileOutput()
+class CameraViewModel: NSObject, ObservableObject, AVCaptureVideoDataOutputSampleBufferDelegate, AVCaptureFileOutputRecordingDelegate {
     @Published var isRecording: Bool = false
     @Published var recordedURLs: [URL] = []
     @Published var previewUrl: URL?
     @Published var showSaveDialog: Bool = false
-
-    func startRecording(session: AVCaptureSession) {
-        guard session.isRunning else {
-            print("La sesión no está activa")
+    @Published var detections: [CGRect] = [] // Almacena las bounding boxes de los objetos detectados
+    
+    private var model: VNCoreMLModel
+    
+    override init() {
+        guard let model = try? VNCoreMLModel(for: demo().model) else {
+            fatalError("No se pudo cargar el modelo ML")
+        }
+        self.model = model
+        super.init()
+    }
+    
+    func fileOutput(_ output: AVCaptureFileOutput, didFinishRecordingTo outputFileURL: URL, from connections: [AVCaptureConnection], error: Error?) {
+        if let error = error {
+            print("Error al finalizar la grabación: \(error.localizedDescription)")
             return
         }
         
-        let tempURL = URL(fileURLWithPath: NSTemporaryDirectory()).appendingPathComponent("\(UUID().uuidString).mov")
-        if !session.outputs.contains(output) {
-            session.addOutput(output)
-        }
-        output.startRecording(to: tempURL, recordingDelegate: self)
-        isRecording = true
-    }
-
-    func stopRecording() {
-        output.stopRecording()
-        isRecording = false
-    }
-
-    func fileOutput(_ output: AVCaptureFileOutput, didFinishRecordingTo outputFileURL: URL, from connections: [AVCaptureConnection], error: Error?) {
-        if let error = error {
-            print(error.localizedDescription)
-            return
-        }
-
-        print("Video saved at: \(outputFileURL)")
+        print("Video guardado en: \(outputFileURL)")
         self.recordedURLs.append(outputFileURL)
         self.previewUrl = outputFileURL
         self.showSaveDialog = true
     }
-
+    
     func saveVideoToGallery(url: URL) {
         PHPhotoLibrary.requestAuthorization(for: .addOnly) { status in
             switch status {
@@ -49,18 +41,51 @@ class CameraViewModel: NSObject, ObservableObject, AVCaptureFileOutputRecordingD
                 }) { success, error in
                     DispatchQueue.main.async {
                         if success {
-                            print("Video saved to gallery")
+                            print("Video guardado en la galería")
                         } else {
-                            print("Error saving video to gallery: \(String(describing: error))")
+                            print("Error al guardar el video en la galería: \(String(describing: error))")
                         }
                     }
                 }
             case .denied, .restricted:
-                print("Gallery access permission denied")
+                print("Permiso de acceso a la galería denegado")
             case .notDetermined:
-                print("Gallery access permission not determined")
+                print("Permiso de acceso a la galería no determinado")
             @unknown default:
-                print("Unknown gallery access status")
+                print("Estado de permiso de galería desconocido")
+            }
+        }
+    }
+    
+    func captureOutput(_ output: AVCaptureOutput, didOutput sampleBuffer: CMSampleBuffer, from connection: AVCaptureConnection) {
+        guard isRecording, let pixelBuffer = CMSampleBufferGetImageBuffer(sampleBuffer) else {
+            return
+        }
+        
+        let request = VNCoreMLRequest(model: model) { (request, error) in
+            if let results = request.results as? [VNRecognizedObjectObservation] {
+                self.handleDetections(results)
+            }
+        }
+        
+        let handler = VNImageRequestHandler(cvPixelBuffer: pixelBuffer, options: [:])
+        try? handler.perform([request])
+    }
+    
+    private func handleDetections(_ results: [VNRecognizedObjectObservation]) {
+        DispatchQueue.main.async {
+            self.detections = results.map { observation in
+                // Convertir las coordenadas de la bounding box
+                let boundingBox = observation.boundingBox
+                let viewWidth = UIScreen.main.bounds.width
+                let viewHeight = UIScreen.main.bounds.height
+                
+                let x = boundingBox.minX * viewWidth
+                let y = (1 - boundingBox.maxY) * viewHeight
+                let width = boundingBox.width * viewWidth
+                let height = boundingBox.height * viewHeight
+                
+                return CGRect(x: x, y: y, width: width, height: height)
             }
         }
     }

@@ -9,6 +9,7 @@ struct FavoriteRoute: View {
     @State private var route: MKRoute?
     @State private var isFollowingUserLocation = true
     @State private var showFavorites = false
+    @State private var navigateToCamera = false
     
     struct Location: Identifiable, Equatable {
         let id = UUID()
@@ -20,7 +21,6 @@ struct FavoriteRoute: View {
         }
     }
     
-    // Lugares favoritos
     let locations = [
         Location(name: "Catedral", coordinate: CLLocationCoordinate2D(latitude: 19.04281015, longitude: -98.1983963)),
         Location(name: "Zócalo", coordinate: CLLocationCoordinate2D(latitude: 19.0438393, longitude: -98.1982317)),
@@ -51,7 +51,6 @@ struct FavoriteRoute: View {
                 }
                 
                 VStack {
-                    // Barra de búsqueda y favoritos
                     HStack {
                         TextField("Buscar destino...", text: $searchQuery, onCommit: {
                             searchLocation()
@@ -91,10 +90,43 @@ struct FavoriteRoute: View {
                     }
                     
                     Spacer()
+                    
+                    // Botón de navegación a la vista de la cámara
+                    if selectedLocation != nil {
+                        NavigationLink(destination: FullScreenCameraView(), isActive: $navigateToCamera) {
+                            Button(action: {
+                                navigateToCamera = true
+                            }) {
+                                Text("Ir a la cámara")
+                                    .font(.headline)
+                                    .foregroundColor(.white)
+                                    .frame(maxWidth: .infinity)
+                                    .padding()
+                                    .background(Color.blue)
+                                    .cornerRadius(10)
+                            }
+                            .padding(.horizontal)
+                            .padding(.bottom, 10)
+                        }
+                    } else {
+                        Button(action: {}) {
+                            Text("Ir a la cámara")
+                                .font(.headline)
+                                .foregroundColor(.white)
+                                .frame(maxWidth: .infinity)
+                                .padding()
+                                .background(Color.gray)
+                                .cornerRadius(10)
+                        }
+                        .disabled(true) // Este botón está siempre deshabilitado cuando no hay selección
+                        .padding(.horizontal)
+                        .padding(.bottom, 10)
+                    }
                 }
             }
             .navigationBarHidden(true)
         }
+        .navigationBarHidden(true)
     }
     
     func searchLocation() {
@@ -142,10 +174,9 @@ struct FavoriteRoute: View {
                 print("Error al calcular la ruta: \(error?.localizedDescription ?? "Desconocido")")
             }
         }
-    }
+    } 
 }
 
-// Vista para dibujar la polilínea de la ruta en el mapa
 struct RouteOverlay: UIViewRepresentable {
     var route: MKRoute
     

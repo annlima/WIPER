@@ -1,34 +1,45 @@
 import SwiftUI
 
 struct FullScreenCameraView: View {
-    @Environment(\.presentationMode) var presentationMode // Para cerrar la vista de cámara
-    @StateObject var cameraViewModel = CameraViewModel() // ViewModel para manejar la cámara
-    @ObservedObject var cameraManager = CameraManager() // Manager de la cámara
+    @Environment(\.presentationMode) var presentationMode
+    @StateObject var cameraViewModel = CameraViewModel()
+    @ObservedObject var cameraManager = CameraManager()
 
     var body: some View {
         ZStack {
+            // Vista de cámara
             CameraPreview(captureSession: cameraManager.session)
-                .ignoresSafeArea() // La cámara cubre toda la pantalla
+                .ignoresSafeArea()
+                .navigationBarHidden(true)
                 .onAppear {
                     cameraManager.setUp(cameraViewModel: cameraViewModel) { result in
                         switch result {
-                        case .success():
-                            cameraManager.session.startRunning()
+                        case .success:
+                            print("Sesión configurada y en ejecución")
                         case .failure(let error):
                             print("Error setting up camera: \(error.localizedDescription)")
                         }
                     }
-                    lockOrientation(.landscape) // Bloquear orientación cuando la cámara esté activa
+                    lockOrientation(.landscape)
                 }
                 .onDisappear {
                     cameraManager.session.stopRunning()
-                    lockOrientation(.all) // Permitir todas las orientaciones después de cerrar la cámara
+                    lockOrientation(.all)
                 }
             
+            // Dibujar bounding boxes
+            ForEach(cameraViewModel.detections, id: \.self) { rect in
+                Rectangle()
+                    .path(in: rect)
+                    .stroke(Color.red, lineWidth: 2)
+                    .background(Rectangle().fill(Color.clear))
+            }
+            
+            // Botones de UI
             VStack {
                 HStack {
                     Button(action: {
-                        presentationMode.wrappedValue.dismiss() // Cerrar la vista de la cámara
+                        presentationMode.wrappedValue.dismiss()
                     }) {
                         Text("Cerrar")
                             .padding()
@@ -44,12 +55,11 @@ struct FullScreenCameraView: View {
 
                 HStack {
                     Spacer()
-                    // Botón de grabación
                     Button(action: {
                         if cameraViewModel.isRecording {
-                            cameraViewModel.stopRecording()
+                            cameraManager.stopRecording(cameraViewModel: cameraViewModel)
                         } else {
-                            cameraViewModel.startRecording(session: cameraManager.session)
+                            cameraManager.startRecording(cameraViewModel: cameraViewModel)
                         }
                     }) {
                         Image(systemName: cameraViewModel.isRecording ? "stop.circle" : "record.circle")
@@ -76,7 +86,6 @@ struct FullScreenCameraView: View {
         }
     }
 
-    // Función para bloquear la orientación
     func lockOrientation(_ orientation: UIInterfaceOrientationMask) {
         if let appDelegate = UIApplication.shared.delegate as? AppDelegate {
             appDelegate.orientationLock = orientation
