@@ -49,9 +49,14 @@ struct StartDrivingScreen: View {
                     NavigationLink(destination: Onboarding()
                         .environmentObject(locationManager)) {
                         ZStack {
-                            LinearGradient(gradient: Gradient(colors: [Color("Color"), Color("Color")]), startPoint: .leading, endPoint: .trailing)
-                                .cornerRadius(20)
-                                .shadow(color: .gray.opacity(0.5), radius: 10, x: 0, y: 5)
+                            LinearGradient(
+                                gradient: Gradient(colors: [Color("Color"), Color("Color")]),
+                                startPoint: .leading,
+                                endPoint: .trailing
+                            )
+                            .cornerRadius(20)
+                            .shadow(color: .gray.opacity(0.5), radius: 10, x: 0, y: 5)
+                            .opacity(checked ? 1 : 0.5) // Ajusta la opacidad según el estado de checked
                             
                             Text("¡Empezar a conducir!")
                                 .foregroundColor(.white)
@@ -61,10 +66,10 @@ struct StartDrivingScreen: View {
                         }
                         .frame(height: 60)
                     }
-                    
-                    
+                    .disabled(!checked) // Deshabilita el botón si no está marcado el checkbox
                     .padding(.top, 30)
                     .padding(.bottom, 15)
+
                     
                     HStack {
                         

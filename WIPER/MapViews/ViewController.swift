@@ -21,72 +21,66 @@ class ViewController: UIViewController , CLLocationManagerDelegate, UITextFieldD
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        // Do any additional setup after loading the view.
         
         locationManager.delegate = self
-        
         locationManager.desiredAccuracy = kCLLocationAccuracyBest
         
-        if (CLLocationManager.locationServicesEnabled()){
+        if (CLLocationManager.locationServicesEnabled()) {
             locationManager.requestLocation()
             locationManager.startUpdatingLocation()
         }
         
         textField_Address.delegate = self
         myMap.delegate = self
+
+        // Configuración de un zoom inicial adecuado
+        let initialLocation = CLLocationCoordinate2D(latitude: 19.03793, longitude: -98.20346)
+        let initialRegion = MKCoordinateRegion(center: initialLocation, span: MKCoordinateSpan(latitudeDelta: 0.05, longitudeDelta: 0.05))
+        myMap.setRegion(initialRegion, animated: true)
     }
-    
-    @IBAction func DirectionsButton(_ sender: Any) {
-        myGeoCoder.geocodeAddressString(textField_Address.text ?? "" ){(placemark, error) in
-            self.processResponse(withPlacemarks: placemark, error: error)
-        }
-    }
-    
-    //process the request coming from the geocoder
-    func processResponse(withPlacemarks placemarks: [CLPlacemark]?, error: Error?){
+
+    func processResponse(withPlacemarks placemarks: [CLPlacemark]?, error: Error?) {
         if let error = error {
             print("Error fetching the coordinates (\(error)")
+            return
         }
         
-        else {
-            //fetch coordinates from placemarks
-            var location: CLLocation?
-            if let placemarks = placemarks, placemarks.count > 0 {
-                location = placemarks.first?.location
-            }
+        // Fetch coordinates from placemarks
+        guard let location = placemarks?.first?.location else { return }
+        let coordinate = location.coordinate
+        
+        // Request source, destination, and mode of travel (default as automobile)
+        let request = MKDirections.Request()
+        request.source = MKMapItem(placemark: MKPlacemark(coordinate: locationManager.location?.coordinate ?? CLLocationCoordinate2D()))
+        request.destination = MKMapItem(placemark: MKPlacemark(coordinate: coordinate))
+        request.transportType = .automobile
+        request.requestsAlternateRoutes = true
+        
+        // Plotting requests on the map
+        let directions = MKDirections(request: request)
+        directions.calculate { response, error in
+            guard let directionsResponse = response else { return }
             
-            if let location = location {
-                let coordinate = location.coordinate
+            // Remove any existing overlays before adding new one
+            self.myMap.removeOverlays(self.myMap.overlays)
+            
+            for route in directionsResponse.routes {
+                self.myMap.addOverlay(route.polyline)
                 
-                //request source, destination and mode of travel (default as automobile in this case)
-                
-                let request = MKDirections.Request()
-                request.source = MKMapItem(placemark: MKPlacemark(coordinate: CLLocationCoordinate2D(latitude: locationManager.location?.coordinate.latitude ?? 0.0, longitude: locationManager.location?.coordinate.longitude ?? 0.0)))
-                request.destination = MKMapItem(placemark: MKPlacemark(coordinate: CLLocationCoordinate2D(latitude: coordinate.latitude, longitude: coordinate.longitude)))
-                request.transportType = .automobile
-                request.requestsAlternateRoutes = true
-                
-                //plotting requests on the map
-                let directions = MKDirections(request: request)
-                directions.calculate{response, error in
-                    guard let directionsResponse = response else {return}
-                    
-                    for route in directionsResponse.routes {
-                        self.myMap.addOverlay(route.polyline)
-                        self.myMap.setVisibleMapRect(route.polyline.boundingMapRect, animated: true)
-                    }
-                }
-                
-                //adding pin
-                let addressPin = MKPointAnnotation()
-                addressPin.coordinate = coordinate
-                addressPin.title = textField_Address.text
-                addressPin.subtitle = "Destination"
-                
-                myMap.addAnnotation(addressPin)
+                // Ajustar el zoom para que la ruta sea visible
+                self.myMap.setVisibleMapRect(route.polyline.boundingMapRect, edgePadding: UIEdgeInsets(top: 20, left: 20, bottom: 20, right: 20), animated: true)
             }
         }
+        
+        // Adding pin for destination
+        let addressPin = MKPointAnnotation()
+        addressPin.coordinate = coordinate
+        addressPin.title = textField_Address.text
+        addressPin.subtitle = "Destination"
+        
+        myMap.addAnnotation(addressPin)
     }
+
     
     //render the map -mkoverlay renderer
     func mapView(_ mapView: MKMapView, rendererFor overlay: MKOverlay) -> MKOverlayRenderer {
@@ -138,6 +132,7 @@ class ViewController: UIViewController , CLLocationManagerDelegate, UITextFieldD
             locationManager.requestWhenInUseAuthorization()
         }
     }
+    
     
     func locationManager(_ manager: CLLocationManager, didFailWithError error: Swift.Error){
         print(error)

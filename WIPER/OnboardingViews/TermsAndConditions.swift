@@ -27,30 +27,34 @@ struct TermsAndConditions: View {
 }
 
 private let termsAndConditionsText = """
-Bienvenido a echoChallenges. Al acceder y utilizar nuestra red social, usted acepta estar sujeto a los siguientes términos y condiciones. Si no está de acuerdo con alguno de estos términos, no utilice nuestro servicio.
+Términos y Condiciones / Aviso de Privacidad para WIPER
 
-Privacidad
-Su privacidad es importante para nosotros. Nuestra Política de Privacidad explica cómo recopilamos, utilizamos y protegemos su información personal. Al utilizar nuestro servicio, acepta que podamos procesar su información de acuerdo con estas políticas.
+1.⁠ ⁠Introducción
+Bienvenido a WIPER. Este documento establece los términos y condiciones, así como el aviso de privacidad de nuestra aplicación móvil destinada a mejorar la seguridad vial a través de la detección de anomalías durante el manejo mediante técnicas de visión por computadora e inteligencia artificial. Al usar la aplicación, usted acepta cumplir con estos términos y condiciones en su totalidad.
 
-Uso del Servicio
-Usted acuerda utilizar echoChallenges de manera responsable y conforme a la ley. No está permitido publicar contenido violento, discriminatorio, ilegal o que infrinja los derechos de terceros. Nos reservamos el derecho de eliminar contenido que consideremos inapropiado.
+2.⁠ ⁠Responsabilidad del Usuario
+WIPER está diseñada para brindar apoyo y alertas auditivas que ayuden al conductor a identificar riesgos potenciales en la carretera. Sin embargo, la aplicación no reemplaza la responsabilidad del usuario de conducir de manera segura y cumplir con todas las leyes de tránsito. WIPER no asume ninguna responsabilidad por accidentes, daños, pérdidas o lesiones de cualquier tipo que puedan ocurrir mientras se utiliza la aplicación.
 
-Cuentas
-Al crear una cuenta en echoChallenges, usted es responsable de mantener la seguridad de su cuenta y de todas las actividades que ocurran bajo el uso de su cuenta. Debe notificarnos inmediatamente sobre cualquier uso no autorizado de su cuenta.
+3.⁠ ⁠Limitación de Responsabilidad
+El usuario reconoce y acepta que WIPER es una herramienta de asistencia y que su funcionalidad puede estar sujeta a imprecisiones debido a factores externos como el estado del dispositivo móvil, condiciones climáticas, calidad de la señal de la cámara y otros aspectos que afectan la tecnología de visión por computadora. WIPER, sus desarrolladores, socios y afiliados no serán responsables por errores en la detección o interpretación de las alertas emitidas por la aplicación.
 
-Derechos de Autor
-Respetamos los derechos de autor y esperamos que nuestros usuarios hagan lo mismo. Es su responsabilidad asegurarse de que el contenido que comparte no infrinja los derechos de autor de terceros.
+4.⁠ ⁠Uso Seguro de la Aplicación
+Se recomienda que el conductor utilice WIPER de manera responsable y que no permita que la aplicación desvie su atención de la carretera. Las alertas auditivas proporcionadas están diseñadas para complementar, no sustituir, la atención del conductor.
 
-Modificaciones a los Términos
-Podemos modificar estos términos y condiciones en cualquier momento. Al continuar utilizando nuestro servicio después de que se realicen cambios, usted acepta estar sujeto a los términos modificados.
+5.⁠ ⁠Recopilación y Uso de Datos
+Para mejorar la experiencia y efectividad de WIPER, es posible que la aplicación recopile información no personal del dispositivo, como datos de uso y de la cámara. Estos datos son utilizados únicamente para el correcto funcionamiento de las funcionalidades de la aplicación y no se comparten con terceros sin el consentimiento expreso del usuario.
 
-Contacto
-Si tiene preguntas sobre estos términos, por favor contáctenos a través de [Método de Contacto].
+6.⁠ ⁠Exoneración de Garantías
+WIPER se proporciona "tal cual" sin garantías de ningún tipo, ya sea expresa o implícita. La aplicación no garantiza la exactitud, completitud o disponibilidad en todo momento y se exime de cualquier garantía implícita de comerciabilidad o idoneidad para un propósito particular.
 
-Fecha de Vigencia: 26 de Febrero de 2025
+7.⁠ ⁠Modificaciones de los Términos
+WIPER se reserva el derecho de modificar estos términos y condiciones, así como el aviso de privacidad, en cualquier momento. Las modificaciones serán efectivas una vez publicadas en la aplicación, y el uso continuo de WIPER después de dichas publicaciones se considerará como la aceptación de los cambios.
 
-© [2024] [echoChallenges]. Todos los derechos reservados.
+8.⁠ ⁠Contacto
+Si tiene preguntas o inquietudes sobre estos términos y condiciones o sobre la política de privacidad, puede comunicarse con nuestro equipo a través del correo de soporte de WIPER.
 
+Aviso Final
+El uso de WIPER implica la aceptación de que la aplicación es un asistente para la seguridad y no exime al conductor de su responsabilidad de conducir con precaución y siguiendo las normativas viales aplicables.
 """
 
 struct TermsAndConditionsView_Previews: PreviewProvider {

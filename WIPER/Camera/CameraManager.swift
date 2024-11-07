@@ -7,8 +7,8 @@ class CameraManager: NSObject, ObservableObject {
     @Published var alert = false
     var videoDataOutput = AVCaptureVideoDataOutput()
     var output = AVCaptureMovieFileOutput()
-    @Published var isSessionRunning = false // Controla el estado de la sesión
-    private var isConfigured = false // Nueva variable para verificar la configuración
+    @Published var isSessionRunning = false
+    private var isConfigured = false
     
     func startRecording(cameraViewModel: CameraViewModel) {
         guard session.isRunning else {
@@ -22,7 +22,7 @@ class CameraManager: NSObject, ObservableObject {
         }
         
         let tempURL = URL(fileURLWithPath: NSTemporaryDirectory()).appendingPathComponent("\(UUID().uuidString).mov")
-        print("Intentando iniciar la grabación en: \(tempURL)") // Mensaje adicional
+        print("Intentando iniciar la grabación en: \(tempURL)")
         output.startRecording(to: tempURL, recordingDelegate: cameraViewModel)
         cameraViewModel.isRecording = true
         print("Iniciando grabación en: \(tempURL)")
