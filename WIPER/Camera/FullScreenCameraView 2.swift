@@ -2,12 +2,11 @@ import SwiftUI
 
 struct FullScreenCameraView: View {
     @Environment(\.presentationMode) var presentationMode
-    @StateObject var cameraViewModel = CameraViewModel()
-    @ObservedObject var cameraManager = CameraManager()
+    @ObservedObject var cameraViewModel: CameraViewModel   // Usar instancia pasada
+    @ObservedObject var cameraManager: CameraManager       // Usar instancia pasada
 
     var body: some View {
         ZStack {
-            // Vista de cámara
             CameraPreview(captureSession: cameraManager.session)
                 .ignoresSafeArea()
                 .navigationBarHidden(true)
@@ -15,9 +14,9 @@ struct FullScreenCameraView: View {
                     cameraManager.setUp(cameraViewModel: cameraViewModel) { result in
                         switch result {
                         case .success:
-                            print("Sesión configurada y en ejecución")
+                            print("Sesión configurada y en ejecución en FullScreenCameraView")
                         case .failure(let error):
-                            print("Error setting up camera: \(error.localizedDescription)")
+                            print("Error al configurar la cámara en FullScreenCameraView: \(error.localizedDescription)")
                         }
                     }
                     lockOrientation(.landscape)
@@ -26,7 +25,7 @@ struct FullScreenCameraView: View {
                     cameraManager.session.stopRunning()
                     lockOrientation(.all)
                 }
-            
+
             // Dibujar bounding boxes
             ForEach(cameraViewModel.detections, id: \.self) { rect in
                 Rectangle()
@@ -34,8 +33,7 @@ struct FullScreenCameraView: View {
                     .stroke(Color.red, lineWidth: 2)
                     .background(Rectangle().fill(Color.clear))
             }
-            
-            // Botones de UI
+
             VStack {
                 HStack {
                     Button(action: {
@@ -68,6 +66,7 @@ struct FullScreenCameraView: View {
                             .foregroundColor(cameraViewModel.isRecording ? .red : .white)
                             .padding()
                     }
+                    .disabled(!cameraManager.isSessionRunning)
                 }
             }
             .padding(.bottom, 30)

@@ -23,6 +23,7 @@ class CameraViewModel: NSObject, ObservableObject, AVCaptureVideoDataOutputSampl
     func fileOutput(_ output: AVCaptureFileOutput, didFinishRecordingTo outputFileURL: URL, from connections: [AVCaptureConnection], error: Error?) {
         if let error = error {
             print("Error al finalizar la grabación: \(error.localizedDescription)")
+            self.isRecording = false // Actualiza el estado correctamente
             return
         }
         
@@ -30,7 +31,10 @@ class CameraViewModel: NSObject, ObservableObject, AVCaptureVideoDataOutputSampl
         self.recordedURLs.append(outputFileURL)
         self.previewUrl = outputFileURL
         self.showSaveDialog = true
+        self.isRecording = false // Actualiza el estado correctamente
     }
+
+
     
     func saveVideoToGallery(url: URL) {
         PHPhotoLibrary.requestAuthorization(for: .addOnly) { status in

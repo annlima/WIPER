@@ -93,7 +93,7 @@ struct FavoriteRoute: View {
                     
                     // Botón de navegación a la vista de la cámara
                     if selectedLocation != nil {
-                        NavigationLink(destination: FullScreenCameraView(), isActive: $navigateToCamera) {
+                        NavigationLink(destination: CameraView(), isActive: $navigateToCamera) {
                             Button(action: {
                                 navigateToCamera = true
                             }) {

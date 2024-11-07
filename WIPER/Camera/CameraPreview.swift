@@ -4,8 +4,6 @@
 //
 //  Created by Andrea Lima Blanca on 24/09/24.
 //
-import AVFoundation
-import SwiftUI
 
 import SwiftUI
 import AVFoundation
