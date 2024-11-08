@@ -47,8 +47,8 @@ struct FullScreenCameraView: View {
                     }
                     Spacer()
                 }
-                .padding()
-
+                .padding(.top, 50)
+                .padding(.horizontal, 20)
                 Spacer()
 
                 HStack {
