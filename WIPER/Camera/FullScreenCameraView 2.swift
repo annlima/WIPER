@@ -98,15 +98,6 @@ struct FullScreenCameraView: View {
                 isNavigatingToMap = false
             }
         }
-        .onAppear {
-            startUpdatingSpeed() // Inicia la actualización de la velocidad
-        }
-    }
-    
-    func startUpdatingSpeed() {
-        Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) { _ in
-            self.speed = Double.random(in: 0...120) // Simula la velocidad o usa datos reales
-        }
     }
     
     func navigateToMap() {

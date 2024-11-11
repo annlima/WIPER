@@ -8,7 +8,6 @@
 
 /* Begin PBXBuildFile section */
 		9B0948A32CD9691100952C5A /* AlarmTrigger.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9B0948A22CD9691100952C5A /* AlarmTrigger.swift */; };
-		9B9C69692CDEAF8B00F88AEB /* yolov5s.mlmodel in Sources */ = {isa = PBXBuildFile; fileRef = 9B9C69682CDEAF8B00F88AEB /* yolov5s.mlmodel */; };
 		A12727DA2CA3303D0060164C /* CameraView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A12727D92CA330390060164C /* CameraView.swift */; };
 		A12727DC2CA331110060164C /* CameraPreview.swift in Sources */ = {isa = PBXBuildFile; fileRef = A12727DB2CA3310D0060164C /* CameraPreview.swift */; };
 		A12B83902CC0511A0045BA44 /* UIViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A12B838F2CC051150045BA44 /* UIViewController.swift */; };
@@ -28,7 +27,6 @@
 		A1C891532C73D3E100308657 /* WIPERApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1C891522C73D3E100308657 /* WIPERApp.swift */; };
 		A1C891552C73D3E100308657 /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1C891542C73D3E100308657 /* ContentView.swift */; };
 		A1C891572C73D3E200308657 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = A1C891562C73D3E200308657 /* Assets.xcassets */; };
-		A1C8915A2C73D3E200308657 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = A1C891592C73D3E200308657 /* Preview Assets.xcassets */; };
 		A1C891642C73D3E200308657 /* WIPERTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1C891632C73D3E200308657 /* WIPERTests.swift */; };
 		A1C8916E2C73D3E200308657 /* WIPERUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1C8916D2C73D3E200308657 /* WIPERUITests.swift */; };
 		A1C891702C73D3E200308657 /* WIPERUITestsLaunchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1C8916F2C73D3E200308657 /* WIPERUITestsLaunchTests.swift */; };
@@ -140,6 +138,14 @@
 			path = Camera;
 			sourceTree = "<group>";
 		};
+		A1BE26582CE1B58E009A8F0D /* Recovered References */ = {
+			isa = PBXGroup;
+			children = (
+				9B9C69682CDEAF8B00F88AEB /* yolov5s.mlmodel */,
+			);
+			name = "Recovered References";
+			sourceTree = "<group>";
+		};
 		A1C891462C73D3E100308657 = {
 			isa = PBXGroup;
 			children = (
@@ -147,6 +153,7 @@
 				A1C891622C73D3E200308657 /* WIPERTests */,
 				A1C8916C2C73D3E200308657 /* WIPERUITests */,
 				A1C891502C73D3E100308657 /* Products */,
+				A1BE26582CE1B58E009A8F0D /* Recovered References */,
 			);
 			sourceTree = "<group>";
 		};
@@ -333,7 +340,6 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				A1C8915A2C73D3E200308657 /* Preview Assets.xcassets in Resources */,
 				A1C891572C73D3E200308657 /* Assets.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -370,7 +376,6 @@
 				A1BE26512CE19848009A8F0D /* SpeedOverlay.swift in Sources */,
 				A1BE264F2CE192C8009A8F0D /* SwipeToDeleteRow.swift in Sources */,
 				A1C560592C920ACA00E2A9DD /* SceneDelegate.swift in Sources */,
-				9B9C69692CDEAF8B00F88AEB /* yolov5s.mlmodel in Sources */,
 				A1C891552C73D3E100308657 /* ContentView.swift in Sources */,
 				A1C891532C73D3E100308657 /* WIPERApp.swift in Sources */,
 				A173E8812C90BB97005BB0F9 /* StartScreen.swift in Sources */,
@@ -548,7 +553,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"WIPER/Preview Content\"";
-				DEVELOPMENT_TEAM = KS6DBFHYN6;
+				DEVELOPMENT_TEAM = D99DB5VWR6;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = WIPER/Info.plist;
@@ -567,7 +572,7 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.Andy.WIPERP.;
+				PRODUCT_BUNDLE_IDENTIFIER = com.Andy.WIPER;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
@@ -584,7 +589,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"WIPER/Preview Content\"";
-				DEVELOPMENT_TEAM = KS6DBFHYN6;
+				DEVELOPMENT_TEAM = D99DB5VWR6;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = WIPER/Info.plist;
@@ -603,7 +608,7 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.Andy.WIPERP.;
+				PRODUCT_BUNDLE_IDENTIFIER = com.Andy.WIPER;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;

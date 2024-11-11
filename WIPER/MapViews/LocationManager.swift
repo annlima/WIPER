@@ -54,7 +54,7 @@ class LocationManager: NSObject, ObservableObject, CLLocationManagerDelegate {
         guard let newLocation = locations.last else { return }
         
         // Actualiza la ubicación actual para pintar la ruta y relocalizar
-        currentLocation = EquatableLocation(coordinate: newLocation.coordinate)
+        currentLocation = EquatableLocation(coordinate: newLocation.coordinate, speed: self.speed)
         
         // Calcular la velocidad usando la ubicación y tiempo anterior
         if let lastLocation = lastLocation, let lastUpdateTime = lastUpdateTime {
