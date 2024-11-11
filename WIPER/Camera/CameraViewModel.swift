@@ -10,6 +10,7 @@ class CameraViewModel: NSObject, ObservableObject, AVCaptureVideoDataOutputSampl
     @Published var showSaveDialog: Bool = false
     @Published var detections: [CGRect] = [] // Almacena las bounding boxes de los objetos detectados
     @Published var detectedDistances: [Double] = []
+    @Published var isTestMode: Bool = true
     
     private var model: VNCoreMLModel
     private var depthOutput = AVCaptureDepthDataOutput()
@@ -111,7 +112,15 @@ class CameraViewModel: NSObject, ObservableObject, AVCaptureVideoDataOutputSampl
             depthOutput.setDelegate(self, callbackQueue: DispatchQueue(label: "depthQueue"))
         }
     }
-    
+    func simulateDetections() {
+        // Simula una detección en el centro de la pantalla
+        let simulatedDetection = CGRect(x: UIScreen.main.bounds.width / 2 - 50, y: UIScreen.main.bounds.height / 2 - 50, width: 100, height: 100)
+        self.detections = [simulatedDetection]
+        
+        // Simula una distancia al objeto
+        self.detectedDistances = [30.0] // Por ejemplo, 30 metros
+    }
+
     func captureOutput(_ output: AVCaptureOutput, didOutput depthData: AVDepthData, from connection: AVCaptureConnection) {
         let depthPixelBuffer = depthData.depthDataMap
         CVPixelBufferLockBaseAddress(depthPixelBuffer, .readOnly)
@@ -123,36 +132,39 @@ class CameraViewModel: NSObject, ObservableObject, AVCaptureVideoDataOutputSampl
         guard let baseAddress = CVPixelBufferGetBaseAddress(depthPixelBuffer) else { return }
 
         let floatBuffer = unsafeBitCast(baseAddress, to: UnsafeMutablePointer<Float32>.self)
-
-        DispatchQueue.main.async {
-            // Primero, calcula 'detectedDistances'
-            self.detectedDistances = self.detections.map { detection in
-                // Mapear coordenadas de detección al mapa de profundidad
-                let normalizedX = detection.midX / UIScreen.main.bounds.width
-                let normalizedY = detection.midY / UIScreen.main.bounds.height
-                
-                let pixelX = Int(normalizedX * CGFloat(width))
-                let pixelY = Int(normalizedY * CGFloat(height))
-                
-                guard pixelX >= 0 && pixelX < width && pixelY >= 0 && pixelY < height else {
-                    return Double.nan
+        if isTestMode {
+                simulateDetections()
+        } else {
+            DispatchQueue.main.async {
+                // Primero, calcula 'detectedDistances'
+                self.detectedDistances = self.detections.map { detection in
+                    // Mapear coordenadas de detección al mapa de profundidad
+                    let normalizedX = detection.midX / UIScreen.main.bounds.width
+                    let normalizedY = detection.midY / UIScreen.main.bounds.height
+                    
+                    let pixelX = Int(normalizedX * CGFloat(width))
+                    let pixelY = Int(normalizedY * CGFloat(height))
+                    
+                    guard pixelX >= 0 && pixelX < width && pixelY >= 0 && pixelY < height else {
+                        return Double.nan
+                    }
+                    
+                    let index = pixelY * width + pixelX
+                    let depth = Double(floatBuffer[index])
+                    
+                    return depth
                 }
                 
-                let index = pixelY * width + pixelX
-                let depth = Double(floatBuffer[index])
-                
-                return depth
-            }
-            
-            // Ahora que 'detectedDistances' ha sido calculado, puedes iterar sobre él
-            for (index, distance) in self.detectedDistances.enumerated() where !distance.isNaN {
-                let objectDetected = true
-                checkAndTriggerAlarm(
-                    objectDetected: objectDetected,
-                    objectDistance: distance,
-                    locationManager: self.locationManager,
-                    visibility: self.visibility
-                )
+                // Ahora que 'detectedDistances' ha sido calculado, puedes iterar sobre él
+                for (index, distance) in self.detectedDistances.enumerated() where !distance.isNaN {
+                    let objectDetected = true
+                    checkAndTriggerAlarm(
+                        objectDetected: objectDetected,
+                        objectDistance: distance,
+                        locationManager: self.locationManager,
+                        visibility: self.visibility
+                    )
+                }
             }
         }
     }
