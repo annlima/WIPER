@@ -14,6 +14,9 @@
 		A173E8812C90BB97005BB0F9 /* StartScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = A173E8802C90BB97005BB0F9 /* StartScreen.swift */; };
 		A1BA5EA22CC973D800C9CED3 /* EquatableLocation.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1BA5EA12CC973D100C9CED3 /* EquatableLocation.swift */; };
 		A1BA5EA52CC977EA00C9CED3 /* DeviceManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1BA5EA42CC977E700C9CED3 /* DeviceManager.swift */; };
+		A1BE264B2CE1664C009A8F0D /* yolov5s.mlpackage in Sources */ = {isa = PBXBuildFile; fileRef = A1BE264A2CE1664C009A8F0D /* yolov5s.mlpackage */; };
+		A1BE264D2CE191B9009A8F0D /* CustomMapView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1BE264C2CE191B5009A8F0D /* CustomMapView.swift */; };
+		A1BE264F2CE192C8009A8F0D /* SwipeToDeleteRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1BE264E2CE192C1009A8F0D /* SwipeToDeleteRow.swift */; };
 		A1C5604F2C92088100E2A9DD /* FavoriteRoute.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1C5604E2C92088100E2A9DD /* FavoriteRoute.swift */; };
 		A1C560532C920A0C00E2A9DD /* CameraViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1C560522C920A0C00E2A9DD /* CameraViewModel.swift */; };
 		A1C560552C920A8500E2A9DD /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1C560542C920A8500E2A9DD /* ViewController.swift */; };
@@ -26,7 +29,6 @@
 		A1C891642C73D3E200308657 /* WIPERTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1C891632C73D3E200308657 /* WIPERTests.swift */; };
 		A1C8916E2C73D3E200308657 /* WIPERUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1C8916D2C73D3E200308657 /* WIPERUITests.swift */; };
 		A1C891702C73D3E200308657 /* WIPERUITestsLaunchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1C8916F2C73D3E200308657 /* WIPERUITestsLaunchTests.swift */; };
-		A1E51B192CDC9808002BBBDA /* demo.mlmodel in Sources */ = {isa = PBXBuildFile; fileRef = A1E51B182CDC9808002BBBDA /* demo.mlmodel */; };
 		A1F0A45C2CA0FA6800F7FEE8 /* TermsAndConditions.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1F0A45B2CA0FA6000F7FEE8 /* TermsAndConditions.swift */; };
 		A1F0A45E2CA0FD6900F7FEE8 /* SplashScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1F0A45D2CA0FD6400F7FEE8 /* SplashScreen.swift */; };
 		A1F0A4622CA100C800F7FEE8 /* Carrousel.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1F0A4612CA100C200F7FEE8 /* Carrousel.swift */; };
@@ -60,6 +62,9 @@
 		A173E8802C90BB97005BB0F9 /* StartScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StartScreen.swift; sourceTree = "<group>"; };
 		A1BA5EA12CC973D100C9CED3 /* EquatableLocation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EquatableLocation.swift; sourceTree = "<group>"; };
 		A1BA5EA42CC977E700C9CED3 /* DeviceManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeviceManager.swift; sourceTree = "<group>"; };
+		A1BE264A2CE1664C009A8F0D /* yolov5s.mlpackage */ = {isa = PBXFileReference; lastKnownFileType = folder.mlpackage; path = yolov5s.mlpackage; sourceTree = "<group>"; };
+		A1BE264C2CE191B5009A8F0D /* CustomMapView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomMapView.swift; sourceTree = "<group>"; };
+		A1BE264E2CE192C1009A8F0D /* SwipeToDeleteRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwipeToDeleteRow.swift; sourceTree = "<group>"; };
 		A1C5604E2C92088100E2A9DD /* FavoriteRoute.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FavoriteRoute.swift; sourceTree = "<group>"; };
 		A1C560522C920A0C00E2A9DD /* CameraViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CameraViewModel.swift; sourceTree = "<group>"; };
 		A1C560542C920A8500E2A9DD /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
@@ -75,7 +80,6 @@
 		A1C891692C73D3E200308657 /* WIPERUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = WIPERUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		A1C8916D2C73D3E200308657 /* WIPERUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WIPERUITests.swift; sourceTree = "<group>"; };
 		A1C8916F2C73D3E200308657 /* WIPERUITestsLaunchTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WIPERUITestsLaunchTests.swift; sourceTree = "<group>"; };
-		A1E51B182CDC9808002BBBDA /* demo.mlmodel */ = {isa = PBXFileReference; lastKnownFileType = file.mlmodel; path = demo.mlmodel; sourceTree = "<group>"; };
 		A1F0A45B2CA0FA6000F7FEE8 /* TermsAndConditions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TermsAndConditions.swift; sourceTree = "<group>"; };
 		A1F0A45D2CA0FD6400F7FEE8 /* SplashScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SplashScreen.swift; sourceTree = "<group>"; };
 		A1F0A4612CA100C200F7FEE8 /* Carrousel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Carrousel.swift; sourceTree = "<group>"; };
@@ -111,10 +115,10 @@
 		A12727D62CA3261A0060164C /* Camera */ = {
 			isa = PBXGroup;
 			children = (
-				A1E51B182CDC9808002BBBDA /* demo.mlmodel */,
 				A12B83912CC0524A0045BA44 /* FullScreenCameraView 2.swift */,
 				A12B838F2CC051150045BA44 /* UIViewController.swift */,
 				A12727DB2CA3310D0060164C /* CameraPreview.swift */,
+				A1BE264A2CE1664C009A8F0D /* yolov5s.mlpackage */,
 				A12727D92CA330390060164C /* CameraView.swift */,
 				A1F0A4652CA106D100F7FEE8 /* CameraManager.swift */,
 				A1C560522C920A0C00E2A9DD /* CameraViewModel.swift */,
@@ -198,6 +202,8 @@
 		A1F0A4602CA0FF9500F7FEE8 /* MapViews */ = {
 			isa = PBXGroup;
 			children = (
+				A1BE264E2CE192C1009A8F0D /* SwipeToDeleteRow.swift */,
+				A1BE264C2CE191B5009A8F0D /* CustomMapView.swift */,
 				A1BA5EA12CC973D100C9CED3 /* EquatableLocation.swift */,
 				A1F0A4632CA1011400F7FEE8 /* LocationManager.swift */,
 				A1C5604E2C92088100E2A9DD /* FavoriteRoute.swift */,
@@ -344,7 +350,7 @@
 				A12B83902CC0511A0045BA44 /* UIViewController.swift in Sources */,
 				A1C5605B2C920AED00E2A9DD /* AppDelegate.swift in Sources */,
 				A1C560552C920A8500E2A9DD /* ViewController.swift in Sources */,
-				A1E51B192CDC9808002BBBDA /* demo.mlmodel in Sources */,
+				A1BE264F2CE192C8009A8F0D /* SwipeToDeleteRow.swift in Sources */,
 				A1C560592C920ACA00E2A9DD /* SceneDelegate.swift in Sources */,
 				A1C891552C73D3E100308657 /* ContentView.swift in Sources */,
 				A1C891532C73D3E100308657 /* WIPERApp.swift in Sources */,
@@ -352,9 +358,11 @@
 				A1F0A45C2CA0FA6800F7FEE8 /* TermsAndConditions.swift in Sources */,
 				A12727DC2CA331110060164C /* CameraPreview.swift in Sources */,
 				A1BA5EA52CC977EA00C9CED3 /* DeviceManager.swift in Sources */,
+				A1BE264B2CE1664C009A8F0D /* yolov5s.mlpackage in Sources */,
 				A1F0A4642CA1011700F7FEE8 /* LocationManager.swift in Sources */,
 				A1C560532C920A0C00E2A9DD /* CameraViewModel.swift in Sources */,
 				A1C5604F2C92088100E2A9DD /* FavoriteRoute.swift in Sources */,
+				A1BE264D2CE191B9009A8F0D /* CustomMapView.swift in Sources */,
 				A1F0A45E2CA0FD6900F7FEE8 /* SplashScreen.swift in Sources */,
 				A12727DA2CA3303D0060164C /* CameraView.swift in Sources */,
 			);

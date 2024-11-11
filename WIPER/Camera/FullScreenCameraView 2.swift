@@ -4,6 +4,7 @@ struct FullScreenCameraView: View {
     @Environment(\.presentationMode) var presentationMode
     @ObservedObject var cameraViewModel: CameraViewModel   // Usar instancia pasada
     @ObservedObject var cameraManager: CameraManager       // Usar instancia pasada
+    @State private var isNavigatingToMap = false
 
     var body: some View {
         ZStack {
@@ -79,11 +80,28 @@ struct FullScreenCameraView: View {
                     if let url = cameraViewModel.previewUrl {
                         cameraViewModel.saveVideoToGallery(url: url)
                     }
+                    isNavigatingToMap = true // Navegar al mapa
                 },
-                secondaryButton: .cancel(Text("Cancelar"))
+                secondaryButton: .default(Text("Cancelar")) {
+                    isNavigatingToMap = true // Navegar al mapa
+                }
             )
         }
+        .onChange(of: isNavigatingToMap) { navigate in
+            if navigate {
+                
+                navigateToMap()
+                isNavigatingToMap = false
+            }
+        }
+
+
     }
+    
+    func navigateToMap() {
+        presentationMode.wrappedValue.dismiss() // Regresa a la vista de mapa
+    }
+
 
     func lockOrientation(_ orientation: UIInterfaceOrientationMask) {
         if let appDelegate = UIApplication.shared.delegate as? AppDelegate {

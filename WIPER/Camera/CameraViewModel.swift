@@ -13,7 +13,7 @@ class CameraViewModel: NSObject, ObservableObject, AVCaptureVideoDataOutputSampl
     private var model: VNCoreMLModel
     
     override init() {
-        guard let model = try? VNCoreMLModel(for: demo().model) else {
+        guard let model = try? VNCoreMLModel(for: yolov5s().model) else {
             fatalError("No se pudo cargar el modelo ML")
         }
         self.model = model
@@ -78,17 +78,22 @@ class CameraViewModel: NSObject, ObservableObject, AVCaptureVideoDataOutputSampl
     
     private func handleDetections(_ results: [VNRecognizedObjectObservation]) {
         DispatchQueue.main.async {
-            self.detections = results.map { observation in
-                // Convertir las coordenadas de la bounding box
+            self.detections = results.compactMap { observation in
+                guard let label = observation.labels.first?.identifier,
+                      ["bus", "train", "car", "truck", "motorcycle", "bicycle", "person", "dog"].contains(label) else {
+                    return nil
+                }
+                
+                // Convert bounding box to CGRect
                 let boundingBox = observation.boundingBox
                 let viewWidth = UIScreen.main.bounds.width
                 let viewHeight = UIScreen.main.bounds.height
-                
+
                 let x = boundingBox.minX * viewWidth
                 let y = (1 - boundingBox.maxY) * viewHeight
                 let width = boundingBox.width * viewWidth
                 let height = boundingBox.height * viewHeight
-                
+
                 return CGRect(x: x, y: y, width: width, height: height)
             }
         }

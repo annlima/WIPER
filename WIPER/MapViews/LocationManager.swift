@@ -16,8 +16,6 @@ class LocationManager: NSObject, ObservableObject, CLLocationManagerDelegate {
         authorizationStatus = locationManager.authorizationStatus
         
         switch locationManager.authorizationStatus {
-        case .notDetermined:
-            requestLocationAuthorization()
         case .restricted, .denied:
             print("Location access denied or restricted")
         case .authorizedWhenInUse, .authorizedAlways:
