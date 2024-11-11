@@ -2,6 +2,9 @@ import AVFoundation
 import Photos
 import SwiftUI
 import Vision
+import WeatherKit
+import CoreLocation
+import Combine
 
 class CameraViewModel: NSObject, ObservableObject, AVCaptureVideoDataOutputSampleBufferDelegate, AVCaptureFileOutputRecordingDelegate, AVCaptureDepthDataOutputDelegate {
     @Published var isRecording: Bool = false
@@ -10,13 +13,12 @@ class CameraViewModel: NSObject, ObservableObject, AVCaptureVideoDataOutputSampl
     @Published var showSaveDialog: Bool = false
     @Published var detections: [CGRect] = [] // Almacena las bounding boxes de los objetos detectados
     @Published var detectedDistances: [Double] = []
-    @Published var isTestMode: Bool = true
-    
     private var model: VNCoreMLModel
-    private var depthOutput = AVCaptureDepthDataOutput()
+    
+    @Published var currentWeatherCond: String?
     @ObservedObject var locationManager = LocationManager()
-    var visibility: Double = 100.0 // Puedes obtener el valor real utilizando WeatherKit
-       
+    private let weatherService = WeatherService.shared
+    private var cancellables = Set<AnyCancellable>()
     
     override init() {
         guard let model = try? VNCoreMLModel(for: yolov5s().model) else {
@@ -24,7 +26,35 @@ class CameraViewModel: NSObject, ObservableObject, AVCaptureVideoDataOutputSampl
         }
         self.model = model
         super.init()
+        observeLocationUpdates()
     }
+    
+    // Observe lastCLLocation updates to fetch weather
+    private func observeLocationUpdates() {
+        locationManager.$lastLocation
+            .compactMap { $0 }
+            .sink { [weak self] location in
+                self?.fetchCurrentWeather(for: location)
+            }
+            .store(in: &cancellables)
+    }
+    
+    // Fetch weather condition using WeatherKit
+    private func fetchCurrentWeather(for location: CLLocation) {
+        Task {
+            do {
+                let weather = try await weatherService.weather(for: location)
+                DispatchQueue.main.async {
+                    // Directly assign the weather condition description
+                    self.currentWeatherCond = weather.currentWeather.condition.description
+                    print("Current Condition: \(self.currentWeatherCond ?? "Unknown")")
+                }
+            } catch {
+                print("Failed to fetch weather data: \(error.localizedDescription)")
+            }
+        }
+    }
+
     
     func fileOutput(_ output: AVCaptureFileOutput, didFinishRecordingTo outputFileURL: URL, from connections: [AVCaptureConnection], error: Error?) {
         if let error = error {
@@ -101,70 +131,6 @@ class CameraViewModel: NSObject, ObservableObject, AVCaptureVideoDataOutputSampl
                 let height = boundingBox.height * viewHeight
 
                 return CGRect(x: x, y: y, width: width, height: height)
-            }
-        }
-    }
-    
-    func addDepthOutput(to session: AVCaptureSession){
-        if session.canAddOutput(depthOutput) {
-            session.canAddOutput(depthOutput)
-            depthOutput.isFilteringEnabled = true
-            depthOutput.setDelegate(self, callbackQueue: DispatchQueue(label: "depthQueue"))
-        }
-    }
-    func simulateDetections() {
-        // Simula una detección en el centro de la pantalla
-        let simulatedDetection = CGRect(x: UIScreen.main.bounds.width / 2 - 50, y: UIScreen.main.bounds.height / 2 - 50, width: 100, height: 100)
-        self.detections = [simulatedDetection]
-        
-        // Simula una distancia al objeto
-        self.detectedDistances = [30.0] // Por ejemplo, 30 metros
-    }
-
-    func captureOutput(_ output: AVCaptureOutput, didOutput depthData: AVDepthData, from connection: AVCaptureConnection) {
-        let depthPixelBuffer = depthData.depthDataMap
-        CVPixelBufferLockBaseAddress(depthPixelBuffer, .readOnly)
-        defer { CVPixelBufferUnlockBaseAddress(depthPixelBuffer, .readOnly) }
-
-        let width = CVPixelBufferGetWidth(depthPixelBuffer)
-        let height = CVPixelBufferGetHeight(depthPixelBuffer)
-
-        guard let baseAddress = CVPixelBufferGetBaseAddress(depthPixelBuffer) else { return }
-
-        let floatBuffer = unsafeBitCast(baseAddress, to: UnsafeMutablePointer<Float32>.self)
-        if isTestMode {
-                simulateDetections()
-        } else {
-            DispatchQueue.main.async {
-                // Primero, calcula 'detectedDistances'
-                self.detectedDistances = self.detections.map { detection in
-                    // Mapear coordenadas de detección al mapa de profundidad
-                    let normalizedX = detection.midX / UIScreen.main.bounds.width
-                    let normalizedY = detection.midY / UIScreen.main.bounds.height
-                    
-                    let pixelX = Int(normalizedX * CGFloat(width))
-                    let pixelY = Int(normalizedY * CGFloat(height))
-                    
-                    guard pixelX >= 0 && pixelX < width && pixelY >= 0 && pixelY < height else {
-                        return Double.nan
-                    }
-                    
-                    let index = pixelY * width + pixelX
-                    let depth = Double(floatBuffer[index])
-                    
-                    return depth
-                }
-                
-                // Ahora que 'detectedDistances' ha sido calculado, puedes iterar sobre él
-                for (index, distance) in self.detectedDistances.enumerated() where !distance.isNaN {
-                    let objectDetected = true
-                    checkAndTriggerAlarm(
-                        objectDetected: objectDetected,
-                        objectDistance: distance,
-                        locationManager: self.locationManager,
-                        visibility: self.visibility
-                    )
-                }
             }
         }
     }

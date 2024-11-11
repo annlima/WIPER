@@ -6,7 +6,7 @@ class LocationManager: NSObject, ObservableObject, CLLocationManagerDelegate {
     private let locationManager = CLLocationManager()
     @Published var currentLocation: EquatableLocation?
     @Published var speed: Double = 0.0 // Velocidad en km/h
-    private var lastLocation: CLLocation?
+    @Published var lastLocation: CLLocation?
     var simulateSpeed: Double? // Añade esta propiedad opcional para simular la velocidad
     private var lastUpdateTime: Date?
     
@@ -15,7 +15,6 @@ class LocationManager: NSObject, ObservableObject, CLLocationManagerDelegate {
         locationManager.delegate = self
         locationManager.desiredAccuracy = kCLLocationAccuracyBest
         checkAuthorizationStatus()
-        locationManager.desiredAccuracy = kCLLocationAccuracyBest
         locationManager.startUpdatingLocation()
     }
 
