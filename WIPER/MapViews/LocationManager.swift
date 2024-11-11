@@ -7,6 +7,7 @@ class LocationManager: NSObject, ObservableObject, CLLocationManagerDelegate {
     @Published var currentLocation: EquatableLocation?
     @Published var speed: Double = 0.0 // Velocidad en km/h
     private var lastLocation: CLLocation?
+    var simulateSpeed: Double? // Añade esta propiedad opcional para simular la velocidad
     private var lastUpdateTime: Date?
     
     override init() {
@@ -52,6 +53,11 @@ class LocationManager: NSObject, ObservableObject, CLLocationManagerDelegate {
 
     func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
         guard let newLocation = locations.last else { return }
+        if let simulatedSpeed = simulateSpeed {
+                   self.speed = simulatedSpeed
+               } else {
+                   self.speed = newLocation.speed * 3.6 // Convertir m/s a km/h
+               }
         
         // Actualiza la ubicación actual para pintar la ruta y relocalizar
         currentLocation = EquatableLocation(coordinate: newLocation.coordinate, speed: self.speed)

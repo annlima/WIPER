@@ -43,17 +43,21 @@ struct AlarmSystem {
     func shouldTriggerAlarm() -> Bool {
         guard objectDetected else { return false }
         
-        // Determine road condition based on visibility
+        // Determina la condición de la carretera en base a la visibilidad
         let condition = (visibility < visibilityThreshold) ? "wet" : "dry"
         
-        // Find the closest speed key
+        // Busca la clave de velocidad más cercana
         let roundedSpeed = Int((currentSpeed / 10).rounded() * 10)
         guard let closestSpeed = getClosestSpeedKey(forSpeed: roundedSpeed),
               let stoppingDistance = getStoppingDistance(forSpeed: closestSpeed, condition: condition) else {
-            return false // No valid stopping distance for this speed
+            return false
         }
         
-        // Check if object is within the stopping distance
+        // Mensajes de depuración
+        print("Velocidad: \(currentSpeed), Rango de frenado para \(closestSpeed) km/h en \(condition): \(stoppingDistance) metros")
+        print("Distancia al objeto: \(objectDistance) metros")
+        
+        // Activa la alarma si la distancia es menor o igual a la de frenado
         return objectDistance <= stoppingDistance
     }
 }
@@ -73,21 +77,23 @@ func emitAlarmSound() {
 
 // Function to Check and Trigger Alarm
 func checkAndTriggerAlarm(objectDetected: Bool, objectDistance: Double, locationManager: LocationManager, visibility: Double) {
-    guard let currentSpeed = locationManager.currentLocation?.speed else {
-        print("Current speed not available")
-                return
-    }
+    // Simulación de velocidad si está en modo de prueba
+    let simulatedSpeed = locationManager.simulateSpeed ?? locationManager.speed
+    
     let alarmSystem = AlarmSystem(
         objectDetected: objectDetected,
         objectDistance: objectDistance,
-        currentSpeed: currentSpeed,
+        currentSpeed: simulatedSpeed,
         visibility: visibility
     )
     
     if alarmSystem.shouldTriggerAlarm() {
-        // Trigger sound if alarm is activated
-        emitAlarmSound()
+        print("Alarma activada: Objeto a \(objectDistance) metros con velocidad \(simulatedSpeed) km/h")
+        emitAlarmSound() // Emite el sonido de alarma
+    } else {
+        print("Alarma no activada: Distancia \(objectDistance) metros, velocidad \(simulatedSpeed) km/h, no dentro de rango")
     }
 }
+
 
 

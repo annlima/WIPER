@@ -100,6 +100,7 @@ struct FullScreenCameraView: View {
         }
     }
     
+    
     func navigateToMap() {
         presentationMode.wrappedValue.dismiss() // Regresa a la vista de mapa
     }
