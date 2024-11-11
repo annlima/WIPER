@@ -6,7 +6,8 @@ struct FullScreenCameraView: View {
     @ObservedObject var cameraManager: CameraManager       // Usar instancia pasada
     @State private var isNavigatingToMap = false
     @State private var speed: Double = 0.0 // Estado para la velocidad
-
+    @ObservedObject var locationManager = LocationManager()
+    
     var body: some View {
         ZStack {
             CameraPreview(captureSession: cameraManager.session)
@@ -28,7 +29,7 @@ struct FullScreenCameraView: View {
                     lockOrientation(.all)
                 }
             
-            SpeedOverlayView(speed: $speed)
+            SpeedOverlayView(speed: $locationManager.speed)
                 .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .bottomLeading)
             
             // Dibujar bounding boxes
