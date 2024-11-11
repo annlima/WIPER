@@ -13,6 +13,9 @@ class CameraViewModel: NSObject, ObservableObject, AVCaptureVideoDataOutputSampl
     
     private var model: VNCoreMLModel
     private var depthOutput = AVCaptureDepthDataOutput()
+    @ObservedObject var locationManager = LocationManager()
+    var visibility: Double = 100.0 // Puedes obtener el valor real utilizando WeatherKit
+       
     
     override init() {
         guard let model = try? VNCoreMLModel(for: yolov5s().model) else {
@@ -110,52 +113,47 @@ class CameraViewModel: NSObject, ObservableObject, AVCaptureVideoDataOutputSampl
     }
     
     func captureOutput(_ output: AVCaptureOutput, didOutput depthData: AVDepthData, from connection: AVCaptureConnection) {
-        let depthMap = depthData.depthDataMap
-        CVPixelBufferLockBaseAddress(depthMap, .readOnly)
-        defer { CVPixelBufferUnlockBaseAddress(depthMap, .readOnly) } // Ensure the buffer is unlocked even if an error occurs
-        
-        let width = CVPixelBufferGetWidth(depthMap)
-        let height = CVPixelBufferGetHeight(depthMap)
+        let depthPixelBuffer = depthData.depthDataMap
+        CVPixelBufferLockBaseAddress(depthPixelBuffer, .readOnly)
+        defer { CVPixelBufferUnlockBaseAddress(depthPixelBuffer, .readOnly) }
 
-        guard let baseAddress = CVPixelBufferGetBaseAddress(depthMap)?.assumingMemoryBound(to: Float32.self) else {
-            print("Error: Could not access base address of depth map")
-            return
-        }
+        let width = CVPixelBufferGetWidth(depthPixelBuffer)
+        let height = CVPixelBufferGetHeight(depthPixelBuffer)
+
+        guard let baseAddress = CVPixelBufferGetBaseAddress(depthPixelBuffer) else { return }
+
+        let floatBuffer = unsafeBitCast(baseAddress, to: UnsafeMutablePointer<Float32>.self)
 
         DispatchQueue.main.async {
+            // Primero, calcula 'detectedDistances'
             self.detectedDistances = self.detections.map { detection in
-                // Calculate the center point of the detection bounding box
-                let centerX = Int((detection.midX / UIScreen.main.bounds.width) * CGFloat(width))
-                let centerY = Int((detection.midY / UIScreen.main.bounds.height) * CGFloat(height))
-
-                // Ensure coordinates are within bounds
-                guard centerX >= 0, centerX < width, centerY >= 0, centerY < height else {
-                    print("Warning: Coordinates out of bounds")
-                    return Double.nan // Return NaN for out-of-bounds cases
+                // Mapear coordenadas de detección al mapa de profundidad
+                let normalizedX = detection.midX / UIScreen.main.bounds.width
+                let normalizedY = detection.midY / UIScreen.main.bounds.height
+                
+                let pixelX = Int(normalizedX * CGFloat(width))
+                let pixelY = Int(normalizedY * CGFloat(height))
+                
+                guard pixelX >= 0 && pixelX < width && pixelY >= 0 && pixelY < height else {
+                    return Double.nan
                 }
-
-                let depthIndex = centerY * width + centerX
-                let depthValue = Double(baseAddress[depthIndex])
-
-                // Print depth value for debugging
-                print("Depth for detected object at (\(centerX), \(centerY)): \(depthValue) meters")
-
-                return depthValue
+                
+                let index = pixelY * width + pixelX
+                let depth = Double(floatBuffer[index])
+                
+                return depth
             }
-
-            // Print all detected distances for verification
-            print("Detected distances: \(self.detectedDistances)")
-
-            // Pass distances to the alarm system
-            for distance in self.detectedDistances where !distance.isNaN {
+            
+            // Ahora que 'detectedDistances' ha sido calculado, puedes iterar sobre él
+            for (index, distance) in self.detectedDistances.enumerated() where !distance.isNaN {
+                let objectDetected = true
                 checkAndTriggerAlarm(
-                    objectDetected: true,
+                    objectDetected: objectDetected,
                     objectDistance: distance,
-                    locationManager: LocationManager(), // Assumes LocationManager is set up properly
-                    visibility: 90 // Replace with actual visibility data
+                    locationManager: self.locationManager,
+                    visibility: self.visibility
                 )
             }
         }
     }
-
 }
