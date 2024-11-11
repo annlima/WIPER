@@ -3,14 +3,16 @@ import Photos
 import SwiftUI
 import Vision
 
-class CameraViewModel: NSObject, ObservableObject, AVCaptureVideoDataOutputSampleBufferDelegate, AVCaptureFileOutputRecordingDelegate {
+class CameraViewModel: NSObject, ObservableObject, AVCaptureVideoDataOutputSampleBufferDelegate, AVCaptureFileOutputRecordingDelegate, AVCaptureDepthDataOutputDelegate {
     @Published var isRecording: Bool = false
     @Published var recordedURLs: [URL] = []
     @Published var previewUrl: URL?
     @Published var showSaveDialog: Bool = false
     @Published var detections: [CGRect] = [] // Almacena las bounding boxes de los objetos detectados
+    @Published var detectedDistances: [Double] = []
     
     private var model: VNCoreMLModel
+    private var depthOutput = AVCaptureDepthDataOutput()
     
     override init() {
         guard let model = try? VNCoreMLModel(for: demo().model) else {
@@ -33,8 +35,8 @@ class CameraViewModel: NSObject, ObservableObject, AVCaptureVideoDataOutputSampl
         self.showSaveDialog = true
         self.isRecording = false // Actualiza el estado correctamente
     }
-
-
+    
+    
     
     func saveVideoToGallery(url: URL) {
         PHPhotoLibrary.requestAuthorization(for: .addOnly) { status in
@@ -93,4 +95,62 @@ class CameraViewModel: NSObject, ObservableObject, AVCaptureVideoDataOutputSampl
             }
         }
     }
+    
+    func addDepthOutput(to session: AVCaptureSession){
+        if session.canAddOutput(depthOutput) {
+            session.canAddOutput(depthOutput)
+            depthOutput.isFilteringEnabled = true
+            depthOutput.setDelegate(self, callbackQueue: DispatchQueue(label: "depthQueue"))
+        }
+    }
+    
+    func captureOutput(_ output: AVCaptureOutput, didOutput depthData: AVDepthData, from connection: AVCaptureConnection) {
+        let depthMap = depthData.depthDataMap
+        CVPixelBufferLockBaseAddress(depthMap, .readOnly)
+        defer { CVPixelBufferUnlockBaseAddress(depthMap, .readOnly) } // Ensure the buffer is unlocked even if an error occurs
+        
+        let width = CVPixelBufferGetWidth(depthMap)
+        let height = CVPixelBufferGetHeight(depthMap)
+
+        guard let baseAddress = CVPixelBufferGetBaseAddress(depthMap)?.assumingMemoryBound(to: Float32.self) else {
+            print("Error: Could not access base address of depth map")
+            return
+        }
+
+        DispatchQueue.main.async {
+            self.detectedDistances = self.detections.map { detection in
+                // Calculate the center point of the detection bounding box
+                let centerX = Int((detection.midX / UIScreen.main.bounds.width) * CGFloat(width))
+                let centerY = Int((detection.midY / UIScreen.main.bounds.height) * CGFloat(height))
+
+                // Ensure coordinates are within bounds
+                guard centerX >= 0, centerX < width, centerY >= 0, centerY < height else {
+                    print("Warning: Coordinates out of bounds")
+                    return Double.nan // Return NaN for out-of-bounds cases
+                }
+
+                let depthIndex = centerY * width + centerX
+                let depthValue = Double(baseAddress[depthIndex])
+
+                // Print depth value for debugging
+                print("Depth for detected object at (\(centerX), \(centerY)): \(depthValue) meters")
+
+                return depthValue
+            }
+
+            // Print all detected distances for verification
+            print("Detected distances: \(self.detectedDistances)")
+
+            // Pass distances to the alarm system
+            for distance in self.detectedDistances where !distance.isNaN {
+                checkAndTriggerAlarm(
+                    objectDetected: true,
+                    objectDistance: distance,
+                    locationManager: LocationManager(), // Assumes LocationManager is set up properly
+                    visibility: 90 // Replace with actual visibility data
+                )
+            }
+        }
+    }
+
 }

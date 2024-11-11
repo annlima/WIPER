@@ -10,6 +10,7 @@ import CoreLocation
 
 struct EquatableLocation: Equatable {
     var coordinate: CLLocationCoordinate2D
+    var speed: Double
 
     static func == (lhs: EquatableLocation, rhs: EquatableLocation) -> Bool {
         return lhs.coordinate.latitude == rhs.coordinate.latitude &&

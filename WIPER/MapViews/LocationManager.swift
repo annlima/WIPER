@@ -9,6 +9,7 @@ class LocationManager: NSObject, ObservableObject, CLLocationManagerDelegate {
     override init() {
         super.init()
         locationManager.delegate = self
+        locationManager.desiredAccuracy = kCLLocationAccuracyBest
         checkAuthorizationStatus()
     }
 
@@ -48,7 +49,10 @@ class LocationManager: NSObject, ObservableObject, CLLocationManagerDelegate {
 
     func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
         if let location = locations.last {
-            currentLocation = EquatableLocation(coordinate: location.coordinate)
+            currentLocation = EquatableLocation(
+                coordinate: location.coordinate,
+                speed: location.speed >= 0 ? location.speed * 3.6 : 0 //Convert from m/s to km/h
+            )
         }
     }
 }

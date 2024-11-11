@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		9B0948A32CD9691100952C5A /* AlarmTrigger.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9B0948A22CD9691100952C5A /* AlarmTrigger.swift */; };
+		9B9C69692CDEAF8B00F88AEB /* yolov5s.mlmodel in Sources */ = {isa = PBXBuildFile; fileRef = 9B9C69682CDEAF8B00F88AEB /* yolov5s.mlmodel */; };
 		A12727DA2CA3303D0060164C /* CameraView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A12727D92CA330390060164C /* CameraView.swift */; };
 		A12727DC2CA331110060164C /* CameraPreview.swift in Sources */ = {isa = PBXBuildFile; fileRef = A12727DB2CA3310D0060164C /* CameraPreview.swift */; };
 		A12B83902CC0511A0045BA44 /* UIViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A12B838F2CC051150045BA44 /* UIViewController.swift */; };
@@ -52,6 +54,8 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		9B0948A22CD9691100952C5A /* AlarmTrigger.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AlarmTrigger.swift; sourceTree = "<group>"; };
+		9B9C69682CDEAF8B00F88AEB /* yolov5s.mlmodel */ = {isa = PBXFileReference; lastKnownFileType = file.mlmodel; path = yolov5s.mlmodel; sourceTree = "<group>"; };
 		A12727D52CA1D4AE0060164C /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		A12727D92CA330390060164C /* CameraView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CameraView.swift; sourceTree = "<group>"; };
 		A12727DB2CA3310D0060164C /* CameraPreview.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CameraPreview.swift; sourceTree = "<group>"; };
@@ -108,6 +112,14 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		9B0948A12CD968F400952C5A /* AlarmSystem */ = {
+			isa = PBXGroup;
+			children = (
+				9B0948A22CD9691100952C5A /* AlarmTrigger.swift */,
+			);
+			path = AlarmSystem;
+			sourceTree = "<group>";
+		};
 		A12727D62CA3261A0060164C /* Camera */ = {
 			isa = PBXGroup;
 			children = (
@@ -145,6 +157,8 @@
 		A1C891512C73D3E100308657 /* WIPER */ = {
 			isa = PBXGroup;
 			children = (
+				9B9C69682CDEAF8B00F88AEB /* yolov5s.mlmodel */,
+				9B0948A12CD968F400952C5A /* AlarmSystem */,
 				A1BA5EA42CC977E700C9CED3 /* DeviceManager.swift */,
 				A12727D62CA3261A0060164C /* Camera */,
 				A12727D52CA1D4AE0060164C /* Info.plist */,
@@ -342,10 +356,12 @@
 				A1F0A4662CA106DA00F7FEE8 /* CameraManager.swift in Sources */,
 				A12B83922CC052510045BA44 /* FullScreenCameraView 2.swift in Sources */,
 				A12B83902CC0511A0045BA44 /* UIViewController.swift in Sources */,
+				9B0948A32CD9691100952C5A /* AlarmTrigger.swift in Sources */,
 				A1C5605B2C920AED00E2A9DD /* AppDelegate.swift in Sources */,
 				A1C560552C920A8500E2A9DD /* ViewController.swift in Sources */,
 				A1E51B192CDC9808002BBBDA /* demo.mlmodel in Sources */,
 				A1C560592C920ACA00E2A9DD /* SceneDelegate.swift in Sources */,
+				9B9C69692CDEAF8B00F88AEB /* yolov5s.mlmodel in Sources */,
 				A1C891552C73D3E100308657 /* ContentView.swift in Sources */,
 				A1C891532C73D3E100308657 /* WIPERApp.swift in Sources */,
 				A173E8812C90BB97005BB0F9 /* StartScreen.swift in Sources */,
@@ -521,7 +537,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"WIPER/Preview Content\"";
-				DEVELOPMENT_TEAM = D99DB5VWR6;
+				DEVELOPMENT_TEAM = KS6DBFHYN6;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = WIPER/Info.plist;
@@ -529,6 +545,7 @@
 				INFOPLIST_KEY_NSCameraUsageDescription = "Necesitamos acceso a tu cámara para indicarte los peligros alrededor";
 				INFOPLIST_KEY_NSLocationAlwaysUsageDescription = "La aplicación necesita acceso a tu ubicación siempre para alertarte de peligros.";
 				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "Necesitamos acceso a tu ubicación para darte indicaciones";
+				INFOPLIST_KEY_NSPhotoLibraryAddUsageDescription = "We need access to your photo library to save the recorded videos";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -539,7 +556,7 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.Andy.WIPERP;
+				PRODUCT_BUNDLE_IDENTIFIER = com.Andy.WIPERP.;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
@@ -556,7 +573,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"WIPER/Preview Content\"";
-				DEVELOPMENT_TEAM = D99DB5VWR6;
+				DEVELOPMENT_TEAM = KS6DBFHYN6;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = WIPER/Info.plist;
@@ -564,6 +581,7 @@
 				INFOPLIST_KEY_NSCameraUsageDescription = "Necesitamos acceso a tu cámara para indicarte los peligros alrededor";
 				INFOPLIST_KEY_NSLocationAlwaysUsageDescription = "La aplicación necesita acceso a tu ubicación siempre para alertarte de peligros.";
 				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "Necesitamos acceso a tu ubicación para darte indicaciones";
+				INFOPLIST_KEY_NSPhotoLibraryAddUsageDescription = "We need access to your photo library to save the recorded videos";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
@@ -574,7 +592,7 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.Andy.WIPERP;
+				PRODUCT_BUNDLE_IDENTIFIER = com.Andy.WIPERP.;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;

@@ -98,5 +98,10 @@ class CameraManager: NSObject, ObservableObject {
                 }
             }
         }
+        
+        cameraViewModel.addDepthOutput(to: self.session)
+            self.session.commitConfiguration()
+            completion(.success(()))
+        
     }
 }
