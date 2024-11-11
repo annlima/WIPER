@@ -17,6 +17,7 @@
 		A1BE264B2CE1664C009A8F0D /* yolov5s.mlpackage in Sources */ = {isa = PBXBuildFile; fileRef = A1BE264A2CE1664C009A8F0D /* yolov5s.mlpackage */; };
 		A1BE264D2CE191B9009A8F0D /* CustomMapView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1BE264C2CE191B5009A8F0D /* CustomMapView.swift */; };
 		A1BE264F2CE192C8009A8F0D /* SwipeToDeleteRow.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1BE264E2CE192C1009A8F0D /* SwipeToDeleteRow.swift */; };
+		A1BE26512CE19848009A8F0D /* SpeedOverlay.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1BE26502CE19842009A8F0D /* SpeedOverlay.swift */; };
 		A1C5604F2C92088100E2A9DD /* FavoriteRoute.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1C5604E2C92088100E2A9DD /* FavoriteRoute.swift */; };
 		A1C560532C920A0C00E2A9DD /* CameraViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1C560522C920A0C00E2A9DD /* CameraViewModel.swift */; };
 		A1C560552C920A8500E2A9DD /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1C560542C920A8500E2A9DD /* ViewController.swift */; };
@@ -65,6 +66,7 @@
 		A1BE264A2CE1664C009A8F0D /* yolov5s.mlpackage */ = {isa = PBXFileReference; lastKnownFileType = folder.mlpackage; path = yolov5s.mlpackage; sourceTree = "<group>"; };
 		A1BE264C2CE191B5009A8F0D /* CustomMapView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomMapView.swift; sourceTree = "<group>"; };
 		A1BE264E2CE192C1009A8F0D /* SwipeToDeleteRow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SwipeToDeleteRow.swift; sourceTree = "<group>"; };
+		A1BE26502CE19842009A8F0D /* SpeedOverlay.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SpeedOverlay.swift; sourceTree = "<group>"; };
 		A1C5604E2C92088100E2A9DD /* FavoriteRoute.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FavoriteRoute.swift; sourceTree = "<group>"; };
 		A1C560522C920A0C00E2A9DD /* CameraViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CameraViewModel.swift; sourceTree = "<group>"; };
 		A1C560542C920A8500E2A9DD /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
@@ -149,6 +151,7 @@
 		A1C891512C73D3E100308657 /* WIPER */ = {
 			isa = PBXGroup;
 			children = (
+				A1BE26502CE19842009A8F0D /* SpeedOverlay.swift */,
 				A1BA5EA42CC977E700C9CED3 /* DeviceManager.swift */,
 				A12727D62CA3261A0060164C /* Camera */,
 				A12727D52CA1D4AE0060164C /* Info.plist */,
@@ -350,6 +353,7 @@
 				A12B83902CC0511A0045BA44 /* UIViewController.swift in Sources */,
 				A1C5605B2C920AED00E2A9DD /* AppDelegate.swift in Sources */,
 				A1C560552C920A8500E2A9DD /* ViewController.swift in Sources */,
+				A1BE26512CE19848009A8F0D /* SpeedOverlay.swift in Sources */,
 				A1BE264F2CE192C8009A8F0D /* SwipeToDeleteRow.swift in Sources */,
 				A1C560592C920ACA00E2A9DD /* SceneDelegate.swift in Sources */,
 				A1C891552C73D3E100308657 /* ContentView.swift in Sources */,

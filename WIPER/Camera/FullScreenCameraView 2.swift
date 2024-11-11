@@ -5,6 +5,7 @@ struct FullScreenCameraView: View {
     @ObservedObject var cameraViewModel: CameraViewModel   // Usar instancia pasada
     @ObservedObject var cameraManager: CameraManager       // Usar instancia pasada
     @State private var isNavigatingToMap = false
+    @State private var speed: Double = 0.0 // Estado para la velocidad
 
     var body: some View {
         ZStack {
@@ -26,7 +27,10 @@ struct FullScreenCameraView: View {
                     cameraManager.session.stopRunning()
                     lockOrientation(.all)
                 }
-
+            
+            SpeedOverlayView(speed: $speed)
+                .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .bottomLeading)
+            
             // Dibujar bounding boxes
             ForEach(cameraViewModel.detections, id: \.self) { rect in
                 Rectangle()
@@ -34,7 +38,7 @@ struct FullScreenCameraView: View {
                     .stroke(Color.red, lineWidth: 2)
                     .background(Rectangle().fill(Color.clear))
             }
-
+            
             VStack {
                 HStack {
                     Button(action: {
@@ -48,7 +52,7 @@ struct FullScreenCameraView: View {
                     }
                     Spacer()
                 }
-                .padding(.top, 50)
+                .padding(.top, 30)
                 .padding(.horizontal, 20)
                 Spacer()
 
@@ -82,26 +86,31 @@ struct FullScreenCameraView: View {
                     }
                     isNavigatingToMap = true // Navegar al mapa
                 },
-                secondaryButton: .default(Text("Cancelar")) {
+                secondaryButton: .cancel(Text("Cancelar")) { // Botón de cancelar estilo predeterminado
                     isNavigatingToMap = true // Navegar al mapa
                 }
             )
         }
         .onChange(of: isNavigatingToMap) { navigate in
             if navigate {
-                
                 navigateToMap()
                 isNavigatingToMap = false
             }
         }
-
-
+        .onAppear {
+            startUpdatingSpeed() // Inicia la actualización de la velocidad
+        }
+    }
+    
+    func startUpdatingSpeed() {
+        Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) { _ in
+            self.speed = Double.random(in: 0...120) // Simula la velocidad o usa datos reales
+        }
     }
     
     func navigateToMap() {
         presentationMode.wrappedValue.dismiss() // Regresa a la vista de mapa
     }
-
 
     func lockOrientation(_ orientation: UIInterfaceOrientationMask) {
         if let appDelegate = UIApplication.shared.delegate as? AppDelegate {
