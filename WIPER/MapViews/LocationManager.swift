@@ -5,20 +5,23 @@ class LocationManager: NSObject, ObservableObject, CLLocationManagerDelegate {
     @Published var authorizationStatus: CLAuthorizationStatus?
     private let locationManager = CLLocationManager()
     @Published var currentLocation: EquatableLocation?
+    @Published var speed: Double = 0.0 // Velocidad en km/h
+    private var lastLocation: CLLocation?
+    private var lastUpdateTime: Date?
     
     override init() {
         super.init()
         locationManager.delegate = self
         locationManager.desiredAccuracy = kCLLocationAccuracyBest
         checkAuthorizationStatus()
+        locationManager.desiredAccuracy = kCLLocationAccuracyBest
+        locationManager.startUpdatingLocation()
     }
 
     func checkAuthorizationStatus() {
         authorizationStatus = locationManager.authorizationStatus
         
         switch locationManager.authorizationStatus {
-        case .notDetermined:
-            requestLocationAuthorization()
         case .restricted, .denied:
             print("Location access denied or restricted")
         case .authorizedWhenInUse, .authorizedAlways:
@@ -48,11 +51,24 @@ class LocationManager: NSObject, ObservableObject, CLLocationManagerDelegate {
     }
 
     func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
-        if let location = locations.last {
-            currentLocation = EquatableLocation(
-                coordinate: location.coordinate,
-                speed: location.speed >= 0 ? location.speed * 3.6 : 0 //Convert from m/s to km/h
-            )
+        guard let newLocation = locations.last else { return }
+        
+        // Actualiza la ubicación actual para pintar la ruta y relocalizar
+        currentLocation = EquatableLocation(coordinate: newLocation.coordinate)
+        
+        // Calcular la velocidad usando la ubicación y tiempo anterior
+        if let lastLocation = lastLocation, let lastUpdateTime = lastUpdateTime {
+            let distance = newLocation.distance(from: lastLocation) // Distancia en metros
+            let timeInterval = newLocation.timestamp.timeIntervalSince(lastUpdateTime) // Tiempo en segundos
+            
+            if timeInterval > 0 {
+                let speedInMetersPerSecond = distance / timeInterval
+                self.speed = speedInMetersPerSecond * 3.6 // Convertir a km/h
+            }
         }
+        
+        // Actualiza la última ubicación y tiempo
+        self.lastLocation = newLocation
+        self.lastUpdateTime = newLocation.timestamp
     }
 }
