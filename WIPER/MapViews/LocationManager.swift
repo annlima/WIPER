@@ -3,61 +3,57 @@ import CoreLocation
 
 class LocationManager: NSObject, ObservableObject, CLLocationManagerDelegate {
     @Published var authorizationStatus: CLAuthorizationStatus?
+    @Published var isAuthorized: Bool = false
     private let locationManager = CLLocationManager()
     @Published var currentLocation: EquatableLocation?
     @Published var speed: Double = 0.0 // Velocidad en km/h
     private var lastLocation: CLLocation?
-    var simulateSpeed: Double? // Añade esta propiedad opcional para simular la velocidad
+    var simulateSpeed: Double?
     private var lastUpdateTime: Date?
     
     override init() {
         super.init()
         locationManager.delegate = self
         locationManager.desiredAccuracy = kCLLocationAccuracyBest
-        checkAuthorizationStatus()
-        locationManager.desiredAccuracy = kCLLocationAccuracyBest
-        locationManager.startUpdatingLocation()
-    }
-
-    func checkAuthorizationStatus() {
-        authorizationStatus = locationManager.authorizationStatus
-        
-        switch locationManager.authorizationStatus {
-        case .restricted, .denied:
-            print("Location access denied or restricted")
-        case .authorizedWhenInUse, .authorizedAlways:
-            startLocationUpdates()
-        @unknown default:
-            break
-        }
     }
 
     func requestLocationAuthorization() {
-        if CLLocationManager.locationServicesEnabled() {
-            locationManager.requestWhenInUseAuthorization()
-        } else {
-            print("Location services are not enabled")
+        DispatchQueue.global().async {
+            // Realiza la verificación en un hilo de fondo
+            if CLLocationManager.locationServicesEnabled() {
+                DispatchQueue.main.async {
+                    // Solicita la autorización en el hilo principal
+                    self.locationManager.requestWhenInUseAuthorization()
+                }
+            } else {
+                print("Location services are not enabled")
+            }
         }
     }
-
+    
     func startLocationUpdates() {
         locationManager.startUpdatingLocation()
     }
 
     func locationManagerDidChangeAuthorization(_ manager: CLLocationManager) {
         authorizationStatus = manager.authorizationStatus
-        if manager.authorizationStatus == .authorizedWhenInUse || manager.authorizationStatus == .authorizedAlways {
+        isAuthorized = manager.authorizationStatus == .authorizedWhenInUse || manager.authorizationStatus == .authorizedAlways
+
+        if isAuthorized {
             startLocationUpdates()
+        } else {
+            print("Location access denied or restricted")
         }
     }
 
     func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
         guard let newLocation = locations.last else { return }
+
         if let simulatedSpeed = simulateSpeed {
-                   self.speed = simulatedSpeed
-               } else {
-                   self.speed = newLocation.speed * 3.6 // Convertir m/s a km/h
-               }
+            self.speed = simulatedSpeed
+        } else {
+            self.speed = newLocation.speed * 3.6 // Convertir m/s a km/h
+        }
         
         // Actualiza la ubicación actual para pintar la ruta y relocalizar
         currentLocation = EquatableLocation(coordinate: newLocation.coordinate, speed: self.speed)
