@@ -14,7 +14,7 @@ class CameraViewModel: NSObject, ObservableObject, AVCaptureVideoDataOutputSampl
     @Published var detections: [CGRect] = [] // Almacena las bounding boxes de los objetos detectados
     @Published var detectedDistances: [Double] = []
     private var model: VNCoreMLModel
-    
+    private var imageEnhancer = ImageEnhancer()
     @Published var currentWeatherCond: String?
     @ObservedObject var locationManager = LocationManager()
     private let weatherService = WeatherService.shared
@@ -108,9 +108,41 @@ class CameraViewModel: NSObject, ObservableObject, AVCaptureVideoDataOutputSampl
             }
         }
         
-        let handler = VNImageRequestHandler(cvPixelBuffer: pixelBuffer, options: [:])
-        try? handler.perform([request])
+        if let condition = currentWeatherCond, !condition.isEmpty {
+            // Convert pixel buffer to UIImage
+            let ciImage = CIImage(cvPixelBuffer: pixelBuffer)
+            let uiImage = UIImage(ciImage: ciImage)
+
+            // Apply preprocessing based on weather condition
+            let preprocessedImage: UIImage?
+            switch condition.lowercased() {
+            case "sunny":
+                preprocessedImage = imageEnhancer.applyCLAHE(to: uiImage)
+            case "fog":
+                preprocessedImage = imageEnhancer.applyDehaze(to: uiImage)
+            case "rain":
+                preprocessedImage = imageEnhancer.applyRainRemoval(to: uiImage)
+            case "night":
+                preprocessedImage = imageEnhancer.applyNightEnhancement(to: uiImage)
+            default:
+                preprocessedImage = uiImage  // No filter if condition is unknown
+            }
+            
+            guard let finalImage = preprocessedImage, let cgImage = finalImage.cgImage else {
+                print("Error: No se pudo obtener cgImage de la imagen preprocesada")
+                return
+            }
+            
+            // Create handler with preprocessed image
+            let handler = VNImageRequestHandler(cgImage: cgImage, options: [:])
+            try? handler.perform([request])
+        } else {
+            // Use pixelBuffer directly if no weather condition requires preprocessing
+            let handler = VNImageRequestHandler(cvPixelBuffer: pixelBuffer, options: [:])
+            try? handler.perform([request])
+        }
     }
+
     
     private func handleDetections(_ results: [VNRecognizedObjectObservation]) {
         DispatchQueue.main.async {
