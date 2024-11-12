@@ -19,7 +19,10 @@ class CameraViewModel: NSObject, ObservableObject, AVCaptureVideoDataOutputSampl
     @ObservedObject var locationManager = LocationManager()
     private let weatherService = WeatherService.shared
     private var cancellables = Set<AnyCancellable>()
-
+        @Published var isTestMode: Bool = true
+        private var depthOutput = AVCaptureDepthDataOutput()
+        var visibility: Double = 100.0 // Puedes obtener el valor real utilizando WeatherKit
+        
     
     private let realObjectHeights: [String: CGFloat] = [
            "person": 1.7, // average human height in meters

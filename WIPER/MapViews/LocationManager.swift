@@ -12,7 +12,6 @@ class LocationManager: NSObject, ObservableObject, CLLocationManagerDelegate {
             
         }
     } // Speed in km/h
-    private var lastLocation: CLLocation?
 
     @Published var lastLocation: CLLocation?
 
