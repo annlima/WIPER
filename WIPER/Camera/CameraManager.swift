@@ -69,6 +69,10 @@ class CameraManager: NSObject, ObservableObject {
                             print("No se pudo agregar 'videoDataOutput' a la sesión")
                         }
                         
+                        // Configure depth output and set active depth data format
+                        cameraViewModel.addDepthOutput(to: self.session)
+                        
+                        
                         if self.session.canAddOutput(self.output) {
                             self.session.addOutput(self.output)
                         } else {
@@ -98,10 +102,5 @@ class CameraManager: NSObject, ObservableObject {
                 }
             }
         }
-        
-        cameraViewModel.addDepthOutput(to: self.session)
-            self.session.commitConfiguration()
-            completion(.success(()))
-        
     }
 }

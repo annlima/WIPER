@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		062E6F6F2CE2C033005050BD /* alarm_sound.wav in Resources */ = {isa = PBXBuildFile; fileRef = 062E6F6E2CE2C033005050BD /* alarm_sound.wav */; };
 		9B0948A32CD9691100952C5A /* AlarmTrigger.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9B0948A22CD9691100952C5A /* AlarmTrigger.swift */; };
 		A12727DA2CA3303D0060164C /* CameraView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A12727D92CA330390060164C /* CameraView.swift */; };
 		A12727DC2CA331110060164C /* CameraPreview.swift in Sources */ = {isa = PBXBuildFile; fileRef = A12727DB2CA3310D0060164C /* CameraPreview.swift */; };
@@ -56,6 +57,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		062E6F6E2CE2C033005050BD /* alarm_sound.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = alarm_sound.wav; sourceTree = "<group>"; };
 		9B0948A22CD9691100952C5A /* AlarmTrigger.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AlarmTrigger.swift; sourceTree = "<group>"; };
 		9B9C69682CDEAF8B00F88AEB /* yolov5s.mlmodel */ = {isa = PBXFileReference; lastKnownFileType = file.mlmodel; path = yolov5s.mlmodel; sourceTree = "<group>"; };
 		A12727D52CA1D4AE0060164C /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
@@ -121,6 +123,7 @@
 		9B0948A12CD968F400952C5A /* AlarmSystem */ = {
 			isa = PBXGroup;
 			children = (
+				062E6F6E2CE2C033005050BD /* alarm_sound.wav */,
 				9B0948A22CD9691100952C5A /* AlarmTrigger.swift */,
 			);
 			path = AlarmSystem;
@@ -343,6 +346,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				062E6F6F2CE2C033005050BD /* alarm_sound.wav in Resources */,
 				A1C891572C73D3E200308657 /* Assets.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -557,7 +561,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"WIPER/Preview Content\"";
-				DEVELOPMENT_TEAM = D99DB5VWR6;
+				DEVELOPMENT_TEAM = 23H7UMY4H7;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = WIPER/Info.plist;
@@ -576,7 +580,7 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.Andy.WIPER;
+				PRODUCT_BUNDLE_IDENTIFIER = WIPERR;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
@@ -593,7 +597,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"WIPER/Preview Content\"";
-				DEVELOPMENT_TEAM = D99DB5VWR6;
+				DEVELOPMENT_TEAM = 23H7UMY4H7;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = WIPER/Info.plist;
@@ -612,7 +616,7 @@
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.Andy.WIPER;
+				PRODUCT_BUNDLE_IDENTIFIER = WIPERR;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
