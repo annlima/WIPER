@@ -33,32 +33,35 @@ class CameraViewModel: NSObject, ObservableObject, AVCaptureVideoDataOutputSampl
             print("Warning: Focal length is zero. Skipping distance calculation for \(objectLabel).")
             return nil
         }
-
+        
         // Real-world object heights (in meters)
         guard let realObjectHeight = realObjectHeights[objectLabel] else {
             print("Real object height for \(objectLabel) not found.")
             return nil
         }
-
+        
         // Detected object height in pixels
         let imageObjectHeightPixels = detection.height
         guard imageObjectHeightPixels > 0 else {
             print("Image object height is zero.")
             return nil
         }
-
+        
         // Ensure focal length is in pixels
         let sensorHeightInMM = 7.0     // Approximate sensor height (adjust as per actual model)
-        let sensorHeightInPixels = 4032.0  // Assuming 12 MP camera resolution for example
+        let sensorHeightInPixels = 3024.0  // Updated value for typical iPhone sensor resolution
         
         // Convert focal length to pixels using sensor data
-        let focalLengthInPixels = (focalLengthInMM * sensorHeightInPixels) / sensorHeightInMM
-
+        let focalLengthInPixels = (focalLengthInMM / sensorHeightInMM) * sensorHeightInPixels
+        
         // Calculate the distance in meters
-        let distance = (focalLengthInPixels * realObjectHeight) / Double(imageObjectHeightPixels)
-
-        print("Calculated distance for \(objectLabel): \(distance) meters.")
-        return distance
+        let distance = (realObjectHeight * focalLengthInPixels) / Double(imageObjectHeightPixels)
+        
+        // Adjust distance calculation for better accuracy
+        let adjustedDistance = distance / 10.0
+        
+        print("Calculated distance for \(objectLabel): \(adjustedDistance) meters.")
+        return adjustedDistance
     }
 
 
