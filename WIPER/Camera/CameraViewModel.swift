@@ -2,6 +2,9 @@ import AVFoundation
 import Photos
 import SwiftUI
 import Vision
+import WeatherKit
+import CoreLocation
+import Combine
 
 class CameraViewModel: NSObject, ObservableObject, AVCaptureVideoDataOutputSampleBufferDelegate, AVCaptureFileOutputRecordingDelegate, AVCaptureDepthDataOutputDelegate {
     @Published var isRecording: Bool = false
@@ -10,12 +13,13 @@ class CameraViewModel: NSObject, ObservableObject, AVCaptureVideoDataOutputSampl
     @Published var showSaveDialog: Bool = false
     @Published var detections: [CGRect] = [] // Almacena las bounding boxes de los objetos detectados
     @Published var detectedDistances: [Double] = []
-    @Published var isTestMode: Bool = true
-    
     private var model: VNCoreMLModel
-    private var depthOutput = AVCaptureDepthDataOutput()
+    private var imageEnhancer = ImageEnhancer()
+    @Published var currentWeatherCond: String?
     @ObservedObject var locationManager = LocationManager()
-    var visibility: Double = 100.0 // Puedes obtener el valor real utilizando WeatherKit
+    private let weatherService = WeatherService.shared
+    private var cancellables = Set<AnyCancellable>()
+
     
     private let realObjectHeights: [String: CGFloat] = [
            "person": 1.7, // average human height in meters
@@ -72,7 +76,35 @@ class CameraViewModel: NSObject, ObservableObject, AVCaptureVideoDataOutputSampl
         }
         self.model = model
         super.init()
+        observeLocationUpdates()
     }
+    
+    // Observe lastCLLocation updates to fetch weather
+    private func observeLocationUpdates() {
+        locationManager.$lastLocation
+            .compactMap { $0 }
+            .sink { [weak self] location in
+                self?.fetchCurrentWeather(for: location)
+            }
+            .store(in: &cancellables)
+    }
+    
+    // Fetch weather condition using WeatherKit
+    private func fetchCurrentWeather(for location: CLLocation) {
+        Task {
+            do {
+                let weather = try await weatherService.weather(for: location)
+                DispatchQueue.main.async {
+                    // Directly assign the weather condition description
+                    self.currentWeatherCond = weather.currentWeather.condition.description
+                    print("Current Condition: \(self.currentWeatherCond ?? "Unknown")")
+                }
+            } catch {
+                print("Failed to fetch weather data: \(error.localizedDescription)")
+            }
+        }
+    }
+
     
     func fileOutput(_ output: AVCaptureFileOutput, didFinishRecordingTo outputFileURL: URL, from connections: [AVCaptureConnection], error: Error?) {
         if let error = error {
@@ -124,8 +156,39 @@ class CameraViewModel: NSObject, ObservableObject, AVCaptureVideoDataOutputSampl
             }
         }
         
-        let handler = VNImageRequestHandler(cvPixelBuffer: pixelBuffer, options: [:])
-        try? handler.perform([request])
+        if let condition = currentWeatherCond, !condition.isEmpty {
+            // Convert pixel buffer to UIImage
+            let ciImage = CIImage(cvPixelBuffer: pixelBuffer)
+            let uiImage = UIImage(ciImage: ciImage)
+
+            // Apply preprocessing based on weather condition
+            let preprocessedImage: UIImage?
+            switch condition.lowercased() {
+            case "sunny":
+                preprocessedImage = imageEnhancer.applyCLAHE(to: uiImage)
+            case "fog":
+                preprocessedImage = imageEnhancer.applyDehaze(to: uiImage)
+            case "rain":
+                preprocessedImage = imageEnhancer.applyRainRemoval(to: uiImage)
+            case "night":
+                preprocessedImage = imageEnhancer.applyNightEnhancement(to: uiImage)
+            default:
+                preprocessedImage = uiImage  // No filter if condition is unknown
+            }
+            
+            guard let finalImage = preprocessedImage, let cgImage = finalImage.cgImage else {
+                print("Error: No se pudo obtener cgImage de la imagen preprocesada")
+                return
+            }
+            
+            // Create handler with preprocessed image
+            let handler = VNImageRequestHandler(cgImage: cgImage, options: [:])
+            try? handler.perform([request])
+        } else {
+            // Use pixelBuffer directly if no weather condition requires preprocessing
+            let handler = VNImageRequestHandler(cvPixelBuffer: pixelBuffer, options: [:])
+            try? handler.perform([request])
+        }
     }
     private func handleDetections(_ results: [VNRecognizedObjectObservation]) {
         DispatchQueue.main.async {
@@ -170,7 +233,7 @@ class CameraViewModel: NSObject, ObservableObject, AVCaptureVideoDataOutputSampl
             }
         }
     }
-    
+ 
     func addDepthOutput(to session: AVCaptureSession) {
         if session.canAddOutput(depthOutput) {
             session.addOutput(depthOutput)
@@ -238,6 +301,4 @@ class CameraViewModel: NSObject, ObservableObject, AVCaptureVideoDataOutputSampl
             }
         }
     }
-
-
 }

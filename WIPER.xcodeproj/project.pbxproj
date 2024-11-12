@@ -15,6 +15,7 @@
 		A12B83922CC052510045BA44 /* FullScreenCameraView 2.swift in Sources */ = {isa = PBXBuildFile; fileRef = A12B83912CC0524A0045BA44 /* FullScreenCameraView 2.swift */; };
 		A173E8812C90BB97005BB0F9 /* StartScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = A173E8802C90BB97005BB0F9 /* StartScreen.swift */; };
 		A1A0EFB82CE2A00A001413D3 /* CGRect.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1A0EFB72CE2A006001413D3 /* CGRect.swift */; };
+		A1A7C3472CE2FA6C00A42B2E /* ImageEnhancer.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1A7C3462CE2FA6800A42B2E /* ImageEnhancer.swift */; };
 		A1BA5EA22CC973D800C9CED3 /* EquatableLocation.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1BA5EA12CC973D100C9CED3 /* EquatableLocation.swift */; };
 		A1BA5EA52CC977EA00C9CED3 /* DeviceManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1BA5EA42CC977E700C9CED3 /* DeviceManager.swift */; };
 		A1BE264B2CE1664C009A8F0D /* yolov5s.mlpackage in Sources */ = {isa = PBXBuildFile; fileRef = A1BE264A2CE1664C009A8F0D /* yolov5s.mlpackage */; };
@@ -59,7 +60,6 @@
 /* Begin PBXFileReference section */
 		062E6F6E2CE2C033005050BD /* alarm_sound.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = alarm_sound.wav; sourceTree = "<group>"; };
 		9B0948A22CD9691100952C5A /* AlarmTrigger.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AlarmTrigger.swift; sourceTree = "<group>"; };
-		9B9C69682CDEAF8B00F88AEB /* yolov5s.mlmodel */ = {isa = PBXFileReference; lastKnownFileType = file.mlmodel; path = yolov5s.mlmodel; sourceTree = "<group>"; };
 		A12727D52CA1D4AE0060164C /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		A12727D92CA330390060164C /* CameraView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CameraView.swift; sourceTree = "<group>"; };
 		A12727DB2CA3310D0060164C /* CameraPreview.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CameraPreview.swift; sourceTree = "<group>"; };
@@ -67,6 +67,7 @@
 		A12B83912CC0524A0045BA44 /* FullScreenCameraView 2.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "FullScreenCameraView 2.swift"; sourceTree = "<group>"; };
 		A173E8802C90BB97005BB0F9 /* StartScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StartScreen.swift; sourceTree = "<group>"; };
 		A1A0EFB72CE2A006001413D3 /* CGRect.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CGRect.swift; sourceTree = "<group>"; };
+		A1A7C3462CE2FA6800A42B2E /* ImageEnhancer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageEnhancer.swift; sourceTree = "<group>"; };
 		A1BA5EA12CC973D100C9CED3 /* EquatableLocation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EquatableLocation.swift; sourceTree = "<group>"; };
 		A1BA5EA42CC977E700C9CED3 /* DeviceManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeviceManager.swift; sourceTree = "<group>"; };
 		A1BE264A2CE1664C009A8F0D /* yolov5s.mlpackage */ = {isa = PBXFileReference; lastKnownFileType = folder.mlpackage; path = yolov5s.mlpackage; sourceTree = "<group>"; };
@@ -147,7 +148,6 @@
 		A1BE26582CE1B58E009A8F0D /* Recovered References */ = {
 			isa = PBXGroup;
 			children = (
-				9B9C69682CDEAF8B00F88AEB /* yolov5s.mlmodel */,
 			);
 			name = "Recovered References";
 			sourceTree = "<group>";
@@ -176,6 +176,7 @@
 		A1C891512C73D3E100308657 /* WIPER */ = {
 			isa = PBXGroup;
 			children = (
+				A1A7C3462CE2FA6800A42B2E /* ImageEnhancer.swift */,
 				9B0948A12CD968F400952C5A /* AlarmSystem */,
 				A1BE26502CE19842009A8F0D /* SpeedOverlay.swift */,
 				A1BA5EA42CC977E700C9CED3 /* DeviceManager.swift */,
@@ -375,6 +376,7 @@
 				A1BA5EA22CC973D800C9CED3 /* EquatableLocation.swift in Sources */,
 				A1F0A4622CA100C800F7FEE8 /* Carrousel.swift in Sources */,
 				A1F0A4662CA106DA00F7FEE8 /* CameraManager.swift in Sources */,
+				A1A7C3472CE2FA6C00A42B2E /* ImageEnhancer.swift in Sources */,
 				A12B83922CC052510045BA44 /* FullScreenCameraView 2.swift in Sources */,
 				A12B83902CC0511A0045BA44 /* UIViewController.swift in Sources */,
 				9B0948A32CD9691100952C5A /* AlarmTrigger.swift in Sources */,

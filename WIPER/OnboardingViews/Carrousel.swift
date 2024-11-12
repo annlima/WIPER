@@ -14,11 +14,9 @@ struct Onboarding: View {
     @State private var onboardingCompleted = false
 
     var body: some View {
-        if onboardingCompleted{
+        if onboardingCompleted {
             FavoriteRoute()
-        }
-        else
-        {
+        } else {
             ZStack {
                 LinearGradient(gradient: Gradient(colors: [Color("Color").opacity(0.7), Color("Color").opacity(0.9), Color("Color")]), startPoint: .topLeading, endPoint: .bottomTrailing)
                     .edgesIgnoringSafeArea(.all)
@@ -51,19 +49,17 @@ struct Onboarding: View {
 
 struct Onboarding_Previews: PreviewProvider {
     static var previews: some View {
-        NavigationView{
+        NavigationView {
             Onboarding()
                 .preferredColorScheme(.light)
         }
     }
 }
 
-
-
 // MARK: - LocationPermissionTab
 struct LocationPermissionTab: View {
-    @Environment(\.presentationMode) var presentationMode
     @EnvironmentObject var locationManager: LocationManager
+    @State private var showingThanksAlert = false
     
     var body: some View {
         VStack {
@@ -94,6 +90,11 @@ struct LocationPermissionTab: View {
             
             Button("Permitir ubicación") {
                 locationManager.requestLocationAuthorization()
+                
+                // Muestra el agradecimiento si el permiso fue concedido
+                if locationManager.isAuthorized { // Asegúrate de que `isAuthorized` esté en tu `LocationManager`
+                    showingThanksAlert = true
+                }
             }
             .frame(width: 320, height: 50)
             .font(.system(size: 20, weight: .bold))
@@ -101,12 +102,12 @@ struct LocationPermissionTab: View {
             .foregroundColor(Color("Color"))
             .cornerRadius(10)
             .padding(.bottom, 50)
+            .alert(isPresented: $showingThanksAlert) {
+                Alert(title: Text("Permiso concedido"), message: Text("Gracias por aceptar los permisos de localización"), dismissButton: .default(Text("OK")))
+            }
         }
     }
 }
-
-
-
 // MARK: - GoTab
 struct GoTab: View {
     @Binding var onboardingCompleted: Bool
@@ -148,7 +149,6 @@ struct NotificationsTab: View {
 
     var body: some View {
         VStack {
-            // Imagen alineada a la izquierda
             HStack {
                 Image(systemName: "bell.badge.fill")
                     .font(.system(size: 190, weight: .bold))
@@ -193,20 +193,13 @@ struct NotificationsTab: View {
     func requestNotifications() {
         UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .badge, .sound]) { granted, error in
             DispatchQueue.main.async {
-                if granted {
-                    alertTitle = "Notificaciones activadas"
-                    alertMessage = "¡Gracias por activar las notificaciones! Ahora recibirás las últimas actualizaciones directamente."
-                } else {
-                    alertTitle = "Notificaciones Desactivadas"
-                    alertMessage = "Has desactivado las notificaciones. Puedes cambiar esto en cualquier momento desde los ajustes de tu dispositivo."
-                }
+                alertTitle = granted ? "Notificaciones activadas" : "Notificaciones Desactivadas"
+                alertMessage = granted ? "¡Gracias por activar las notificaciones! Ahora recibirás las últimas actualizaciones directamente." : "Has desactivado las notificaciones. Puedes cambiar esto en cualquier momento desde los ajustes de tu dispositivo."
                 showingAlert = true
-                selectedIndex = (selectedIndex + 1) % 6
             }
         }
     }
 }
-
 
 // MARK: - CameraPermissionTab
 struct CameraPermissionTab: View {
@@ -217,7 +210,6 @@ struct CameraPermissionTab: View {
 
     var body: some View {
         VStack {
-            // Imagen alineada a la izquierda
             HStack {
                 Image(systemName: "camera.fill")
                     .font(.system(size: 180, weight: .bold))
@@ -254,11 +246,7 @@ struct CameraPermissionTab: View {
             .cornerRadius(10)
             .padding(.bottom, 50)
             .alert(isPresented: $showingAlert) {
-                Alert(title: Text("Permiso de cámara"), message: Text(alertMessage), dismissButton: .default(Text("OK"), action: {
-                    if cameraAuthorized {
-                        selectedIndex = (selectedIndex + 1) % 6
-                    }
-                }))
+                Alert(title: Text("Permiso de cámara"), message: Text(alertMessage), dismissButton: .default(Text("OK")))
             }
         }
     }
@@ -266,18 +254,10 @@ struct CameraPermissionTab: View {
     func requestCameraPermission() {
         AVCaptureDevice.requestAccess(for: .video) { granted in
             DispatchQueue.main.async {
-                if granted {
-                    cameraAuthorized = true
-                    alertMessage = "El acceso a la cámara ha sido concedido."
-                } else {
-                    alertMessage = "El acceso a la cámara ha sido denegado. Por favor, habilítalo en la configuración."
-                }
+                cameraAuthorized = granted
+                alertMessage = granted ? "El acceso a la cámara ha sido concedido." : "El acceso a la cámara ha sido denegado. Por favor, habilítalo en la configuración."
                 showingAlert = true
             }
         }
     }
 }
-
-
-
-
