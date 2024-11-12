@@ -1,4 +1,8 @@
 import UIKit
+import AVFoundation
+import SwiftUI
+import CoreLocation
+import Vision
 
 class DeviceManager {
     static let shared = DeviceManager()
@@ -10,14 +14,18 @@ class DeviceManager {
     private(set) var deviceModel: String = ""
     private(set) var systemVersion: String = ""
     private(set) var screenSize: String = ""
+    private(set) var focalLength: CGFloat = 0.0
 
     private func detectDevice() {
         let device = UIDevice.current
         systemVersion = device.systemVersion
         if let modelCode = getModelCode() {
             deviceModel = modelCode
+            focalLength = getFocalLength(for: modelCode)
+            print("Focal length for model \(modelCode): \(focalLength)")
         } else {
             deviceModel = "Desconocido"
+            focalLength = 0.0
         }
         
         let screen = UIScreen.main.bounds
@@ -26,6 +34,7 @@ class DeviceManager {
         print("Modelo del dispositivo: \(deviceModel)")
         print("Versión de iOS: \(systemVersion)")
         print("Tamaño de la pantalla: \(screenSize)")
+        print("Longitud focal: \(focalLength) mm")
     }
 
     private func getModelCode() -> String? {
@@ -37,6 +46,47 @@ class DeviceManager {
             return identifier + String(UnicodeScalar(UInt8(value)))
         }
         return mapToDevice(identifier: identifier)
+    }
+    
+    private func getFocalLength(for modelCode: String) -> CGFloat {
+        let focalLengths: [String: CGFloat] = [
+            // iPhone XR and XS series
+            "iPhone11,8": 4.25,   // iPhone XR
+            "iPhone11,2": 4.25,   // iPhone XS
+            "iPhone11,4": 4.25,   // iPhone XS Max
+            "iPhone11,6": 4.25,   // iPhone XS Max (alternative code)
+            // iPhone 11 series
+            "iPhone12,1": 4.25,   // iPhone 11
+            "iPhone12,3": 4.25,   // iPhone 11 Pro (main wide camera)
+            "iPhone12,5": 4.25,   // iPhone 11 Pro Max (main wide camera)
+            // iPhone 12 series
+            "iPhone13,1": 4.25,   // iPhone 12 mini
+            "iPhone13,2": 4.25,   // iPhone 12
+            "iPhone13,3": 4.25,   // iPhone 12 Pro (main wide camera)
+            "iPhone13,4": 4.25,   // iPhone 12 Pro Max (main wide camera)
+            // iPhone 13 series
+            "iPhone14,4": 4.25,   // iPhone 13 mini
+            "iPhone14,5": 4.25,   // iPhone 13
+            "iPhone14,2": 4.25,   // iPhone 13 Pro (main wide camera)
+            "iPhone14,3": 4.25,   // iPhone 13 Pro Max (main wide camera)
+            // iPhone 14 series
+            "iPhone14,7": 4.25,   // iPhone 14
+            "iPhone14,8": 4.25,   // iPhone 14 Plus
+            "iPhone15,2": 3.5,    // iPhone 14 Pro (main wide camera)
+            "iPhone15,3": 3.5,    // iPhone 14 Pro Max (main wide camera)
+            // iPhone 15 series (estimates based on iPhone 14 series)
+            "iPhone15,4": 4.25,   // iPhone 15
+            "iPhone15,5": 4.25,   // iPhone 15 Plus
+            "iPhone16,1": 3.5,    // iPhone 15 Pro (main wide camera)
+            "iPhone16,2": 3.5,    // iPhone 15 Pro Max (main wide camera)
+            // iPhone 16 series (estimates based on iPhone 15 series)
+            "iPhone16,3": 4.25,   // iPhone 16
+            "iPhone16,4": 4.25,   // iPhone 16 Plus
+            "iPhone16,5": 3.5,    // iPhone 16 Pro
+            "iPhone16,6": 3.5     // iPhone 16 Pro Max
+        ]
+
+        return focalLengths[modelCode] ?? 4.25
     }
 
     private func mapToDevice(identifier: String) -> String {
@@ -83,6 +133,3 @@ class DeviceManager {
         }
     }
 }
-
-// Uso
-let deviceModel = DeviceManager.shared.deviceModel

@@ -43,42 +43,38 @@ struct AlarmSystem {
     func shouldTriggerAlarm() -> Bool {
         guard objectDetected else { return false }
         
-        // Determina la condición de la carretera en base a la visibilidad
+        // Ignore alarm if speed is below 15 km/h
+        if currentSpeed < 15 {
+            print("Speed below threshold for alarm triggering.")
+            return false
+        }
+        
+        // Determine road condition based on visibility
         let condition = (visibility < visibilityThreshold) ? "wet" : "dry"
         
-        // Busca la clave de velocidad más cercana
+        // Find the closest speed category, rounding to the nearest multiple of 10
         let roundedSpeed = Int((currentSpeed / 10).rounded() * 10)
         guard let closestSpeed = getClosestSpeedKey(forSpeed: roundedSpeed),
               let stoppingDistance = getStoppingDistance(forSpeed: closestSpeed, condition: condition) else {
             return false
         }
         
-        // Mensajes de depuración
-        print("Velocidad: \(currentSpeed), Rango de frenado para \(closestSpeed) km/h en \(condition): \(stoppingDistance) metros")
-        print("Distancia al objeto: \(objectDistance) metros")
+        // Debug messages
+        print("Speed: \(currentSpeed) km/h, Stopping distance for \(closestSpeed) km/h in \(condition) condition: \(stoppingDistance) meters")
+        print("Object distance: \(objectDistance) meters")
         
-        // Activa la alarma si la distancia es menor o igual a la de frenado
+        // Trigger alarm if distance is less than or equal to stopping distance
         return objectDistance <= stoppingDistance
     }
+
 }
 
 var audioPlayer: AVAudioPlayer?
 
-func emitAlarmSound() {
-    guard let soundURL = Bundle.main.url(forResource: "alarm_sound", withExtension: "mp3") else { return }
-    
-    do {
-        audioPlayer = try AVAudioPlayer(contentsOf: soundURL)
-        audioPlayer?.play()
-    } catch {
-        print("Error: Could not play alarm sound.")
-    }
-}
-
 // Function to Check and Trigger Alarm
 func checkAndTriggerAlarm(objectDetected: Bool, objectDistance: Double, locationManager: LocationManager, visibility: Double) {
     // Simulación de velocidad si está en modo de prueba
-    let simulatedSpeed = locationManager.simulateSpeed ?? locationManager.speed
+    let simulatedSpeed = locationManager.speed
     
     let alarmSystem = AlarmSystem(
         objectDetected: objectDetected,
@@ -89,11 +85,47 @@ func checkAndTriggerAlarm(objectDetected: Bool, objectDistance: Double, location
     
     if alarmSystem.shouldTriggerAlarm() {
         print("Alarma activada: Objeto a \(objectDistance) metros con velocidad \(simulatedSpeed) km/h")
-        emitAlarmSound() // Emite el sonido de alarma
+        configureAudioSessionForPlayback()
+        AlarmManager.shared.emitAlarmSound() // Emite el sonido de alarma
     } else {
         print("Alarma no activada: Distancia \(objectDistance) metros, velocidad \(simulatedSpeed) km/h, no dentro de rango")
     }
 }
+
+import AVFoundation
+
+func configureAudioSessionForPlayback() {
+    let audioSession = AVAudioSession.sharedInstance()
+    
+    do {
+        try audioSession.setCategory(.playback, mode: .default, options: [.mixWithOthers])
+        try audioSession.setActive(true)
+        print("Audio session configured for playback.")
+    } catch {
+        print("Failed to set audio session category and activate it: \(error)")
+    }
+}
+
+
+class AlarmManager {
+    static let shared = AlarmManager()
+    var audioPlayer: AVAudioPlayer?
+    
+    func emitAlarmSound() {
+        guard let soundURL = Bundle.main.url(forResource: "alarm_sound", withExtension: "mp3") else {
+            print("Sound file not found in bundle.")
+            return
+        }
+        
+        do {
+            audioPlayer = try AVAudioPlayer(contentsOf: soundURL)
+            audioPlayer?.play()
+        } catch {
+            print("Error: Could not play alarm sound: \(error)")
+        }
+    }
+}
+
 
 
 
