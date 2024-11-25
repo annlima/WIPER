@@ -120,3 +120,17 @@ We welcome contributions! To contribute:
 - **Apple Developer Tools**: For seamless integration with SwiftUI and CoreML.
 - **WeatherKit**: For enabling weather-aware preprocessing.
 - **Community Contributors**: Thank you for supporting WIPER's development!
+
+---
+## Team:
+
+- Andrea Lima Blanca 
+- Dicka Jamesina Lezama Alvarado
+- Emiliano Mixali Tofas Rodríguez
+- Efraín Gómez Arcive
+
+## Mentor:
+- Zobeida Jezabel Guzmán Zavaleta 
+
+
+
