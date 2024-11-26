@@ -35,7 +35,6 @@ struct FavoriteRoute: View {
     var body: some View {
         NavigationView {
             ZStack(alignment: .top) {
-                // Mapa personalizado
                 CustomMapView(
                     mapRegion: $mapRegion,
                     annotations: annotations,
@@ -55,7 +54,7 @@ struct FavoriteRoute: View {
                 )
                 .edgesIgnoringSafeArea(.all)
                 .onAppear {
-                    resetMap() // Llama a la función para limpiar el mapa al aparecer
+                    resetMap()
                 }
                 .onChange(of: locationManager.currentLocation) { newLocation in
                     if let newLocation = newLocation, isFollowingUserLocation {
@@ -67,7 +66,6 @@ struct FavoriteRoute: View {
                 }
 
                 VStack(spacing: 0) {
-                    // Barra de búsqueda y botones
                     HStack {
                         TextField("Buscar destino...", text: $searchQuery, onCommit: {
                             searchLocation()
@@ -88,7 +86,6 @@ struct FavoriteRoute: View {
                     }
                     .padding(.top, 10)
 
-                    // Vista de favoritos debajo de la barra de búsqueda
                     if showFavorites {
                         VStack(spacing: 0) {
                             ScrollView {
@@ -101,14 +98,14 @@ struct FavoriteRoute: View {
                                             },
                                             onSelect: {
                                                 self.selectLocation(location)
-                                                self.showFavorites = false // Cierra favoritos después de seleccionar
+                                                self.showFavorites = false
                                             }
                                         )
                                         Divider()
                                     }
                                 }
                             }
-                            .frame(maxHeight: itemHeight * 2.8 + 12) // Mostrar hasta 3 elementos
+                            .frame(maxHeight: itemHeight * 2.8 + 12)
                             .background(Color.white)
                             .cornerRadius(10)
                             .padding(.horizontal)
@@ -119,7 +116,6 @@ struct FavoriteRoute: View {
 
                     Spacer()
 
-                    // Botón de navegación a la vista de la cámara
                     if selectedLocation != nil {
                         NavigationLink(destination: CameraView(), isActive: $navigateToCamera) {
                             Button(action: {
@@ -151,8 +147,7 @@ struct FavoriteRoute: View {
                         .padding(.bottom, 10)
                     }
                 }
-
-                // Botón para recentralizar en la ubicación del usuario
+                
                 VStack {
                     Spacer()
                     HStack {
@@ -189,7 +184,7 @@ struct FavoriteRoute: View {
         .navigationBarHidden(true)
     }
 
-    let itemHeight: CGFloat = 60 // Altura estándar de un elemento de lista
+    let itemHeight: CGFloat = 60
 
     var annotations: [MKAnnotation] {
         var allAnnotations: [MKAnnotation] = locations.map { location in

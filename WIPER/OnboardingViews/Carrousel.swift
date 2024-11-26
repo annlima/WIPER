@@ -56,7 +56,7 @@ struct Onboarding_Previews: PreviewProvider {
     }
 }
 
-// MARK: - LocationPermissionTab
+
 struct LocationPermissionTab: View {
     @EnvironmentObject var locationManager: LocationManager
     @State private var showingThanksAlert = false
@@ -91,8 +91,7 @@ struct LocationPermissionTab: View {
             Button("Permitir ubicación") {
                 locationManager.requestLocationAuthorization()
                 
-                // Muestra el agradecimiento si el permiso fue concedido
-                if locationManager.isAuthorized { // Asegúrate de que `isAuthorized` esté en tu `LocationManager`
+                if locationManager.isAuthorized {
                     showingThanksAlert = true
                 }
             }
@@ -108,7 +107,7 @@ struct LocationPermissionTab: View {
         }
     }
 }
-// MARK: - GoTab
+
 struct GoTab: View {
     @Binding var onboardingCompleted: Bool
     var body: some View {
@@ -140,7 +139,7 @@ struct GoTab: View {
     }
 }
 
-// MARK: - Notifications
+
 struct NotificationsTab: View {
     @Binding var selectedIndex: Int
     @State private var showingAlert = false
@@ -201,7 +200,7 @@ struct NotificationsTab: View {
     }
 }
 
-// MARK: - CameraPermissionTab
+
 struct CameraPermissionTab: View {
     @Binding var selectedIndex: Int
     @State private var cameraAuthorized = false

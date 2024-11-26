@@ -11,7 +11,7 @@ class CameraViewModel: NSObject, ObservableObject, AVCaptureVideoDataOutputSampl
     @Published var recordedURLs: [URL] = []
     @Published var previewUrl: URL?
     @Published var showSaveDialog: Bool = false
-    @Published var detections: [CGRect] = [] // Almacena las bounding boxes de los objetos detectados
+    @Published var detections: [CGRect] = []
     @Published var detectedDistances: [Double] = []
     private var model: VNCoreMLModel
     private var imageEnhancer = ImageEnhancer()
@@ -19,70 +19,92 @@ class CameraViewModel: NSObject, ObservableObject, AVCaptureVideoDataOutputSampl
     @ObservedObject var locationManager = LocationManager()
     private let weatherService = WeatherService.shared
     private var cancellables = Set<AnyCancellable>()
-        @Published var isTestMode: Bool = true
-        private var depthOutput = AVCaptureDepthDataOutput()
-        var visibility: Double = 100.0 // Puedes obtener el valor real utilizando WeatherKit
+    @Published var isTestMode: Bool = true
+    private var depthOutput = AVCaptureDepthDataOutput()
+    var visibility: Double = 100.0
         
+    private var frameCount: Int = 0
+    private(set) var frameProcessingInterval: Int = 3
     
+    private var lastDetectionTime: Date = Date()
+    private var minTimeBetweenDetections: TimeInterval = 0.1
+        
     private let realObjectHeights: [String: CGFloat] = [
-           "person": 1.7, // average human height in meters
-           "bus": 3.0,    // approximate height of a bus
-           "car": 1.5,    // average car height
-           "dog": 0.5,    // average dog height
-           "bicycle": 1.0, // average bicycle height
-           "truck": 3.0
+        "auto rickshaw": 1.5,
+        "bicycle": 1.0,
+        "bus": 3.2,
+        "car": 1.5,
+        "motorbike": 1.2,
+        "pedestrian": 1.7,
+        "person": 1.7,
+        "truck": 3.5
     ]
     
     func calculateDistance(for detection: CGRect, objectLabel: String) -> Double? {
-        // Retrieve the focal length in millimeters from device data
+        
         let focalLengthInMM = DeviceManager.shared.focalLength
         if focalLengthInMM == 0.0 {
             print("Warning: Focal length is zero. Skipping distance calculation for \(objectLabel).")
             return nil
         }
         
-        // Real-world object heights (in meters)
         guard let realObjectHeight = realObjectHeights[objectLabel] else {
             print("Real object height for \(objectLabel) not found.")
             return nil
         }
         
-        // Detected object height in pixels
         let imageObjectHeightPixels = detection.height
         guard imageObjectHeightPixels > 0 else {
             print("Image object height is zero.")
             return nil
         }
         
-        // Ensure focal length is in pixels
-        let sensorHeightInMM = 7.0     // Approximate sensor height (adjust as per actual model)
-        let sensorHeightInPixels = 3024.0  // Updated value for typical iPhone sensor resolution
+        let sensorHeightInMM = 7.0
+        let sensorHeightInPixels = 3024.0
         
-        // Convert focal length to pixels using sensor data
         let focalLengthInPixels = (focalLengthInMM / sensorHeightInMM) * sensorHeightInPixels
         
-        // Calculate the distance in meters
         let distance = (realObjectHeight * focalLengthInPixels) / Double(imageObjectHeightPixels)
         
-        // Adjust distance calculation for better accuracy
         let adjustedDistance = distance / 10.0
         
         print("Calculated distance for \(objectLabel): \(adjustedDistance) meters.")
         return adjustedDistance
     }
 
-
+    func setFrameProcessingInterval(_ interval: Int) {
+        self.frameProcessingInterval = max(1, interval)
+        print("Configurando intervalo de procesamiento: cada \(frameProcessingInterval) fotogramas")
+    }
 
     override init() {
-        guard let model = try? VNCoreMLModel(for: yolov5s().model) else {
+        guard let model = try? VNCoreMLModel(for: best_yolov5stl().model) else {
             fatalError("No se pudo cargar el modelo ML")
         }
         self.model = model
         super.init()
         observeLocationUpdates()
+        adjustProcessingForDevice()
     }
     
-    // Observe lastCLLocation updates to fetch weather
+    private func adjustProcessingForDevice() {
+            let deviceModel = DeviceManager.shared.deviceModel
+            
+            if deviceModel.contains("iPhone XR") || deviceModel.contains("iPhone 11") || deviceModel.contains("iPhone SE") {
+                setFrameProcessingInterval(6)
+                minTimeBetweenDetections = 0.2
+            } else if deviceModel.contains("iPhone 12") || deviceModel.contains("iPhone 13") {
+                setFrameProcessingInterval(4)
+                minTimeBetweenDetections = 0.15
+            } else if deviceModel.contains("iPhone 14") || deviceModel.contains("iPhone 15") {
+                setFrameProcessingInterval(2)
+                minTimeBetweenDetections = 0.1
+            } else {
+                setFrameProcessingInterval(5)
+                minTimeBetweenDetections = 0.15
+            }
+        }
+    
     private func observeLocationUpdates() {
         locationManager.$lastLocation
             .compactMap { $0 }
@@ -92,13 +114,12 @@ class CameraViewModel: NSObject, ObservableObject, AVCaptureVideoDataOutputSampl
             .store(in: &cancellables)
     }
     
-    // Fetch weather condition using WeatherKit
     private func fetchCurrentWeather(for location: CLLocation) {
         Task {
             do {
                 let weather = try await weatherService.weather(for: location)
                 DispatchQueue.main.async {
-                    // Directly assign the weather condition description
+                    
                     self.currentWeatherCond = weather.currentWeather.condition.description
                     print("Current Condition: \(self.currentWeatherCond ?? "Unknown")")
                 }
@@ -112,7 +133,7 @@ class CameraViewModel: NSObject, ObservableObject, AVCaptureVideoDataOutputSampl
     func fileOutput(_ output: AVCaptureFileOutput, didFinishRecordingTo outputFileURL: URL, from connections: [AVCaptureConnection], error: Error?) {
         if let error = error {
             print("Error al finalizar la grabación: \(error.localizedDescription)")
-            self.isRecording = false // Actualiza el estado correctamente
+            self.isRecording = false
             return
         }
         
@@ -120,7 +141,7 @@ class CameraViewModel: NSObject, ObservableObject, AVCaptureVideoDataOutputSampl
         self.recordedURLs.append(outputFileURL)
         self.previewUrl = outputFileURL
         self.showSaveDialog = true
-        self.isRecording = false // Actualiza el estado correctamente
+        self.isRecording = false
     }
     
     func saveVideoToGallery(url: URL) {
@@ -148,23 +169,47 @@ class CameraViewModel: NSObject, ObservableObject, AVCaptureVideoDataOutputSampl
         }
     }
     
+
     func captureOutput(_ output: AVCaptureOutput, didOutput sampleBuffer: CMSampleBuffer, from connection: AVCaptureConnection) {
         guard isRecording, let pixelBuffer = CMSampleBufferGetImageBuffer(sampleBuffer) else {
             return
         }
         
-        let request = VNCoreMLRequest(model: model) { (request, error) in
-            if let results = request.results as? [VNRecognizedObjectObservation] {
-                self.handleDetections(results)
-            }
+        frameCount += 1
+        if frameCount % frameProcessingInterval != 0 {
+            return
         }
         
+        let currentTime = Date()
+        if currentTime.timeIntervalSince(lastDetectionTime) < minTimeBetweenDetections {
+            return
+        }
+        lastDetectionTime = currentTime
+        
+        let deviceModel = DeviceManager.shared.deviceModel
+        let confidenceThreshold: Float = (deviceModel.contains("iPhone XR") || deviceModel.contains("iPhone 11")) ? 0.5 : 0.3
+        
+        let request = VNCoreMLRequest(model: model) { [weak self] (request, error) in
+            guard let self = self else { return }
+            
+            if let results = request.results as? [VNRecognizedObjectObservation] {
+                
+                let filteredResults = results.filter { observation in
+                    
+                    guard let firstLabel = observation.labels.first else { return false }
+                    return firstLabel.confidence >= confidenceThreshold
+                }
+                
+                self.handleDetections(filteredResults)
+            }
+        }
+
+        request.imageCropAndScaleOption = .scaleFill
+
         if let condition = currentWeatherCond, !condition.isEmpty {
-            // Convert pixel buffer to UIImage
             let ciImage = CIImage(cvPixelBuffer: pixelBuffer)
             let uiImage = UIImage(ciImage: ciImage)
-
-            // Apply preprocessing based on weather condition
+            
             let preprocessedImage: UIImage?
             switch condition.lowercased() {
             case "sunny":
@@ -176,7 +221,7 @@ class CameraViewModel: NSObject, ObservableObject, AVCaptureVideoDataOutputSampl
             case "night":
                 preprocessedImage = imageEnhancer.applyNightEnhancement(to: uiImage)
             default:
-                preprocessedImage = uiImage  // No filter if condition is unknown
+                preprocessedImage = uiImage
             }
             
             guard let finalImage = preprocessedImage, let cgImage = finalImage.cgImage else {
@@ -184,15 +229,17 @@ class CameraViewModel: NSObject, ObservableObject, AVCaptureVideoDataOutputSampl
                 return
             }
             
-            // Create handler with preprocessed image
             let handler = VNImageRequestHandler(cgImage: cgImage, options: [:])
             try? handler.perform([request])
         } else {
-            // Use pixelBuffer directly if no weather condition requires preprocessing
+            
             let handler = VNImageRequestHandler(cvPixelBuffer: pixelBuffer, options: [:])
             try? handler.perform([request])
         }
     }
+
+    
+
     private func handleDetections(_ results: [VNRecognizedObjectObservation]) {
         DispatchQueue.main.async {
             self.detections = results.compactMap { observation in
@@ -201,7 +248,6 @@ class CameraViewModel: NSObject, ObservableObject, AVCaptureVideoDataOutputSampl
                     return nil
                 }
                 
-                // Convert bounding box to CGRect
                 let boundingBox = observation.boundingBox
                 let viewWidth = UIScreen.main.bounds.width
                 let viewHeight = UIScreen.main.bounds.height
@@ -213,26 +259,22 @@ class CameraViewModel: NSObject, ObservableObject, AVCaptureVideoDataOutputSampl
 
                 let detectionRect = CGRect(x: x, y: y, width: width, height: height)
                                 
-                // Calculate distance
+                
                 if let distance = self.calculateDistance(for: detectionRect, objectLabel: label) {
                     self.detectedDistances.append(distance)
-                    //print("Detected \(label) at distance: \(distance) meters")
                     
-                    // Trigger alarm if needed
                     checkAndTriggerAlarm(
                         objectDetected: true,
-                                        objectDistance: distance,
-                                        locationManager: self.locationManager,
-                                        visibility: self.visibility
-                                    )
+                        objectDistance: distance,
+                        locationManager: self.locationManager,
+                        visibility: self.visibility
+                    )
                     
                 } else {
                     print("Failed to calculate distance for \(label)")
                 }
 
-                    return detectionRect
-                                
-              
+                return detectionRect
             }
         }
     }
@@ -249,16 +291,6 @@ class CameraViewModel: NSObject, ObservableObject, AVCaptureVideoDataOutputSampl
     }
 
 
-    func simulateDetections() {
-        // Simula una detección en el centro de la pantalla
-        let simulatedDetection = CGRect(x: UIScreen.main.bounds.width / 2 - 50, y: UIScreen.main.bounds.height / 2 - 50, width: 100, height: 100)
-        self.detections = [simulatedDetection]
-        
-        // Simula una distancia al objeto
-        self.detectedDistances = [30.0] // Por ejemplo, 30 metros
-    }
-
-    
     func captureOutput(_ output: AVCaptureOutput, didOutput depthData: AVDepthData, from connection: AVCaptureConnection) {
         print("Depth data output received")
         let depthPixelBuffer = depthData.depthDataMap
@@ -292,7 +324,6 @@ class CameraViewModel: NSObject, ObservableObject, AVCaptureVideoDataOutputSampl
                 return depth
             }
             
-            // Check alarm logic for each detected distance
             for (index, distance) in self.detectedDistances.enumerated() where !distance.isNaN {
                 checkAndTriggerAlarm(
                     objectDetected: true,

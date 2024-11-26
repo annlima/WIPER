@@ -1,7 +1,6 @@
 import SwiftUI
 import AVFoundation
 
-// CameraView.swift
 struct CameraView: View {
     @StateObject var cameraViewModel = CameraViewModel()
     @StateObject var cameraManager = CameraManager()
