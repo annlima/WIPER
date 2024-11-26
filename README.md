@@ -2,7 +2,7 @@
 
 <img width="468" alt="Captura de pantalla 2024-11-25 a la(s) 2 44 35 p m" src="https://github.com/user-attachments/assets/df31550d-37db-49cc-abbb-928296bd9ee8">
 
-**WIPER** is an iOS application that enhances driving safety by detecting road hazards in real-time. Leveraging advanced computer vision and machine learning models, WIPER identifies objects such as vehicles, pedestrians, road damages, and more to provide timely alerts for drivers.
+**WIPER** is an iOS application that enhances driving safety by detecting road hazards in real-time. Leveraging advanced computer vision and machine learning models, WIPER identifies objects such as vehicles, pedestrians, and more to provide timely alerts for drivers.
 
 ---
 
