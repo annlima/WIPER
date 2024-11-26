@@ -122,6 +122,7 @@ We welcome contributions! To contribute:
 - **Community Contributors**: Thank you for supporting WIPER's development!
 
 ---
+
 ## Team:
 
 - Andrea Lima Blanca 
@@ -130,7 +131,65 @@ We welcome contributions! To contribute:
 - Efraín Gómez Arcive
 
 ## Mentor:
-- Zobeida Jezabel Guzmán Zavaleta 
+- Zobeida Jezabel Guzmán Zavaleta
+
+---
+## What is an MVP?
+An MVP is a product with the minimum features necessary to deliver value to early users and gather feedback for future development. For WIPER, this means providing core functionalities that enhance driving safety while being simple, functional, and impactful.
+
+## M: Minimum
+Core Features
+Real-Time Object Detection:
+
+Identifies critical road hazards such as:
+- Person
+- Bus
+- Car
+- Bicycle
+- Displays bounding boxes and labels on the live camera feed.
+- Video Recording with Annotations:
+
+Captures driving sessions with hazard annotations embedded directly in the video.
+
+Privacy-Focused:
+
+No internet dependency; all processing happens on the device, ensuring privacy.
+
+## V: Viable
+Reliable Functionality
+Weather-Based Adaptation:
+
+Automatically adjusts detection performance using:
+- CLAHE for sunny conditions.
+- Dehazing models for foggy weather.
+- Night enhancement for low-light driving.
+- Real-Time Alerts:
+
+Triggers alarms when hazards are detected at unsafe distances.
+
+Map Integration:
+
+Visualizes driving routes and hazards for better navigation.
+Offline Operation:
+
+Designed to work seamlessly without internet connectivity, ensuring uninterrupted safety.
+
+## P: Product
+User Experience
+Easy to Install and Use:
+
+Compatible with iPhone XR and newer devices.
+Simple interface for drivers to start a session, detect hazards, and review recorded videos.
+Tech Stack:
+
+Programming Languages: Swift (iOS), Python (model training).
+Frameworks:
+iOS: SwiftUI, AVFoundation, CoreML, WeatherKit, CoreLocation, MapKit.
+Machine Learning: PyTorch, YOLOv5.
+Tools:
+Google Colab for training models.
+CoreML for on-device processing.
+
 
 
 
