@@ -35,10 +35,8 @@ struct CustomMapView: UIViewRepresentable {
             mapView.userTrackingMode = .none
         }
 
-        // Actualizar anotaciones solo si han cambiado
         updateAnnotations(mapView)
 
-        // Actualizar overlays solo si han cambiado
         updateOverlays(mapView)
     }
 
@@ -75,14 +73,12 @@ struct CustomMapView: UIViewRepresentable {
         let existingOverlays = mapView.overlays
         let newOverlays = overlays
 
-        // Overlays a remover
         let overlaysToRemove = existingOverlays.filter { existing in
             !newOverlays.contains { newOverlay in
                 existing === newOverlay
             }
         }
 
-        // Overlays a agregar
         let overlaysToAdd = newOverlays.filter { newOverlay in
             !existingOverlays.contains { existing in
                 existing === newOverlay
@@ -112,7 +108,6 @@ struct CustomMapView: UIViewRepresentable {
         }
 
         func mapView(_ mapView: MKMapView, regionDidChangeAnimated animated: Bool) {
-            // Si el usuario mueve el mapa, detenemos el recentrado automático
             if mapView.isUserInteractionEnabled {
                 isFollowingUserLocation = false
             }

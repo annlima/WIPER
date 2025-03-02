@@ -18,7 +18,6 @@ struct SwipeToDeleteRow: View {
 
     var body: some View {
         ZStack {
-            // Botón de eliminar en el fondo
             HStack {
                 Spacer()
                 Button(action: {
@@ -35,7 +34,6 @@ struct SwipeToDeleteRow: View {
                 .padding(.trailing, 16)
             }
 
-            // Contenido principal con gesto de toque y deslizar
             Text(location.name)
                 .frame(maxWidth: .infinity, alignment: .leading)
                 .padding()
@@ -51,10 +49,8 @@ struct SwipeToDeleteRow: View {
                         }
                         .onEnded { value in
                             if -offset > 80 {
-                                // Mostrar botón de eliminar
                                 offset = -100
                             } else {
-                                // Volver a la posición original
                                 offset = 0
                             }
                         }

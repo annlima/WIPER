@@ -19,7 +19,6 @@ struct CameraPreview: UIViewControllerRepresentable {
 
     func updateUIViewController(_ uiViewController: UIViewController, context: Context) {
         if let controller = uiViewController as? LandscapeCameraViewController {
-            // Asegúrate de que la capa de vista previa ocupe todo el tamaño de la vista
             DispatchQueue.main.async {
                 controller.previewLayer?.frame = uiViewController.view.bounds
             }
@@ -32,13 +31,13 @@ struct CameraPreview: UIViewControllerRepresentable {
         previewLayer.videoGravity = .resizeAspectFill
         previewLayer.frame = view.bounds
         view.layer.addSublayer(previewLayer)
-        context.coordinator.previewLayer = previewLayer // Save the reference
+        context.coordinator.previewLayer = previewLayer
         return view
     }
 
     func updateUIView(_ uiView: UIView, context: Context) {
         DispatchQueue.main.async {
-            context.coordinator.previewLayer.frame = uiView.bounds // Ensure the layer is resized
+            context.coordinator.previewLayer.frame = uiView.bounds
         }
     }
 

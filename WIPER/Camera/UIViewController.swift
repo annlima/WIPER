@@ -41,7 +41,6 @@ class LandscapeCameraViewController: UIViewController {
 
         let deviceOrientation = UIDevice.current.orientation
 
-        // Ajusta la orientación del video en función de la orientación del dispositivo
         switch deviceOrientation {
         case .landscapeLeft:
             connection.videoOrientation = .landscapeRight

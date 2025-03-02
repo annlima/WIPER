@@ -25,11 +25,10 @@ struct StartDrivingScreen: View {
                 VStack() {
                     Spacer()
                         .frame(height: 190)
-                    // Logo
                     HeaderStartDriving()
                     
                     Text("Bienvenido a")
-                        .font(.system(size: 40)) // Ajusta el tamaño de la fuente aquí
+                        .font(.system(size: 40))
                         .fontWeight(.bold)
                         .foregroundColor(Color("Color"))
                         .padding(.top, 30)
@@ -44,8 +43,6 @@ struct StartDrivingScreen: View {
                         .foregroundColor(.gray)
                         .multilineTextAlignment(.center)
                         .padding(.horizontal, 30)
-                    
-                    // Start button
                     NavigationLink(destination: Onboarding()
                         .environmentObject(locationManager)) {
                         ZStack {
@@ -56,7 +53,7 @@ struct StartDrivingScreen: View {
                             )
                             .cornerRadius(20)
                             .shadow(color: .gray.opacity(0.5), radius: 10, x: 0, y: 5)
-                            .opacity(checked ? 1 : 0.5) // Ajusta la opacidad según el estado de checked
+                            .opacity(checked ? 1 : 0.5)
                             
                             Text("¡Empezar a conducir!")
                                 .foregroundColor(.white)
@@ -66,7 +63,7 @@ struct StartDrivingScreen: View {
                         }
                         .frame(height: 60)
                     }
-                    .disabled(!checked) // Deshabilita el botón si no está marcado el checkbox
+                    .disabled(!checked)
                     .padding(.top, 30)
                     .padding(.bottom, 15)
 
@@ -111,14 +108,12 @@ struct TopWaveShape: Shape {
         let height = rect.height
         
         path.move(to: CGPoint(x: -1*width, y: 2))
-        // Draw wave using cubic curve
         path.addCurve(
             to: CGPoint(x: width*1.5, y: height * 0.2),
             control1: CGPoint(x: width, y: height * 0.5),
             control2: CGPoint(x: width, y: 0)
         )
         
-        // Fill the rest of the shape down and to the bottom
         path.addLine(to: CGPoint(x: width, y: 0))
 
         path.closeSubpath()
