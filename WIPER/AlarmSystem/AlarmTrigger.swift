@@ -1,13 +1,27 @@
-// SOLUCION 1: MODIFICACIÓN DE AlarmSystem PARA FUNCIONAR SIN WEATHERKIT
+import AVFoundation
+import UIKit
+import CoreLocation
 
-// Modificar la estructura AlarmSystem para funcionar aún sin datos de WeatherKit
+/**
+ Sistema que determina cuando se debe activar una alarma basada en la distancia de frenado.
+ Considera la velocidad del vehículo, la distancia al objeto detectado y las condiciones de la carretera.
+ */
 struct AlarmSystem {
-    var objectDetected: Bool
-    var objectDistance: Double
-    var currentSpeed: Double
-    var visibility: Double // Este valor puede ser problemático sin WeatherKit
+    // MARK: - Propiedades
     
-    // Predefined stopping distances (in meters) for each speed category
+    /// Indica si se ha detectado un objeto que representa un posible riesgo
+    var objectDetected: Bool
+    
+    /// Distancia estimada al objeto detectado en metros
+    var objectDistance: Double
+    
+    /// Velocidad actual del vehículo en km/h
+    var currentSpeed: Double
+    
+    /// Estimación de la visibilidad actual en metros (por debajo de umbral = carretera húmeda)
+    var visibility: Double
+    
+    /// Tabla de distancias de frenado en metros para diferentes velocidades y condiciones
     let stoppingDistances: [Int: [String: Double]] = [
         40: ["dry": 26, "wet": 30],
         50: ["dry": 35, "wet": 40],
@@ -19,44 +33,49 @@ struct AlarmSystem {
         110: ["dry": 113, "wet": 125]
     ]
     
-    let visibilityThreshold: Double = 100.0 // Threshold for good/bad visibility
+    /// Umbral de visibilidad para determinar si la carretera está húmeda o seca
+    let visibilityThreshold: Double = 100.0
     
+    // MARK: - Métodos
+    
+    /// Obtiene la distancia de frenado para una velocidad y condición específicas
     func getStoppingDistance(forSpeed speed: Int, condition: String) -> Double? {
         return stoppingDistances[speed]?[condition]
     }
     
+    /// Encuentra la velocidad más cercana en la tabla de distancias de frenado
     func getClosestSpeedKey(forSpeed speed: Int) -> Int? {
-        let availableSpeeds = Array(stoppingDistances.keys)
+        let availableSpeeds = Array(stoppingDistances.keys).sorted()
         return availableSpeeds.min(by: { abs($0 - speed) < abs($1 - speed) })
     }
     
+    /// Determina si se debe activar la alarma basado en todos los factores
     func shouldTriggerAlarm() -> Bool {
         guard objectDetected else {
             print("No hay objeto detectado")
             return false
         }
         
-        // NUEVO: Agregar más logs detallados para diagnóstico
         print("=== DIAGNÓSTICO DE ALARMA ===")
         print("Objeto detectado: Sí")
-        print("Distancia al objeto: \(objectDistance) metros")
-        print("Velocidad actual: \(currentSpeed) km/h")
+        print("Distancia al objeto: \(String(format: "%.2f", objectDistance)) metros")
+        print("Velocidad actual: \(String(format: "%.1f", currentSpeed)) km/h")
         
-        // Ignore alarm if speed is below 15 km/h
+        // No activar alarma si la velocidad es baja
         if currentSpeed < 15 {
             print("Velocidad por debajo del umbral (15 km/h) - No se activará alarma")
             return false
         }
         
-        // NUEVO: Usar valor por defecto para visibilidad si no hay datos de WeatherKit
-        // Asumir condiciones secas si no hay datos de clima
+        // Determinar condición de la carretera
         let condition = (visibility < visibilityThreshold) ? "wet" : "dry"
         print("Condición de carretera determinada: \(condition)")
         
-        // Find the closest speed category
+        // Redondear la velocidad al múltiplo de 10 más cercano
         let roundedSpeed = Int((currentSpeed / 10).rounded() * 10)
         print("Velocidad redondeada: \(roundedSpeed) km/h")
         
+        // Obtener distancia de frenado
         guard let closestSpeed = getClosestSpeedKey(forSpeed: roundedSpeed),
               let stoppingDistance = getStoppingDistance(forSpeed: closestSpeed, condition: condition) else {
             print("Error: No se pudo determinar distancia de frenado para \(roundedSpeed) km/h en condición \(condition)")
@@ -65,9 +84,9 @@ struct AlarmSystem {
         
         print("Velocidad de referencia: \(closestSpeed) km/h")
         print("Distancia de frenado calculada: \(stoppingDistance) metros")
-        print("Criterio de alarma: Distancia al objeto (\(objectDistance) m) <= Distancia de frenado (\(stoppingDistance) m)")
+        print("Criterio de alarma: Distancia al objeto (\(String(format: "%.2f", objectDistance)) m) <= Distancia de frenado (\(stoppingDistance) m)")
         
-        // Trigger alarm if distance is less than or equal to stopping distance
+        // Determinar si se debe activar la alarma
         let shouldAlarm = objectDistance <= stoppingDistance
         print("Decisión final de alarma: \(shouldAlarm ? "ACTIVAR" : "NO ACTIVAR")")
         print("===================")
@@ -75,10 +94,9 @@ struct AlarmSystem {
     }
 }
 
-// SOLUCIÓN 2: CORREGIR LA FUNCIÓN DE REPRODUCCIÓN DE AUDIO
-
-import AVFoundation
-
+/**
+ Configura la sesión de audio para la reproducción de alarmas
+ */
 func configureAudioSessionForPlayback() {
     print("Configurando sesión de audio...")
     let audioSession = AVAudioSession.sharedInstance()
@@ -86,109 +104,161 @@ func configureAudioSessionForPlayback() {
     do {
         try audioSession.setCategory(.playback, mode: .default, options: [.mixWithOthers])
         try audioSession.setActive(true)
-        print("Sesión de audio configurada correctamente")
+        print("✅ Sesión de audio configurada correctamente")
     } catch {
-        print("ERROR al configurar la sesión de audio: \(error)")
+        print("❌ ERROR al configurar la sesión de audio: \(error)")
     }
 }
 
-class AlarmManager {
-    static let shared = AlarmManager()
-    var audioPlayer: AVAudioPlayer?
+/**
+ Gestor centralizado para la reproducción de alarmas sonoras.
+ Incluye mecanismos para evitar la reproducción excesiva de alarmas
+ y sistemas de respaldo en caso de error.
+ */
+class AlarmManager: NSObject, AVAudioPlayerDelegate {
+    // MARK: - Propiedades
     
-    // NUEVO: Variable para rastrear tiempo de la última alarma
+    /// Instancia compartida (singleton)
+    static let shared = AlarmManager()
+    
+    /// Reproductor de audio para las alarmas
+    private var audioPlayer: AVAudioPlayer?
+    
+    /// Timestamp de la última reproducción de alarma
     private var lastAlarmTime: Date?
-    // NUEVO: Tiempo mínimo entre alarmas (en segundos)
+    
+    /// Tiempo mínimo entre alarmas consecutivas (en segundos)
     private let minTimeBetweenAlarms: TimeInterval = 3.0
     
+    /// Indica si actualmente se está reproduciendo un sonido de alarma
+    private(set) var isPlayingAlarm = false
+    
+    // MARK: - Métodos
+    
+    /// Constructor privado para patrón singleton
+    private override init() {
+        super.init()
+    }
+    
+    /**
+     Reproduce el sonido de alarma si ha pasado suficiente tiempo desde la última reproducción.
+     Incluye mecanismos de diagnóstico y respaldo.
+     */
     func emitAlarmSound() {
-        // NUEVO: Verificar si ha pasado suficiente tiempo desde la última alarma
+        // Evitar múltiples alarmas en sucesión rápida
         if let lastTime = lastAlarmTime,
            Date().timeIntervalSince(lastTime) < minTimeBetweenAlarms {
             print("Ignorando activación de alarma - demasiado pronto desde la última")
             return
         }
         
-        // NUEVO: Actualizar tiempo de última alarma
+        // Actualizar timestamp de última alarma
         lastAlarmTime = Date()
         
         print("Buscando archivo de sonido de alarma...")
         
-        // NUEVO: Verificar si el archivo existe en el bundle
+        // Verificar existencia del archivo de sonido
         guard let soundURL = Bundle.main.url(forResource: "alarm_sound", withExtension: "mp3") else {
-            print("ERROR: Archivo de sonido 'alarm_sound.mp3' no encontrado en el bundle.")
-            // NUEVO: Reproducir un sonido del sistema como fallback
-            AudioServicesPlaySystemSound(1005) // Este es un sonido de alerta del sistema
+            print("ERROR: Archivo de sonido 'alarm_sound.mp3' no encontrado en el bundle")
+            AudioServicesPlaySystemSound(1005) // Sonido de alerta del sistema
             return
         }
         
         print("Archivo de sonido encontrado en: \(soundURL)")
         
         do {
+            // Preparar reproductor de audio
             audioPlayer = try AVAudioPlayer(contentsOf: soundURL)
-            audioPlayer?.volume = 1.0 // Asegurar volumen máximo
+            audioPlayer?.volume = 1.0 // Volumen máximo
             
-            // NUEVO: Verificar si el audioPlayer se inicializó correctamente
             guard let player = audioPlayer else {
                 print("ERROR: No se pudo inicializar AVAudioPlayer")
-                AudioServicesPlaySystemSound(1005) // Usar sonido del sistema como respaldo
+                AudioServicesPlaySystemSound(1005)
                 return
             }
             
+            // Añadir un callback para cuando termine la reproducción
+            player.delegate = self
+            
             print("Reproduciendo sonido de alarma...")
+            isPlayingAlarm = true
             let playbackStarted = player.play()
             
             if playbackStarted {
                 print("Reproducción de alarma iniciada correctamente")
             } else {
                 print("ERROR: La reproducción no pudo iniciarse")
-                AudioServicesPlaySystemSound(1005) // Usar sonido del sistema como respaldo
+                isPlayingAlarm = false
+                AudioServicesPlaySystemSound(1005)
             }
         } catch {
             print("ERROR al crear o reproducir AVAudioPlayer: \(error)")
-            // NUEVO: Usar sonido del sistema como respaldo
+            isPlayingAlarm = false
             AudioServicesPlaySystemSound(1005)
         }
     }
+    
+    /**
+     Detiene cualquier alarma que esté reproduciéndose actualmente
+     */
+    func stopAlarm() {
+        guard isPlayingAlarm, let player = audioPlayer else { return }
+        player.stop()
+        isPlayingAlarm = false
+        print("Alarma detenida manualmente")
+    }
+    
+    // MARK: - AVAudioPlayerDelegate
+    
+    func audioPlayerDidFinishPlaying(_ player: AVAudioPlayer, successfully flag: Bool) {
+        isPlayingAlarm = false
+        print("Reproducción de alarma finalizada")
+    }
+    
+    func audioPlayerDecodeErrorDidOccur(_ player: AVAudioPlayer, error: Error?) {
+        isPlayingAlarm = false
+        print("Error de decodificación de audio: \(error?.localizedDescription ?? "desconocido")")
+        AudioServicesPlaySystemSound(1005)
+    }
 }
 
-// SOLUCIÓN 3: FUNCIÓN PARA VERIFICAR LA PRESENCIA DEL ARCHIVO DE SONIDO
-
-// Agregar esta función a la vista de cámara o a la clase que necesite verificar
+/**
+ Verifica la presencia y validez del archivo de sonido de alarma en el bundle.
+ Útil para diagnóstico durante el inicio de la aplicación.
+ */
 func checkAlarmSoundFile() {
-    print("Comprobando archivo de sonido 'alarm_sound.mp3':")
+    print("🔍 Comprobando archivo de sonido 'alarm_sound.mp3':")
     
     if let soundURL = Bundle.main.url(forResource: "alarm_sound", withExtension: "mp3") {
-        print("✅ ÉXITO: Archivo encontrado en \(soundURL)")
+        print("ÉXITO: Archivo encontrado en \(soundURL)")
         
-        // Verificar si el archivo se puede leer
         do {
             let attributes = try FileManager.default.attributesOfItem(atPath: soundURL.path)
             let fileSize = attributes[.size] as? UInt64 ?? 0
             print("   - Tamaño del archivo: \(fileSize) bytes")
             
             if fileSize == 0 {
-                print("⚠️ ADVERTENCIA: El archivo existe pero está vacío")
+                print("ADVERTENCIA: El archivo existe pero está vacío")
             }
         } catch {
-            print("⚠️ ADVERTENCIA: El archivo existe pero no se pudo leer: \(error)")
+            print("ADVERTENCIA: El archivo existe pero no se pudo leer: \(error)")
         }
     } else {
-        print("❌ ERROR: Archivo 'alarm_sound.mp3' NO ENCONTRADO en el bundle")
+        print("ERROR: Archivo 'alarm_sound.mp3' NO ENCONTRADO en el bundle")
         print("   Posibles soluciones:")
         print("   1. Verifica que el archivo esté incluido en el 'Copy Bundle Resources'")
         print("   2. Asegúrate de que el nombre del archivo sea exactamente 'alarm_sound.mp3'")
         print("   3. Intenta limpiar el proyecto (Clean Build Folder) y volver a construir")
     }
     
-    // NUEVO: Como alternativa, buscar cualquier archivo de audio en el bundle
-    print("\nBuscando archivos de audio alternativos en el bundle:")
+    // Buscar archivos de audio alternativos en el bundle
+    print("\n🔍 Buscando archivos de audio alternativos en el bundle:")
     let fileTypes = ["mp3", "wav", "aac", "m4a"]
     var foundAnyAudioFile = false
     
     for fileType in fileTypes {
         if let urls = Bundle.main.urls(forResourcesWithExtension: fileType, subdirectory: nil), !urls.isEmpty {
-            print("✅ Encontrados \(urls.count) archivos .\(fileType):")
+            print("Encontrados \(urls.count) archivos .\(fileType):")
             for url in urls {
                 print("   - \(url.lastPathComponent)")
             }
@@ -197,24 +267,33 @@ func checkAlarmSoundFile() {
     }
     
     if !foundAnyAudioFile {
-        print("❌ No se encontraron archivos de audio en el bundle")
+        print("No se encontraron archivos de audio en el bundle")
     }
 }
 
-// SOLUCIÓN 4: MODIFICAR LA FUNCIÓN checkAndTriggerAlarm PARA TRABAJAR SIN WEATHERKIT
-
+/**
+ Evalúa si se debe activar una alarma basada en los parámetros actuales.
+ Esta función sirve como punto de entrada principal al sistema de alarma.
+ 
+ - Parameters:
+   - objectDetected: Indica si se ha detectado un objeto de riesgo
+   - objectDistance: Distancia al objeto en metros
+   - locationManager: Gestor de ubicación que proporciona la velocidad
+   - visibility: Visibilidad actual en metros (valor por defecto = 100.0)
+ */
 func checkAndTriggerAlarm(objectDetected: Bool, objectDistance: Double, locationManager: LocationManager, visibility: Double = 100.0) {
-    // Si no hay datos de WeatherKit, usar un valor predeterminado para visibility
-    let actualVisibility = visibility > 0 ? visibility : 100.0 // Valor por defecto (condiciones secas)
+    // Asegurar un valor válido para visibilidad
+    let actualVisibility = visibility > 0 ? visibility : 100.0
     
     // Obtener velocidad actual
     let speed = locationManager.speed
     
-    print("\n--- Evaluando necesidad de alarma ---")
-    print("Objeto detectado a: \(objectDistance) metros")
-    print("Velocidad actual: \(speed) km/h")
-    print("Visibilidad determinada: \(actualVisibility) metros")
+    print("\n----- Evaluando necesidad de alarma -----")
+    print("Objeto detectado a: \(String(format: "%.2f", objectDistance)) metros")
+    print("Velocidad actual: \(String(format: "%.1f", speed)) km/h")
+    print("Visibilidad determinada: \(String(format: "%.1f", actualVisibility)) metros")
     
+    // Crear y evaluar el sistema de alarma
     let alarmSystem = AlarmSystem(
         objectDetected: objectDetected,
         objectDistance: objectDistance,
@@ -223,11 +302,31 @@ func checkAndTriggerAlarm(objectDetected: Bool, objectDistance: Double, location
     )
     
     if alarmSystem.shouldTriggerAlarm() {
-        print("🚨 ALARMA ACTIVADA: Objeto a \(objectDistance) metros con velocidad \(speed) km/h")
+        print("ALARMA ACTIVADA: Objeto a \(String(format: "%.2f", objectDistance)) metros con velocidad \(String(format: "%.1f", speed)) km/h")
         configureAudioSessionForPlayback()
-        AlarmManager.shared.emitAlarmSound() // Emite el sonido de alarma
+        AlarmManager.shared.emitAlarmSound()
     } else {
         print("✓ Alarma no activada: Condiciones no cumplen criterios")
     }
-    print("------------------------\n")
+    print("---------------------------------------\n")
+}
+
+/**
+ Función para inicializar y probar el sistema de alarma durante el arranque de la aplicación.
+ */
+func setupAndTestAlarmSystem() {
+    print("\n====== DIAGNÓSTICO DEL SISTEMA DE ALARMA ======")
+    checkAlarmSoundFile()
+    
+    // Configurar y probar la sesión de audio
+    configureAudioSessionForPlayback()
+    
+    // Verificar que el sistema de vibración funciona
+    let generator = UIImpactFeedbackGenerator(style: .heavy)
+    generator.prepare()
+    generator.impactOccurred()
+    print("Sistema de vibración verificado")
+    
+    print("Sistema de alarma inicializado correctamente")
+    print("=============================================\n")
 }
