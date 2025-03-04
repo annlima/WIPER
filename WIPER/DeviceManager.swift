@@ -6,16 +6,16 @@ import Vision
 
 class DeviceManager {
     static let shared = DeviceManager()
+    private(set) var deviceModel: String = ""
+    private(set) var systemVersion: String = ""
+    private(set) var screenSize: String = ""
+    private(set) var focalLength: CGFloat = 0.0
+    private(set) var hasLiDAR: Bool = false
     
     private init() {
         detectDevice()
     }
     
-    private(set) var deviceModel: String = ""
-    private(set) var systemVersion: String = ""
-    private(set) var screenSize: String = ""
-    private(set) var focalLength: CGFloat = 0.0
-
     private func detectDevice() {
         let device = UIDevice.current
         systemVersion = device.systemVersion
@@ -132,4 +132,45 @@ class DeviceManager {
         default: return identifier
         }
     }
+    /**
+         Determina si el dispositivo tiene sensor LiDAR basado en su modelo.
+         Los iPhones Pro y Pro Max desde el 12 en adelante tienen LiDAR,
+         así como algunos modelos de iPad Pro.
+         
+         - Parameter modelCode: Código del modelo del dispositivo
+         - Returns: true si el dispositivo tiene LiDAR, false en caso contrario
+         */
+        private func checkIfDeviceHasLiDAR(modelCode: String) -> Bool {
+            // iPhones con LiDAR
+            if modelCode.contains("iPhone12,3") || // iPhone 11 Pro
+               modelCode.contains("iPhone12,5") || // iPhone 11 Pro Max
+               modelCode.contains("iPhone13,3") || // iPhone 12 Pro
+               modelCode.contains("iPhone13,4") || // iPhone 12 Pro Max
+               modelCode.contains("iPhone14,2") || // iPhone 13 Pro
+               modelCode.contains("iPhone14,3") || // iPhone 13 Pro Max
+               modelCode.contains("iPhone15,2") || // iPhone 14 Pro
+               modelCode.contains("iPhone15,3") || // iPhone 14 Pro Max
+               modelCode.contains("iPhone16,1") || // iPhone 15 Pro
+               modelCode.contains("iPhone16,2") {  // iPhone 15 Pro Max
+                return true
+            }
+            
+            // iPads con LiDAR
+            if modelCode.contains("iPad8,") || // iPad Pro 2020
+               modelCode.contains("iPad13,") { // iPad Pro 2021 y posteriores
+                return true
+            }
+            
+            return false
+        }
+        
+        /**
+         Verifica si el dispositivo actual tiene sensor LiDAR disponible.
+         
+         - Returns: true si el dispositivo tiene LiDAR, false en caso contrario
+         */
+        func deviceHasLiDAR() -> Bool {
+            return hasLiDAR
+        }
+    
 }

@@ -122,7 +122,15 @@ struct GoTab: View {
                 .padding(.horizontal, 10)
                 .padding(.top, 40)
                 .padding(.bottom, 1)
-            Button("Comenzar a manejar") {
+            Text("Coloca tu teléfono abajo del espejo retrovisor y empieza a manejar")
+                .font(.system(size: 20))
+                .foregroundColor(.white)
+                .bold()
+                .multilineTextAlignment(.leading)
+                .padding(.horizontal, 40)
+            
+            Spacer()
+            Button("Comenzar") {
                 onboardingCompleted = true
                         }
                             .frame(width: 320, height: 75)

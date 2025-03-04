@@ -15,6 +15,9 @@
 		A173E8812C90BB97005BB0F9 /* StartScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = A173E8802C90BB97005BB0F9 /* StartScreen.swift */; };
 		A17F474A2D6BC801007D6B8D /* alarm_sound.wav in Resources */ = {isa = PBXBuildFile; fileRef = 062E6F6E2CE2C033005050BD /* alarm_sound.wav */; };
 		A17F474B2D6BC806007D6B8D /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = A1C891562C73D3E200308657 /* Assets.xcassets */; };
+		A1815F312D778E4100FBABA0 /* best_yolov5s.mlmodel in Sources */ = {isa = PBXBuildFile; fileRef = A1815F302D778E4100FBABA0 /* best_yolov5s.mlmodel */; };
+		A1815F322D778E4100FBABA0 /* best_yolov5s.mlmodel in Sources */ = {isa = PBXBuildFile; fileRef = A1815F302D778E4100FBABA0 /* best_yolov5s.mlmodel */; };
+		A1815F332D778E4100FBABA0 /* best_yolov5s.mlmodel in Sources */ = {isa = PBXBuildFile; fileRef = A1815F302D778E4100FBABA0 /* best_yolov5s.mlmodel */; };
 		A1A0EFB82CE2A00A001413D3 /* CGRect.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1A0EFB72CE2A006001413D3 /* CGRect.swift */; };
 		A1A7C3472CE2FA6C00A42B2E /* ImageEnhancer.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1A7C3462CE2FA6800A42B2E /* ImageEnhancer.swift */; };
 		A1BA5EA22CC973D800C9CED3 /* EquatableLocation.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1BA5EA12CC973D100C9CED3 /* EquatableLocation.swift */; };
@@ -32,9 +35,6 @@
 		A1C891642C73D3E200308657 /* WIPERTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1C891632C73D3E200308657 /* WIPERTests.swift */; };
 		A1C8916E2C73D3E200308657 /* WIPERUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1C8916D2C73D3E200308657 /* WIPERUITests.swift */; };
 		A1C891702C73D3E200308657 /* WIPERUITestsLaunchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1C8916F2C73D3E200308657 /* WIPERUITestsLaunchTests.swift */; };
-		A1E3563D2D74EC2C0086DBAB /* best_yolov5stl.mlmodel in Sources */ = {isa = PBXBuildFile; fileRef = A1E3563C2D74EC2C0086DBAB /* best_yolov5stl.mlmodel */; };
-		A1E3563E2D74EC2C0086DBAB /* best_yolov5stl.mlmodel in Sources */ = {isa = PBXBuildFile; fileRef = A1E3563C2D74EC2C0086DBAB /* best_yolov5stl.mlmodel */; };
-		A1E3563F2D74EC2C0086DBAB /* best_yolov5stl.mlmodel in Sources */ = {isa = PBXBuildFile; fileRef = A1E3563C2D74EC2C0086DBAB /* best_yolov5stl.mlmodel */; };
 		A1F0A45C2CA0FA6800F7FEE8 /* TermsAndConditions.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1F0A45B2CA0FA6000F7FEE8 /* TermsAndConditions.swift */; };
 		A1F0A45E2CA0FD6900F7FEE8 /* SplashScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1F0A45D2CA0FD6400F7FEE8 /* SplashScreen.swift */; };
 		A1F0A4622CA100C800F7FEE8 /* Carrousel.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1F0A4612CA100C200F7FEE8 /* Carrousel.swift */; };
@@ -68,6 +68,7 @@
 		A12B838F2CC051150045BA44 /* UIViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIViewController.swift; sourceTree = "<group>"; };
 		A12B83912CC0524A0045BA44 /* FullScreenCameraView 2.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "FullScreenCameraView 2.swift"; sourceTree = "<group>"; };
 		A173E8802C90BB97005BB0F9 /* StartScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StartScreen.swift; sourceTree = "<group>"; };
+		A1815F302D778E4100FBABA0 /* best_yolov5s.mlmodel */ = {isa = PBXFileReference; lastKnownFileType = file.mlmodel; path = best_yolov5s.mlmodel; sourceTree = "<group>"; };
 		A1A0EFB72CE2A006001413D3 /* CGRect.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CGRect.swift; sourceTree = "<group>"; };
 		A1A7C3462CE2FA6800A42B2E /* ImageEnhancer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageEnhancer.swift; sourceTree = "<group>"; };
 		A1BA5EA12CC973D100C9CED3 /* EquatableLocation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EquatableLocation.swift; sourceTree = "<group>"; };
@@ -90,7 +91,6 @@
 		A1C891692C73D3E200308657 /* WIPERUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = WIPERUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		A1C8916D2C73D3E200308657 /* WIPERUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WIPERUITests.swift; sourceTree = "<group>"; };
 		A1C8916F2C73D3E200308657 /* WIPERUITestsLaunchTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WIPERUITestsLaunchTests.swift; sourceTree = "<group>"; };
-		A1E3563C2D74EC2C0086DBAB /* best_yolov5stl.mlmodel */ = {isa = PBXFileReference; lastKnownFileType = file.mlmodel; path = best_yolov5stl.mlmodel; sourceTree = "<group>"; };
 		A1F0A45B2CA0FA6000F7FEE8 /* TermsAndConditions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TermsAndConditions.swift; sourceTree = "<group>"; };
 		A1F0A45D2CA0FD6400F7FEE8 /* SplashScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SplashScreen.swift; sourceTree = "<group>"; };
 		A1F0A4612CA100C200F7FEE8 /* Carrousel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Carrousel.swift; sourceTree = "<group>"; };
@@ -135,7 +135,7 @@
 		A12727D62CA3261A0060164C /* Camera */ = {
 			isa = PBXGroup;
 			children = (
-				A1E3563C2D74EC2C0086DBAB /* best_yolov5stl.mlmodel */,
+				A1815F302D778E4100FBABA0 /* best_yolov5s.mlmodel */,
 				A1A0EFB72CE2A006001413D3 /* CGRect.swift */,
 				A12B83912CC0524A0045BA44 /* FullScreenCameraView 2.swift */,
 				A12B838F2CC051150045BA44 /* UIViewController.swift */,
@@ -379,13 +379,13 @@
 				A1F0A4622CA100C800F7FEE8 /* Carrousel.swift in Sources */,
 				A1F0A4662CA106DA00F7FEE8 /* CameraManager.swift in Sources */,
 				A1A7C3472CE2FA6C00A42B2E /* ImageEnhancer.swift in Sources */,
-				A1E3563F2D74EC2C0086DBAB /* best_yolov5stl.mlmodel in Sources */,
 				A12B83922CC052510045BA44 /* FullScreenCameraView 2.swift in Sources */,
 				A12B83902CC0511A0045BA44 /* UIViewController.swift in Sources */,
 				9B0948A32CD9691100952C5A /* AlarmTrigger.swift in Sources */,
 				A1C5605B2C920AED00E2A9DD /* AppDelegate.swift in Sources */,
 				A1A0EFB82CE2A00A001413D3 /* CGRect.swift in Sources */,
 				A1C560552C920A8500E2A9DD /* ViewController.swift in Sources */,
+				A1815F332D778E4100FBABA0 /* best_yolov5s.mlmodel in Sources */,
 				A1BE26512CE19848009A8F0D /* SpeedOverlay.swift in Sources */,
 				A1BE264F2CE192C8009A8F0D /* SwipeToDeleteRow.swift in Sources */,
 				A1C560592C920ACA00E2A9DD /* SceneDelegate.swift in Sources */,
@@ -408,7 +408,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				A1E3563D2D74EC2C0086DBAB /* best_yolov5stl.mlmodel in Sources */,
+				A1815F322D778E4100FBABA0 /* best_yolov5s.mlmodel in Sources */,
 				A1C891642C73D3E200308657 /* WIPERTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -417,9 +417,9 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				A1E3563E2D74EC2C0086DBAB /* best_yolov5stl.mlmodel in Sources */,
 				A1C891702C73D3E200308657 /* WIPERUITestsLaunchTests.swift in Sources */,
 				A1C8916E2C73D3E200308657 /* WIPERUITests.swift in Sources */,
+				A1815F312D778E4100FBABA0 /* best_yolov5s.mlmodel in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

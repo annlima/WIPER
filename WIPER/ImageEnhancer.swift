@@ -54,7 +54,6 @@ class ImageEnhancer {
     func applyDehaze(to image: UIImage, brightness: Float = 0.1, contrast: Float = 1.2, saturation: Float = 1.0, exposure: Float = 0.5, noiseReduction: Float = 0.02) -> UIImage? {
         guard let ciImage = CIImage(image: image) else { return nil }
 
-        // Adjust Color Controls for brightness, contrast, and saturation
         guard let colorControlsFilter = CIFilter(name: "CIColorControls") else { return nil }
         colorControlsFilter.setValue(ciImage, forKey: kCIInputImageKey)
         colorControlsFilter.setValue(contrast, forKey: kCIInputContrastKey)
@@ -62,19 +61,16 @@ class ImageEnhancer {
         colorControlsFilter.setValue(brightness, forKey: kCIInputBrightnessKey)
         guard let colorControlsOutput = colorControlsFilter.outputImage else { return nil }
 
-        // Adjust Exposure
         guard let exposureFilter = CIFilter(name: "CIExposureAdjust") else { return nil }
         exposureFilter.setValue(colorControlsOutput, forKey: kCIInputImageKey)
         exposureFilter.setValue(exposure, forKey: kCIInputEVKey)
         guard let exposureOutput = exposureFilter.outputImage else { return nil }
 
-        // Apply Noise Reduction
         guard let noiseReductionFilter = CIFilter(name: "CINoiseReduction") else { return nil }
         noiseReductionFilter.setValue(exposureOutput, forKey: kCIInputImageKey)
         noiseReductionFilter.setValue(noiseReduction, forKey: "inputNoiseLevel")
         guard let noiseReductionOutput = noiseReductionFilter.outputImage else { return nil }
 
-        // Finalize with tone curve adjustment for better light distribution
         guard let toneCurveFilter = CIFilter(name: "CILinearToSRGBToneCurve") else { return nil }
         toneCurveFilter.setValue(noiseReductionOutput, forKey: kCIInputImageKey)
 
