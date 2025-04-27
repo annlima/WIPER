@@ -13,7 +13,6 @@
 		A12B83902CC0511A0045BA44 /* UIViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = A12B838F2CC051150045BA44 /* UIViewController.swift */; };
 		A12B83922CC052510045BA44 /* FullScreenCameraView 2.swift in Sources */ = {isa = PBXBuildFile; fileRef = A12B83912CC0524A0045BA44 /* FullScreenCameraView 2.swift */; };
 		A173E8812C90BB97005BB0F9 /* StartScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = A173E8802C90BB97005BB0F9 /* StartScreen.swift */; };
-		A17F474A2D6BC801007D6B8D /* alarm_sound.wav in Resources */ = {isa = PBXBuildFile; fileRef = 062E6F6E2CE2C033005050BD /* alarm_sound.wav */; };
 		A17F474B2D6BC806007D6B8D /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = A1C891562C73D3E200308657 /* Assets.xcassets */; };
 		A1815F312D778E4100FBABA0 /* best_yolov5s.mlmodel in Sources */ = {isa = PBXBuildFile; fileRef = A1815F302D778E4100FBABA0 /* best_yolov5s.mlmodel */; };
 		A1815F322D778E4100FBABA0 /* best_yolov5s.mlmodel in Sources */ = {isa = PBXBuildFile; fileRef = A1815F302D778E4100FBABA0 /* best_yolov5s.mlmodel */; };
@@ -35,6 +34,7 @@
 		A1C891642C73D3E200308657 /* WIPERTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1C891632C73D3E200308657 /* WIPERTests.swift */; };
 		A1C8916E2C73D3E200308657 /* WIPERUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1C8916D2C73D3E200308657 /* WIPERUITests.swift */; };
 		A1C891702C73D3E200308657 /* WIPERUITestsLaunchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1C8916F2C73D3E200308657 /* WIPERUITestsLaunchTests.swift */; };
+		A1E2AE832DBEE24C00B1EB8E /* SearchCompleter.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1E2AE822DBEE24700B1EB8E /* SearchCompleter.swift */; };
 		A1F0A45C2CA0FA6800F7FEE8 /* TermsAndConditions.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1F0A45B2CA0FA6000F7FEE8 /* TermsAndConditions.swift */; };
 		A1F0A45E2CA0FD6900F7FEE8 /* SplashScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1F0A45D2CA0FD6400F7FEE8 /* SplashScreen.swift */; };
 		A1F0A4622CA100C800F7FEE8 /* Carrousel.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1F0A4612CA100C200F7FEE8 /* Carrousel.swift */; };
@@ -60,7 +60,6 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		062E6F6E2CE2C033005050BD /* alarm_sound.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = alarm_sound.wav; sourceTree = "<group>"; };
 		9B0948A22CD9691100952C5A /* AlarmTrigger.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AlarmTrigger.swift; sourceTree = "<group>"; };
 		A12727D52CA1D4AE0060164C /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		A12727D92CA330390060164C /* CameraView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CameraView.swift; sourceTree = "<group>"; };
@@ -91,6 +90,7 @@
 		A1C891692C73D3E200308657 /* WIPERUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = WIPERUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		A1C8916D2C73D3E200308657 /* WIPERUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WIPERUITests.swift; sourceTree = "<group>"; };
 		A1C8916F2C73D3E200308657 /* WIPERUITestsLaunchTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WIPERUITestsLaunchTests.swift; sourceTree = "<group>"; };
+		A1E2AE822DBEE24700B1EB8E /* SearchCompleter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchCompleter.swift; sourceTree = "<group>"; };
 		A1F0A45B2CA0FA6000F7FEE8 /* TermsAndConditions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TermsAndConditions.swift; sourceTree = "<group>"; };
 		A1F0A45D2CA0FD6400F7FEE8 /* SplashScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SplashScreen.swift; sourceTree = "<group>"; };
 		A1F0A4612CA100C200F7FEE8 /* Carrousel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Carrousel.swift; sourceTree = "<group>"; };
@@ -126,7 +126,6 @@
 		9B0948A12CD968F400952C5A /* AlarmSystem */ = {
 			isa = PBXGroup;
 			children = (
-				062E6F6E2CE2C033005050BD /* alarm_sound.wav */,
 				9B0948A22CD9691100952C5A /* AlarmTrigger.swift */,
 			);
 			path = AlarmSystem;
@@ -234,6 +233,7 @@
 		A1F0A4602CA0FF9500F7FEE8 /* MapViews */ = {
 			isa = PBXGroup;
 			children = (
+				A1E2AE822DBEE24700B1EB8E /* SearchCompleter.swift */,
 				A1BE264E2CE192C1009A8F0D /* SwipeToDeleteRow.swift */,
 				A1BE264C2CE191B5009A8F0D /* CustomMapView.swift */,
 				A1BA5EA12CC973D100C9CED3 /* EquatableLocation.swift */,
@@ -350,7 +350,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				A17F474B2D6BC806007D6B8D /* Assets.xcassets in Resources */,
-				A17F474A2D6BC801007D6B8D /* alarm_sound.wav in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -393,6 +392,7 @@
 				A1C891532C73D3E100308657 /* WIPERApp.swift in Sources */,
 				A173E8812C90BB97005BB0F9 /* StartScreen.swift in Sources */,
 				A1F0A45C2CA0FA6800F7FEE8 /* TermsAndConditions.swift in Sources */,
+				A1E2AE832DBEE24C00B1EB8E /* SearchCompleter.swift in Sources */,
 				A12727DC2CA331110060164C /* CameraPreview.swift in Sources */,
 				A1BA5EA52CC977EA00C9CED3 /* DeviceManager.swift in Sources */,
 				A1F0A4642CA1011700F7FEE8 /* LocationManager.swift in Sources */,

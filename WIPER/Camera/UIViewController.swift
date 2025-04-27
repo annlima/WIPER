@@ -40,6 +40,8 @@ class LandscapeCameraViewController: UIViewController {
             view.layer.addSublayer(previewLayer)
         }
         
+
+
         // Registrar observador para cambios de orientación
         NotificationCenter.default.addObserver(self,
                                               selector: #selector(orientationDidChange),
