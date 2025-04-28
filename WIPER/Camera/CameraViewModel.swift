@@ -12,7 +12,7 @@ import Vision
 import WeatherKit
 import CoreLocation
 import Combine
-
+import MapKit
 /**
  ViewModel principal que gestiona la captura de video, detección de objetos,
  cálculo de distancias y activación de alarmas.
@@ -95,21 +95,35 @@ class CameraViewModel: NSObject, ObservableObject, AVCaptureVideoDataOutputSampl
         "truck": 3.5          // Altura promedio de un camión
     ]
     
+    @Published var currentInstruction: String = "Iniciando navegación..." // Initial instruction
+    @Published var distanceToNextManeuver: CLLocationDistance = .infinity // Distance in meters
+    @Published private(set) var currentRoute: MKRoute? // Store the route
+    @Published private(set) var currentRouteStepIndex: Int = 0 // Track current step
+
+    
     // MARK: - Inicialización
     
-    override init() {
-        // Cargar modelo ML para detección de objetos
-        guard let model = try? VNCoreMLModel(for: best_yolov5s().model) else {
+    init(route: MKRoute? = nil) { // Allow optional route injection
+        // Load ML Model
+        guard let loadedModel = try? VNCoreMLModel(for: best_yolov5s().model) else {
             fatalError("No se pudo cargar el modelo ML")
         }
-        self.model = model
+        self.model = loadedModel
+        self.currentRoute = route // Store the passed route
         
         super.init()
         
-        // Configurar observadores y ajustes iniciales
-        observeLocationUpdates()
+        observeLocationUpdates() // Start observing location
         adjustProcessingForDevice()
+        
+        // Initialize navigation state if route exists
+        if let initialRoute = route, !initialRoute.steps.isEmpty {
+            updateNavigationInstruction(stepIndex: 0) // Show the first step instruction
+        } else {
+            currentInstruction = "" // No route, no instruction
+        }
     }
+    
     
     // MARK: - Ajustes y configuración
     
@@ -151,19 +165,109 @@ class CameraViewModel: NSObject, ObservableObject, AVCaptureVideoDataOutputSampl
         }
     }
     
+                
     /**
      Configura los observadores para actualizaciones de ubicación.
      Cuando cambia la ubicación, se obtienen nuevos datos meteorológicos.
      */
     private func observeLocationUpdates() {
         locationManager.$lastLocation
-            .compactMap { $0 }
+            .compactMap { $0 } // Ensure we have a location
+        // Throttle updates slightly if needed, e.g., .throttle(for: 1, scheduler: RunLoop.main, latest: true)
             .sink { [weak self] location in
-                self?.fetchCurrentWeather(for: location)
+                guard let self = self else { return }
+                // Fetch weather (existing logic)
+                self.fetchCurrentWeather(for: location)
+                // ---- NEW: Update navigation progress ----
+                self.updateNavigationProgress(userLocation: location)
             }
             .store(in: &cancellables)
     }
     
+    private func updateNavigationProgress(userLocation: CLLocation) {
+        guard let route = currentRoute, currentRouteStepIndex < route.steps.count else {
+            // No route or navigation finished
+            return
+        }
+
+        let currentStep = route.steps[currentRouteStepIndex]
+        let polyline = currentStep.polyline // Get the polyline for the current step
+
+        // --- Calculate distance to end of current step ---
+        // Check if the polyline has points
+        if polyline.pointCount > 0 {
+            // Get pointer to the MKMapPoint array
+            let mapPoints = polyline.points()
+            // Get the last point and convert it to CLLocationCoordinate2D
+            let lastMapPoint = mapPoints[polyline.pointCount - 1]
+            let lastStepCoordinate = lastMapPoint.coordinate // Conversion happens here
+
+            let maneuverLocation = CLLocation(latitude: lastStepCoordinate.latitude, longitude: lastStepCoordinate.longitude)
+            // Calculate distance from user to the maneuver point
+            let distance = userLocation.distance(from: maneuverLocation)
+            DispatchQueue.main.async {
+                self.distanceToNextManeuver = distance
+            }
+        } else {
+            // Cannot calculate distance if polyline has no points
+            DispatchQueue.main.async {
+                self.distanceToNextManeuver = .infinity
+            }
+        }
+
+        // --- Check if user has completed the current step ---
+        let stepCompletionThreshold: CLLocationDistance = 30.0 // meters (adjust as needed)
+
+        if currentRouteStepIndex + 1 < route.steps.count {
+            let nextStep = route.steps[currentRouteStepIndex + 1]
+            let nextPolyline = nextStep.polyline // Get the polyline for the next step
+
+            // Check if the next polyline has points
+            if nextPolyline.pointCount > 0 {
+                // Get pointer to the MKMapPoint array
+                let nextMapPoints = nextPolyline.points()
+                // Get the first point and convert it to CLLocationCoordinate2D
+                let firstNextMapPoint = nextMapPoints[0]
+                let firstNextStepCoordinate = firstNextMapPoint.coordinate // Conversion
+
+                let nextStepStartLocation = CLLocation(latitude: firstNextStepCoordinate.latitude, longitude: firstNextStepCoordinate.longitude)
+                let distanceToNextStepStart = userLocation.distance(from: nextStepStartLocation)
+
+                print("Distance to next step start: \(distanceToNextStepStart)") // Debug print
+
+                if distanceToNextStepStart < stepCompletionThreshold {
+                    // Advance to the next step
+                    DispatchQueue.main.async {
+                        self.advanceToNextStep()
+                    }
+                }
+            }
+        } else {
+            // Handle arrival at the last step (using distanceToNextManeuver calculated above)
+            if distanceToNextManeuver < stepCompletionThreshold {
+                DispatchQueue.main.async {
+                    self.currentInstruction = "Has llegado a tu destino."
+                    self.distanceToNextManeuver = 0
+                    // Consider stopping navigation state updates here
+                }
+            }
+        }
+    }
+    
+    private func advanceToNextStep() {
+            guard let route = currentRoute, currentRouteStepIndex + 1 < route.steps.count else { return }
+            currentRouteStepIndex += 1
+            updateNavigationInstruction(stepIndex: currentRouteStepIndex)
+            print("Advanced to step \(currentRouteStepIndex)") // Debug print
+       }
+
+        private func updateNavigationInstruction(stepIndex: Int) {
+             guard let route = currentRoute, stepIndex < route.steps.count else { return }
+             let step = route.steps[stepIndex]
+             // Update the published instruction - might add distance later
+             self.currentInstruction = step.instructions.isEmpty ? "Continúa recto" : step.instructions
+        }
+
     /**
      Obtiene datos meteorológicos actualizados para la ubicación proporcionada.
      

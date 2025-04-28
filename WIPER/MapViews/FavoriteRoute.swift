@@ -48,7 +48,6 @@ struct FavoriteRoute: View {
 
     // MARK: - Body
     var body: some View {
-        // Use NavigationView to enable NavigationLink, but hide its bar elements
         NavigationView {
             ZStack(alignment: .top) {
                 // --- Map View ---
@@ -71,78 +70,77 @@ struct FavoriteRoute: View {
                 .onTapGesture { isSearchFocused = false } // Dismiss keyboard on map tap
 
                 VStack(spacing: 0) {
-                                    // --- Search Bar H-Stack ---
-                                    HStack(spacing: 0) { // Use spacing 0 for overlay approach
-                                        // Overlay the TextField with the clear button
-                                        ZStack(alignment: .trailing) {
-                                             TextField("Buscar destino...", text: $searchCompleter.searchQuery)
-                                                 .focused($isSearchFocused)
-                                                 // Add padding to the right to make space for the button
-                                                 .padding(.trailing, 35)
-                                                 .padding(.vertical, 12)
-                                                 .padding(.leading, 12)
-                                                 .background(Color(.systemBackground))
-                                                 .cornerRadius(10)
-                                                 .shadow(radius: 1)
-                                                 .onSubmit {
-                                                     searchLocation(query: searchCompleter.searchQuery)
-                                                     isSearchFocused = false
-                                                 }
-
-                                            // Clear button (X Mark)
-                                            if !searchCompleter.searchQuery.isEmpty {
-                                                Button {
-                                                    searchCompleter.searchQuery = "" // Clear the text
-                                                    searchCompleter.completions = [] // Clear suggestions
-                                                    selectedLocation = nil // Clear selection if any
-                                                    route = nil // Clear route
-                                                } label: {
-                                                    Image(systemName: "xmark.circle.fill")
-                                                        .foregroundColor(.gray)
-                                                }
-                                                .padding(.trailing, 8) // Position inside the text field padding
-                                            }
-                                        } // End ZStack for TextField Overlay
-
-                                        // Favorites button
-                                        Button(action: {
-                                            self.showFavorites.toggle()
-                                            isSearchFocused = false
-                                        }) {
-                                            Image(systemName: "star.fill")
-                                                .font(.system(size: 24))
-                                                .foregroundColor(.yellow)
-                                                .padding(8)
-                                                .background(Color(.systemBackground).opacity(0.8))
-                                                .clipShape(Circle())
-                                                .shadow(radius: 3, x: 0, y: 2)
-                                        }
-                                        .padding(.leading, 10) // Increased space from text field
-                                    } // End Search Bar H-Stack
-                                    .padding(.horizontal)
-                                    .padding(.top, 15)
-
-                                    // --- Suggestions List ---
-                                    if isSearchFocused && !searchCompleter.completions.isEmpty {
-                                        List(searchCompleter.completions, id: \.self) { completion in
-                                            VStack(alignment: .leading) {
-                                                Text(completion.title).font(.headline)
-                                                Text(completion.subtitle).font(.subheadline).foregroundColor(.gray)
-                                            }
-                                            .contentShape(Rectangle())
-                                            .onTapGesture { handleCompletionTap(completion) }
-                                        }
-                                        .listStyle(.plain)
-                                        .background(Color(.systemBackground))
-                                        .cornerRadius(10)
-                                        .frame(maxHeight: 200)
-                                        .padding(.horizontal)
-                                        .padding(.top, 5)
-                                        .shadow(radius: 3)
-                                        .zIndex(1)
-                                    }
+                    // --- Search Bar H-Stack ---
+                    HStack(spacing: 0) { 
+                        ZStack(alignment: .trailing) {
+                            TextField("Buscar destino...", text: $searchCompleter.searchQuery)
+                                .focused($isSearchFocused)
+                            // Add padding to the right to make space for the button
+                                .padding(.trailing, 35)
+                                .padding(.vertical, 12)
+                                .padding(.leading, 12)
+                                .background(Color(.systemBackground))
+                                .cornerRadius(10)
+                                .shadow(radius: 1)
+                                .onSubmit {
+                                    searchLocation(query: searchCompleter.searchQuery)
+                                    isSearchFocused = false
+                                }
+                            
+                            // Clear button (X Mark)
+                            if !searchCompleter.searchQuery.isEmpty {
+                                Button {
+                                    searchCompleter.searchQuery = "" // Clear the text
+                                    searchCompleter.completions = [] // Clear suggestions
+                                    selectedLocation = nil // Clear selection if any
+                                    route = nil // Clear route
+                                } label: {
+                                    Image(systemName: "xmark.circle.fill")
+                                        .foregroundColor(.gray)
+                                }
+                                .padding(.trailing, 8) // Position inside the text field padding
+                            }
+                        } // End ZStack for TextField Overlay
+                        
+                        // Favorites button
+                        Button(action: {
+                            self.showFavorites.toggle()
+                            isSearchFocused = false
+                        }) {
+                            Image(systemName: "star.fill")
+                                .font(.system(size: 24))
+                                .foregroundColor(.yellow)
+                                .padding(8)
+                                .background(Color(.systemBackground).opacity(0.8))
+                                .clipShape(Circle())
+                                .shadow(radius: 3, x: 0, y: 2)
+                        }
+                        .padding(.leading, 10) // Increased space from text field
+                    }
+                    .padding(.horizontal)
+                    .padding(.top, 15)
                     
-
+                    // --- Suggestions List ---
+                    if isSearchFocused && !searchCompleter.completions.isEmpty {
+                        List(searchCompleter.completions, id: \.self) { completion in
+                            VStack(alignment: .leading) {
+                                Text(completion.title).font(.headline)
+                                Text(completion.subtitle).font(.subheadline).foregroundColor(.gray)
+                            }
+                            .contentShape(Rectangle())
+                            .onTapGesture { handleCompletionTap(completion) }
+                        }
+                        .listStyle(.plain)
+                        .background(Color(.systemBackground))
+                        .cornerRadius(10)
+                        .frame(maxHeight: 200)
+                        .padding(.horizontal)
+                        .padding(.top, 5)
+                        .shadow(radius: 3)
+                        .zIndex(1)
+                    }
+                    
+                    
                     // --- Favorites List ---
                     if showFavorites {
                         VStack(spacing: 0) {
@@ -172,35 +170,44 @@ struct FavoriteRoute: View {
                         .padding(.top, 10)
                         .zIndex(1)
                     }
-
+                    
                     Spacer() // Pushes bottom button down
-
+                    
                     // --- Bottom "Start Traveling" Button ---
                     HStack { // Wrap button in HStack to constrain width if needed
-                         Spacer() // Centers the button if width isn't full
-                         NavigationLink(destination: CameraView(), isActive: $navigateToCamera) {
-                              Button(action: {
-                                   navigateToCamera = true
-                                   isSearchFocused = false
-                              }) {
-                                   Text("Empezar a viajar")
-                                        .font(.headline.weight(.semibold))
-                                        .foregroundColor(.white)
-                                        .frame(maxWidth: .infinity) // Button takes full width within constraints
-                                        .padding(.vertical, 12)
-                                        .background(selectedLocation != nil ? Color.blue : Color.gray)
-                                        .cornerRadius(10)
-                                        .shadow(radius: 3)
-                              }
-                              .disabled(selectedLocation == nil)
-                         }
-                         .frame(maxWidth: 400) // Max width for the button link
-                         Spacer() // Centers the button
+                        Spacer() // Centers the button if width isn't full
+                        NavigationLink(
+                            destination: CameraView(calculatedRoute: self.route),
+                            isActive: $navigateToCamera
+                        ) {
+                            Button(action: {
+                                // Ensure route exists before navigating
+                                if self.route != nil {
+                                    navigateToCamera = true
+                                    isSearchFocused = false
+                                } else {
+                                    // Optionally show an alert if route is missing
+                                    print("Error: No route calculated to start navigation.")
+                                }
+                            }) {
+                                Text("Empezar a viajar")
+                                    .font(.headline.weight(.semibold))
+                                    .foregroundColor(.white)
+                                    .frame(maxWidth: .infinity) // Button takes full width within constraints
+                                    .padding(.vertical, 12)
+                                    .background(selectedLocation != nil ? Color.blue : Color.gray)
+                                    .cornerRadius(10)
+                                    .shadow(radius: 3)
+                                
+                            }
+                            .disabled(selectedLocation == nil || route == nil) // Disable if no route
+                        }
+                        .frame(maxWidth: 400)
+                        Spacer()
                     }
                     .padding(.horizontal)
-                    .padding(.bottom, 15) // Space from bottom edge
-
-                } // End Main UI VStack
+                    .padding(.bottom, 15)
+                }// End Main UI VStack
 
                 // --- Recenter Button ---
                 VStack {
@@ -375,9 +382,11 @@ struct FavoriteRoute: View {
                 self.route = response?.routes.first // Assign the calculated route
                 if let route = self.route {
                     // Adjust map region to show the route with padding
+                    self.route = route
                     self.mapRegion = MKCoordinateRegion(route.polyline.boundingMapRect.insetBy(dx: -3000, dy: -3000))
                     self.isFollowingUserLocation = false
                 } else {
+                    self.route = nil
                     print("No routes found.")
                 }
             }
