@@ -433,7 +433,7 @@ class CameraViewModel: NSObject, ObservableObject, AVCaptureVideoDataOutputSampl
             self.detections = results.compactMap { observation in
                 // Filtrar solo clases relevantes para seguridad vial
                 guard let label = observation.labels.first?.identifier,
-                      ["bus", "train", "car", "truck", "motorcycle", "bicycle", "person", "dog"].contains(label) else {
+                      ["bus", "train", "car", "truck", "motorbike", "bicycle", "person", "pedestrian"].contains(label) else {
                     return nil
                 }
                 

@@ -1,6 +1,7 @@
 import SwiftUI
 import AVFoundation
 import MapKit // Import MapKit
+import UIKit // Needed for UIApplication
 
 /**
  Vista principal de cámara a pantalla completa de WIPER.
@@ -12,9 +13,8 @@ struct FullScreenCameraView: View {
     @Environment(\.presentationMode) var presentationMode
     @ObservedObject var cameraViewModel: CameraViewModel
     @ObservedObject var cameraManager: CameraManager
-    @ObservedObject var locationManager = LocationManager() // For Speed Overlay
+    @ObservedObject var locationManager = LocationManager()
     @State private var isNavigatingToMap = false
-    // Removed @State speed as it uses locationManager directly
 
     // MARK: - Vista
     var body: some View {
@@ -33,6 +33,12 @@ struct FullScreenCameraView: View {
                 }
                 .onDisappear {
                     lockOrientation(.all)
+                    
+                    if UIApplication.shared.isIdleTimerDisabled {
+                         UIApplication.shared.isIdleTimerDisabled = false
+                         print("Idle Timer Re-enabled on Disappear")
+                    }
+                   
                 }
 
             SpeedOverlayView(speed: $locationManager.speed)
@@ -42,23 +48,24 @@ struct FullScreenCameraView: View {
 
             ForEach(cameraViewModel.detections, id: \.self) { rect in
                 Rectangle()
-                    .path(in: rect)
+                    .path(in: rect) // Assuming .path(in:) is a valid modifier for your CGRect extension
                     .stroke(Color.red, lineWidth: 2)
                     .background(Rectangle().fill(Color.clear)) // Ensure background is clear
             }
 
+            // Navigation Instructions Overlay
             if let route = cameraViewModel.currentRoute, !cameraViewModel.currentInstruction.isEmpty {
                  VStack(alignment: .leading, spacing: 3) {
-                     Text(formatDistance(cameraViewModel.distanceToNextManeuver))
-                         .font(.system(size: 18, weight: .bold)) // Reduced size
-                         .foregroundColor(.white)
+                      Text(formatDistance(cameraViewModel.distanceToNextManeuver))
+                          .font(.system(size: 18, weight: .bold)) // Reduced size
+                          .foregroundColor(.white)
 
-                     Text(cameraViewModel.currentInstruction)
-                          .font(.system(size: 22, weight: .semibold)) // Reduced size
-                         .foregroundColor(.white)
-                         .lineLimit(2)
-                         .minimumScaleFactor(0.7)
-                         .fixedSize(horizontal: false, vertical: true) // Allow vertical expansion
+                      Text(cameraViewModel.currentInstruction)
+                           .font(.system(size: 22, weight: .semibold)) // Reduced size
+                          .foregroundColor(.white)
+                          .lineLimit(2)
+                          .minimumScaleFactor(0.7)
+                          .fixedSize(horizontal: false, vertical: true) // Allow vertical expansion
                  }
                  .padding(.horizontal, 10) // Reduced padding
                  .padding(.vertical, 6) // Reduced padding
@@ -67,15 +74,15 @@ struct FullScreenCameraView: View {
                  .shadow(radius: 2)
                  // --- POSITIONING CHANGES --
                  .frame(
-                    maxWidth: UIScreen.main.bounds.width * 0.5, // Limit width (e.g., 50% of screen)
-                    maxHeight: .infinity, // Allow height to adjust
-                    alignment: .topLeading // Align the frame itself
+                     maxWidth: UIScreen.main.bounds.width * 0.5, // Limit width (e.g., 50% of screen)
+                     maxHeight: .infinity, // Allow height to adjust
+                     alignment: .topLeading // Align the frame itself
                  )
                  .padding(.leading, 20) // Padding from left edge
                  .padding(.top, 40) // Padding from top edge (adjust as needed for safe area/notch)
-
             }
-            
+
+            // Controls Overlay (Buttons)
             VStack {
                 // Close Button
                 HStack {
@@ -109,13 +116,19 @@ struct FullScreenCameraView: View {
                             .foregroundColor(cameraViewModel.isRecording ? .red : .white)
                            // .padding() // Remove default padding if needed
                     }
-                    .disabled(!cameraManager.isSessionRunning)
+                    .disabled(!cameraManager.isSessionRunning) // Use isSessionRunning from CameraManager
                 }
                 .padding(.trailing, 20) // Padding from right edge
                 .padding(.bottom, 30) // Padding from bottom edge
             } // End Controls VStack
 
         } // End ZStack
+        // --- ADDED: Manage Idle Timer based on recording state ---
+        .onChange(of: cameraViewModel.isRecording) { isRecording in
+             UIApplication.shared.isIdleTimerDisabled = isRecording
+             print("Idle Timer Disabled: \(isRecording)")
+        }
+        // --- END ADDED ---
         .alert(isPresented: $cameraViewModel.showSaveDialog) {
             Alert(
                 title: Text("Guardar video"),
@@ -126,17 +139,23 @@ struct FullScreenCameraView: View {
                 },
                 secondaryButton: .cancel(Text("Descartar")) { // Changed text for clarity
                      // Optionally delete the temporary file if discarded
-                     if let url = cameraViewModel.previewUrl { try? FileManager.default.removeItem(at: url)}
+                     if let url = cameraViewModel.previewUrl {
+                         do {
+                             try FileManager.default.removeItem(at: url)
+                         } catch {
+                             print("Error deleting discarded video: \(error)")
+                         }
+                     }
                     isNavigatingToMap = true // Still navigate back
                 }
             )
         }
-        .onChange(of: isNavigatingToMap) { navigate in
-            if navigate {
-                navigateToMap()
-                isNavigatingToMap = false // Reset flag
-            }
-        }
+        .onChange(of: isNavigatingToMap) { navigate in // Use the new parameter name 'navigate'
+             if navigate {
+                 navigateToMap()
+                 isNavigatingToMap = false // Reset flag
+             }
+         }
         .navigationBarHidden(true)
         .navigationBarBackButtonHidden(true)
     }
@@ -150,10 +169,16 @@ struct FullScreenCameraView: View {
 
     /// Locks/Unlocks screen orientation.
     func lockOrientation(_ orientation: UIInterfaceOrientationMask) {
-        // (Implementation remains the same)
-        if let appDelegate = UIApplication.shared.delegate as? AppDelegate {
-            appDelegate.orientationLock = orientation
-        }
+        // Ensure you have an AppDelegate class setup for this to work
+        if let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene {
+             windowScene.requestGeometryUpdate(.iOS(interfaceOrientations: orientation)) { error in
+                 print("Orientation lock error: \(error.localizedDescription)")
+             }
+         }
+         // You might also need to set the orientation lock in your AppDelegate
+         if let appDelegate = UIApplication.shared.delegate as? AppDelegate {
+              appDelegate.orientationLock = orientation
+         }
     }
 
     /// Formats distance for display.
@@ -170,21 +195,20 @@ struct FullScreenCameraView: View {
             // Convert to kilometers
             let measurementInKm = measurement.converted(to: UnitLength.kilometers) // Use UnitLength.kilometers
             formatter.numberFormatter.maximumFractionDigits = 1 // Allow one decimal for km
-            if measurementInKm.value < 0.1 {
-                 return "En \(formatter.string(from: Measurement(value: 0.1, unit: UnitLength.kilometers)))"
-            } else {
-                 return "En \(formatter.string(from: measurementInKm))"
-            }
+            // Format "En 0.1 km" instead of "En 0 km" for small km values
+            let valueToShow = max(measurementInKm.value, 0.1)
+            let finalMeasurement = Measurement(value: valueToShow, unit: UnitLength.kilometers)
+            return "En \(formatter.string(from: finalMeasurement))"
 
         } else {
-            // Display in meters
-            var roundedMeasurement = measurement
+            // Display in meters, rounding to nearest 10m if >= 50m
+            var valueToFormat = distance
             if distance >= 50 {
-                let roundedValue = (distance / 10).rounded() * 10
-                roundedMeasurement = Measurement(value: roundedValue, unit: UnitLength.meters) // Use UnitLength.meters
+                 valueToFormat = (distance / 10).rounded() * 10
             }
             // Ensure very small distances show as integer meters
             formatter.numberFormatter.maximumFractionDigits = 0
+            let roundedMeasurement = Measurement(value: valueToFormat, unit: UnitLength.meters) // Use UnitLength.meters
             return "En \(formatter.string(from: roundedMeasurement))"
         }
     }
