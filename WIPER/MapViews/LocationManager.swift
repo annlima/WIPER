@@ -32,6 +32,8 @@ class LocationManager: NSObject, ObservableObject, CLLocationManagerDelegate {
             print("Location access denied or restricted")
         case .authorizedWhenInUse, .authorizedAlways:
             startLocationUpdates()
+        case .notDetermined:
+            print("Location not determined")
         @unknown default:
             break
         }
@@ -39,10 +41,8 @@ class LocationManager: NSObject, ObservableObject, CLLocationManagerDelegate {
 
     func requestLocationAuthorization() {
         DispatchQueue.global().async {
-            // Realiza la verificación en un hilo de fondo
             if CLLocationManager.locationServicesEnabled() {
                 DispatchQueue.main.async {
-                    // Solicita la autorización en el hilo principal
                     self.locationManager.requestWhenInUseAuthorization()
                 }
             } else {

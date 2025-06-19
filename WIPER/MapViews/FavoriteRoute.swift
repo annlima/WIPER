@@ -1,16 +1,13 @@
 import SwiftUI
-import MapKit // Make sure MapKit is imported
-import Combine // Needed for SearchCompleter
+import MapKit
+import Combine
 
-// MARK: - FavoriteRoute View Definition
 struct FavoriteRoute: View {
-    // Use StateObject for managers owned by this view
     @StateObject private var locationManager = LocationManager()
     @StateObject private var searchCompleter = SearchCompleter()
 
-    // Map and UI State
     @State private var mapRegion = MKCoordinateRegion(
-        center: CLLocationCoordinate2D(latitude: 19.03793, longitude: -98.20346), // Puebla Center approx.
+        center: CLLocationCoordinate2D(latitude: 19.03793, longitude: -98.20346), // Puebla Fallback
         span: MKCoordinateSpan(latitudeDelta: 0.05, longitudeDelta: 0.05)
     )
     @State private var selectedLocation: Location? = nil
@@ -18,11 +15,11 @@ struct FavoriteRoute: View {
     @State private var isFollowingUserLocation = true
     @State private var showFavorites = false
     @State private var navigateToCamera = false
-    @State private var locations: [Location] = [] // Loaded in .onAppear
+    @State private var locations: [Location] = []
     @State private var showingAddToFavorites = false
     @FocusState private var isSearchFocused: Bool
+    @State private var didCenterOnInitialUserLocation = false
 
-    // MARK: - Location Struct (Codable)
     struct Location: Identifiable, Equatable, Codable {
         let id: UUID
         let name: String
@@ -33,7 +30,6 @@ struct FavoriteRoute: View {
             CLLocationCoordinate2D(latitude: latitude, longitude: longitude)
         }
 
-        // Initializer taking CLLocationCoordinate2D
         init(id: UUID = UUID(), name: String, coordinate: CLLocationCoordinate2D) {
             self.id = id
             self.name = name
@@ -42,15 +38,13 @@ struct FavoriteRoute: View {
         }
 
         static func == (lhs: Location, rhs: Location) -> Bool {
-            lhs.id == rhs.id // Compare by ID for simplicity
+            lhs.id == rhs.id
         }
     }
 
-    // MARK: - Body
     var body: some View {
-        NavigationView {
+        NavigationStack {
             ZStack(alignment: .top) {
-                // --- Map View ---
                 CustomMapView(
                     mapRegion: $mapRegion,
                     annotations: annotations,
@@ -61,21 +55,29 @@ struct FavoriteRoute: View {
                 )
                 .edgesIgnoringSafeArea(.all)
                 .onAppear {
-                    self.locations = loadLocations() // Load saved favorites
+                    self.locations = loadLocations()
                     resetMap()
-                    searchCompleter.setRegion(mapRegion)
                 }
-                .onChange(of: locations) { _ in saveLocations() } // Save on change
-                .onChange(of: locationManager.currentLocation) { handleLocationChange($0) }
-                .onTapGesture { isSearchFocused = false } // Dismiss keyboard on map tap
+                .onChange(of: locations) {
+                    saveLocations()
+                }
+                .onChange(of: locationManager.currentLocation) { _, newLocation in
+                    if !didCenterOnInitialUserLocation, let coordinate = newLocation?.coordinate {
+                        setInitialMapRegion(to: coordinate)
+                    } else if isFollowingUserLocation, let coordinate = newLocation?.coordinate {
+                        mapRegion.center = coordinate
+                    }
+                    if newLocation != nil {
+                        searchCompleter.setRegion(mapRegion)
+                    }
+                }
+                .onTapGesture { isSearchFocused = false }
 
                 VStack(spacing: 0) {
-                    // --- Search Bar H-Stack ---
-                    HStack(spacing: 0) { 
+                    HStack(spacing: 0) {
                         ZStack(alignment: .trailing) {
                             TextField("Buscar destino...", text: $searchCompleter.searchQuery)
                                 .focused($isSearchFocused)
-                            // Add padding to the right to make space for the button
                                 .padding(.trailing, 35)
                                 .padding(.vertical, 12)
                                 .padding(.leading, 12)
@@ -87,22 +89,20 @@ struct FavoriteRoute: View {
                                     isSearchFocused = false
                                 }
                             
-                            // Clear button (X Mark)
                             if !searchCompleter.searchQuery.isEmpty {
                                 Button {
-                                    searchCompleter.searchQuery = "" // Clear the text
-                                    searchCompleter.completions = [] // Clear suggestions
-                                    selectedLocation = nil // Clear selection if any
-                                    route = nil // Clear route
+                                    searchCompleter.searchQuery = ""
+                                    searchCompleter.completions = []
+                                    selectedLocation = nil
+                                    route = nil
                                 } label: {
                                     Image(systemName: "xmark.circle.fill")
                                         .foregroundColor(.gray)
                                 }
-                                .padding(.trailing, 8) // Position inside the text field padding
+                                .padding(.trailing, 8)
                             }
-                        } // End ZStack for TextField Overlay
+                        }
                         
-                        // Favorites button
                         Button(action: {
                             self.showFavorites.toggle()
                             isSearchFocused = false
@@ -115,12 +115,11 @@ struct FavoriteRoute: View {
                                 .clipShape(Circle())
                                 .shadow(radius: 3, x: 0, y: 2)
                         }
-                        .padding(.leading, 10) // Increased space from text field
+                        .padding(.leading, 10)
                     }
                     .padding(.horizontal)
                     .padding(.top, 15)
                     
-                    // --- Suggestions List ---
                     if isSearchFocused && !searchCompleter.completions.isEmpty {
                         List(searchCompleter.completions, id: \.self) { completion in
                             VStack(alignment: .leading) {
@@ -140,8 +139,6 @@ struct FavoriteRoute: View {
                         .zIndex(1)
                     }
                     
-                    
-                    // --- Favorites List ---
                     if showFavorites {
                         VStack(spacing: 0) {
                             ScrollView {
@@ -171,45 +168,35 @@ struct FavoriteRoute: View {
                         .zIndex(1)
                     }
                     
-                    Spacer() // Pushes bottom button down
+                    Spacer()
                     
-                    // --- Bottom "Start Traveling" Button ---
-                    HStack { // Wrap button in HStack to constrain width if needed
-                        Spacer() // Centers the button if width isn't full
-                        NavigationLink(
-                            destination: CameraView(calculatedRoute: self.route),
-                            isActive: $navigateToCamera
-                        ) {
-                            Button(action: {
-                                // Ensure route exists before navigating
-                                if self.route != nil {
-                                    navigateToCamera = true
-                                    isSearchFocused = false
-                                } else {
-                                    // Optionally show an alert if route is missing
-                                    print("Error: No route calculated to start navigation.")
-                                }
-                            }) {
-                                Text("Empezar a viajar")
-                                    .font(.headline.weight(.semibold))
-                                    .foregroundColor(.white)
-                                    .frame(maxWidth: .infinity) // Button takes full width within constraints
-                                    .padding(.vertical, 12)
-                                    .background(selectedLocation != nil ? Color.blue : Color.gray)
-                                    .cornerRadius(10)
-                                    .shadow(radius: 3)
-                                
+                    HStack {
+                        Spacer()
+                        Button(action: {
+                            if self.route != nil {
+                                navigateToCamera = true
+                                isSearchFocused = false
+                            } else {
+                                print("Error: No route calculated to start navigation.")
                             }
-                            .disabled(selectedLocation == nil || route == nil) // Disable if no route
+                        }) {
+                            Text("Empezar a viajar")
+                                .font(.headline.weight(.semibold))
+                                .foregroundColor(.white)
+                                .frame(maxWidth: .infinity)
+                                .padding(.vertical, 12)
+                                .background(selectedLocation != nil && route != nil ? Color.blue : Color.gray)
+                                .cornerRadius(10)
+                                .shadow(radius: 3)
                         }
+                        .disabled(selectedLocation == nil || route == nil)
                         .frame(maxWidth: 400)
                         Spacer()
                     }
                     .padding(.horizontal)
                     .padding(.bottom, 15)
-                }// End Main UI VStack
+                }
 
-                // --- Recenter Button ---
                 VStack {
                     Spacer()
                     HStack {
@@ -225,40 +212,34 @@ struct FavoriteRoute: View {
                                 .clipShape(Circle())
                                 .shadow(radius: 5)
                         }
-                        // Adjust padding to clear the bottom button
-                        .padding(.bottom, 80) // Increased padding
-                        .padding(.trailing, 20) // Adjust horizontal padding
+                        .padding(.bottom, 80)
+                        .padding(.trailing, 20)
                     }
-                } // End Recenter Button VStack
-
-            } // End ZStack
-             // --- Modifiers applied to ZStack ---
-            .navigationBarHidden(true) // Hide the default navigation bar
-            .navigationBarBackButtonHidden(true) // Explicitly hide the back button
+                }
+            }
+            .navigationBarHidden(true)
+            .navigationBarBackButtonHidden(true)
             .alert("Agregar a favoritos", isPresented: $showingAddToFavorites, presenting: selectedLocation) { locationToAdd in
                 Button("Agregar") { addFavorite(locationToAdd) }
                 Button("Cancelar", role: .cancel) {}
             } message: { location in
                 Text("¿Deseas agregar \"\(location.name)\" a tus favoritos?")
             }
+            .navigationDestination(isPresented: $navigateToCamera) {
+                CameraView(calculatedRoute: self.route)
+            }
+        }
+    }
 
-        } // End NavigationView
-        .navigationViewStyle(.stack) // Use stack style
-        .navigationBarBackButtonHidden(true)
-    } // End body
-
-    // MARK: - Constants and Computed Properties
     let itemHeight: CGFloat = 60
 
     var annotations: [MKAnnotation] {
-        // Create annotations from saved locations
         var allAnnotations: [MKAnnotation] = locations.map { location in
             let annotation = MKPointAnnotation()
             annotation.coordinate = location.coordinate
             annotation.title = location.name
             return annotation
         }
-        // Add annotation for the currently selected destination if it's not already a favorite
         if let selected = selectedLocation, !locations.contains(where: { $0.id == selected.id }) {
             let annotation = MKPointAnnotation()
             annotation.coordinate = selected.coordinate
@@ -269,37 +250,39 @@ struct FavoriteRoute: View {
     }
 
     // MARK: - Methods
-
-    /// Handles taps on map annotations.
     func handleAnnotationTap(_ annotation: MKAnnotation) {
         guard !(annotation is MKUserLocation) else { return }
-
         let tappedCoordinate = annotation.coordinate
-        let tappedTitle = annotation.title ?? "Ubicación seleccionada"
-
-        // Find if the tapped annotation corresponds to an existing favorite
-        if let existingFavorite = locations.first(where: { $0.latitude == tappedCoordinate.latitude && $0.longitude == tappedCoordinate.longitude }) {
-            selectLocation(existingFavorite) // Select the favorite directly
+        
+        let nameForLocation: String
+        if let titleFromMKAnnotation = annotation.title {
+            if !titleFromMKAnnotation!.isEmpty {
+                nameForLocation = titleFromMKAnnotation!
+            } else {
+                nameForLocation = "Ubicación sin nombre (vacío)"
+            }
         } else {
-            // If not a favorite, create a temporary location
-            let tappedLocation = Location(name: tappedTitle ?? "Punto de interés", coordinate: tappedCoordinate)
-            self.selectedLocation = tappedLocation // Show it as selected
-            self.showingAddToFavorites = true // Ask user if they want to save it
+            nameForLocation = "Ubicación sin nombre (nil)"
+        }
+
+        if let existingFavorite = locations.first(where: { $0.latitude == tappedCoordinate.latitude && $0.longitude == tappedCoordinate.longitude }) {
+            selectLocation(existingFavorite)
+        } else {
+            let tappedLocation = Location(name: nameForLocation, coordinate: tappedCoordinate) // Esto ya no debería dar error
+            self.selectedLocation = tappedLocation
+            self.showingAddToFavorites = true
         }
         isSearchFocused = false
     }
 
-    /// Handles taps on search suggestions.
     func handleCompletionTap(_ completion: MKLocalSearchCompletion) {
         searchCompleter.searchQuery = completion.title
         isSearchFocused = false
         searchCompleter.completions = []
-        search(for: completion) // Perform detailed search for the selected completion
+        search(for: completion)
     }
 
-    /// Performs a detailed search based on an MKLocalSearchCompletion.
     func search(for suggestedCompletion: MKLocalSearchCompletion) {
-        print("Searching details for suggestion: \(suggestedCompletion.title)")
         let searchRequest = MKLocalSearch.Request(completion: suggestedCompletion)
         let search = MKLocalSearch(request: searchRequest)
         search.start { response, error in
@@ -308,22 +291,17 @@ struct FavoriteRoute: View {
                     print("Error detailed search: \(error.localizedDescription)")
                     return
                 }
-                guard let mapItem = response?.mapItems.first else {
-                    print("Detailed search yielded no results.")
-                    return
-                }
+                guard let mapItem = response?.mapItems.first else { return }
                 let coordinate = mapItem.placemark.coordinate
-                let locationName = mapItem.name ?? suggestedCompletion.title
+                let locationName: String = mapItem.name ?? suggestedCompletion.title
                 let newLocation = Location(name: locationName, coordinate: coordinate)
-                self.selectLocation(newLocation) // Select the found location
+                self.selectLocation(newLocation)
             }
         }
     }
 
-    /// Performs a search based on the raw query string (fallback).
     func searchLocation(query: String) {
         guard !query.isEmpty else { return }
-        print("Performing fallback search for query: \(query)")
         let searchRequest = MKLocalSearch.Request()
         searchRequest.naturalLanguageQuery = query
         searchRequest.region = mapRegion
@@ -335,20 +313,16 @@ struct FavoriteRoute: View {
                     print("Error fallback search: \(error.localizedDescription)")
                     return
                 }
-                guard let mapItem = response?.mapItems.first else {
-                    print("Fallback search yielded no results for query: \(query)")
-                    return
-                }
+                guard let mapItem = response?.mapItems.first else { return }
                 let coordinate = mapItem.placemark.coordinate
-                let location = Location(name: mapItem.name ?? query, coordinate: coordinate)
-                self.selectLocation(location) // Select the first result
+                let locationName: String = mapItem.name ?? query
+                let location = Location(name: locationName, coordinate: coordinate)
+                self.selectLocation(location)
             }
         }
     }
 
-    /// Sets the selected location, updates map, and calculates route.
     func selectLocation(_ location: Location) {
-        print("Selecting location: \(location.name)")
         self.selectedLocation = location
         self.isFollowingUserLocation = false
         self.mapRegion = MKCoordinateRegion(
@@ -356,16 +330,14 @@ struct FavoriteRoute: View {
             span: MKCoordinateSpan(latitudeDelta: 0.02, longitudeDelta: 0.02)
         )
         calculateRoute(to: location.coordinate)
+        searchCompleter.setRegion(mapRegion)
     }
 
-    /// Calculates route using MKDirections.
     func calculateRoute(to destination: CLLocationCoordinate2D) {
         guard let userCoordinate = locationManager.currentLocation?.coordinate else {
-            print("User location unavailable for route calculation.")
             self.route = nil
             return
         }
-
         let request = MKDirections.Request()
         request.source = MKMapItem(placemark: MKPlacemark(coordinate: userCoordinate))
         request.destination = MKMapItem(placemark: MKPlacemark(coordinate: destination))
@@ -379,30 +351,33 @@ struct FavoriteRoute: View {
                     self.route = nil
                     return
                 }
-                self.route = response?.routes.first // Assign the calculated route
+                self.route = response?.routes.first
                 if let route = self.route {
-                    // Adjust map region to show the route with padding
-                    self.route = route
                     self.mapRegion = MKCoordinateRegion(route.polyline.boundingMapRect.insetBy(dx: -3000, dy: -3000))
                     self.isFollowingUserLocation = false
                 } else {
                     self.route = nil
-                    print("No routes found.")
                 }
             }
         }
     }
-
-    /// Handles changes in the user's location.
+    
     func handleLocationChange(_ newLocation: EquatableLocation?) {
-        if let coordinate = newLocation?.coordinate, isFollowingUserLocation {
-            mapRegion.center = coordinate
+        if newLocation != nil {
+             searchCompleter.setRegion(mapRegion)
         }
-        // Update completer region based on current map view
+    }
+    
+    func setInitialMapRegion(to coordinate: CLLocationCoordinate2D) {
+        mapRegion = MKCoordinateRegion(
+            center: coordinate,
+            span: MKCoordinateSpan(latitudeDelta: 0.02, longitudeDelta: 0.02)
+        )
+        isFollowingUserLocation = true
+        didCenterOnInitialUserLocation = true
         searchCompleter.setRegion(mapRegion)
     }
 
-    /// Recenter map on the user's current location.
     func recenterMapOnUserLocation() {
         if let userCoordinate = locationManager.currentLocation?.coordinate {
             mapRegion = MKCoordinateRegion(
@@ -410,93 +385,78 @@ struct FavoriteRoute: View {
                 span: MKCoordinateSpan(latitudeDelta: 0.02, longitudeDelta: 0.02)
             )
             isFollowingUserLocation = true
+            didCenterOnInitialUserLocation = true
+            searchCompleter.setRegion(mapRegion)
         }
     }
 
-    /// Adds a location to the favorites list (triggers save via onChange).
     func addFavorite(_ locationToAdd: Location) {
-         // Avoid adding exact duplicates (check coordinates)
          if !locations.contains(where: { $0.latitude == locationToAdd.latitude && $0.longitude == locationToAdd.longitude }) {
              locations.append(locationToAdd)
-             print("Added \(locationToAdd.name) to favorites.")
-         } else {
-             print("\(locationToAdd.name) is already a favorite.")
          }
     }
 
-    /// Removes a location from the favorites list (triggers save via onChange).
     func removeLocation(_ location: Location) {
         locations.removeAll { $0.id == location.id }
-        print("Removed \(location.name).")
         if selectedLocation?.id == location.id {
             selectedLocation = nil
             route = nil
         }
     }
 
-    /// Resets map state and clears search/selection.
     func resetMap() {
         selectedLocation = nil
         route = nil
-        isFollowingUserLocation = true // Resume following user
-        if locationManager.currentLocation != nil {
-             recenterMapOnUserLocation() // Center only if location is available
+        
+        if let userCoordinate = locationManager.currentLocation?.coordinate {
+            let span = didCenterOnInitialUserLocation ? mapRegion.span : MKCoordinateSpan(latitudeDelta: 0.02, longitudeDelta: 0.02)
+            mapRegion = MKCoordinateRegion(center: userCoordinate, span: span)
+            isFollowingUserLocation = true
+            didCenterOnInitialUserLocation = true
+            searchCompleter.setRegion(mapRegion)
+        } else {
+            isFollowingUserLocation = true
+            didCenterOnInitialUserLocation = false
         }
+        
         searchCompleter.searchQuery = ""
         searchCompleter.completions = []
         isSearchFocused = false
-        showFavorites = false // Hide favorites list on reset
+        showFavorites = false
     }
 
-    // MARK: - Persistence Functions
     private func getLocationsFileURL() -> URL {
-        // Use default FileManager to get Documents directory
         guard let documentsDirectory = FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first else {
-             // Fallback or handle error appropriately if Documents directory is unavailable
-             fatalError("Unable to access Documents directory.")
+            fatalError("Unable to access Documents directory.")
         }
         return documentsDirectory.appendingPathComponent("favoriteLocations.json")
     }
 
     private func loadLocations() -> [Location] {
         let fileURL = getLocationsFileURL()
-        print("Loading locations from: \(fileURL.path)")
-        // Check if the file exists before attempting to load
         guard FileManager.default.fileExists(atPath: fileURL.path) else {
-             print("Locations file not found, starting with empty list.")
              return []
         }
         do {
             let data = try Data(contentsOf: fileURL)
             let decoder = JSONDecoder()
             let loadedLocations = try decoder.decode([Location].self, from: data)
-            print("Loaded \(loadedLocations.count) locations successfully.")
             return loadedLocations
         } catch {
             print("Failed to load locations: \(error)")
-            return [] // Return empty array on error
+            return []
         }
     }
 
     private func saveLocations() {
         let fileURL = getLocationsFileURL()
-        print("Saving \(locations.count) locations to: \(fileURL.path)")
         do {
             let encoder = JSONEncoder()
-            encoder.outputFormatting = .prettyPrinted // For easier debugging
+            encoder.outputFormatting = .prettyPrinted
             let data = try encoder.encode(locations)
-            try data.write(to: fileURL, options: [.atomic, .completeFileProtection]) // Atomic write + encryption
-            print("Locations saved successfully.")
+            try data.write(to: fileURL, options: [.atomic, .completeFileProtection])
         } catch {
             print("Failed to save locations: \(error)")
-            // Consider showing an error to the user
         }
     }
-
 }
-
-// MARK: - Extensions (Required Dependencies)
-extension MKLocalSearchCompletion: Identifiable {
-    public var id: String { title + subtitle }
-}
-

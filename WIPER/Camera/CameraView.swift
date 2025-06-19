@@ -3,27 +3,26 @@ import AVFoundation
 import MapKit
 
 struct CameraView: View {
-    // Accept the route as an optional parameter
     let calculatedRoute: MKRoute?
 
-    // Initialize ViewModel and Manager
     @StateObject var cameraViewModel: CameraViewModel
     @StateObject var cameraManager = CameraManager()
+    @StateObject var locationManager = LocationManager()
 
-    // Custom initializer to pass the route to the ViewModel
     init(calculatedRoute: MKRoute?) {
         self.calculatedRoute = calculatedRoute
-        // Initialize the ViewModel, passing the route
         _cameraViewModel = StateObject(wrappedValue: CameraViewModel(route: calculatedRoute))
     }
 
     var body: some View {
         ZStack {
-            // Pass the initialized ViewModel and Manager
-            FullScreenCameraView(cameraViewModel: cameraViewModel, cameraManager: cameraManager)
-                .edgesIgnoringSafeArea(.all)
+            FullScreenCameraView(
+                cameraViewModel: cameraViewModel,
+                cameraManager: cameraManager,
+                locationManager: locationManager
+            )
+            .edgesIgnoringSafeArea(.all)
         }
-         // Ensure navigation bar remains hidden if needed
         .navigationBarHidden(true)
         .navigationBarBackButtonHidden(true)
     }

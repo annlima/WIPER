@@ -135,9 +135,7 @@ class CameraManager: NSObject, ObservableObject {
                                 completion(.success(()))
                             }
                         }
-                    } catch {
-                        completion(.failure(error))
-                    }
+                    } 
                 }
             } else {
                 DispatchQueue.main.async {
@@ -277,7 +275,6 @@ class CameraManager: NSObject, ObservableObject {
         cameraDevice.unlockForConfiguration()
         
         // Agregar depth output si está disponible
-        cameraViewModel.addDepthOutput(to: session)
         let depthAdded = cameraViewModel.addDepthOutput(to: session)
                 
         if depthAdded && DeviceManager.shared.deviceHasLiDAR() {
@@ -320,7 +317,6 @@ class CameraManager: NSObject, ObservableObject {
         cameraDevice.unlockForConfiguration()
         
         // Agregar depth output con máxima calidad
-        cameraViewModel.addDepthOutput(to: session)
         let depthAdded = cameraViewModel.addDepthOutput(to: session)
                
         if depthAdded && DeviceManager.shared.deviceHasLiDAR() {

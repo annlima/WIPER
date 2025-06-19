@@ -70,7 +70,7 @@ class ViewController: UIViewController , CLLocationManagerDelegate, UITextFieldD
     
     
     func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
-        if let userLocation = locations.first {
+        if locations.first != nil {
             manager.stopUpdatingLocation()
             
             let coordinates = CLLocationCoordinate2D(latitude: locationManager.location?.coordinate.latitude ?? 0.0, longitude: locationManager.location?.coordinate.longitude ?? 0.0)

@@ -109,8 +109,7 @@ struct CameraPermissionTab: View {
             Spacer()
 
             Button("Permitir acceso") {
-                requestCameraPermission() // Request permission first
-                // Advance to the next tab immediately on tap
+                requestCameraPermission()
                 selectedIndex += 1
             }
             .frame(width: OnboardingTextStyles.buttonWidth, height: OnboardingTextStyles.buttonHeight)
@@ -131,7 +130,6 @@ struct CameraPermissionTab: View {
             DispatchQueue.main.async {
                 cameraAuthorized = granted
                 alertMessage = granted ? "¡Acceso a la cámara concedido!" : "Acceso denegado. Puedes habilitarlo en Ajustes."
-                // Show alert *after* requesting, doesn't block advancing tab
                 showingAlert = true
             }
         }
@@ -140,7 +138,6 @@ struct CameraPermissionTab: View {
 
 // MARK: - Notifications Tab
 struct NotificationsTab: View {
-    // Add binding to control the selected tab index
     @Binding var selectedIndex: Int
 
     @State private var showingAlert = false
@@ -196,7 +193,6 @@ struct NotificationsTab: View {
             DispatchQueue.main.async {
                 alertTitle = granted ? "Notificaciones activadas" : "Notificaciones desactivadas"
                 alertMessage = granted ? "¡Gracias! Recibirás alertas importantes." : "Notificaciones desactivadas. Puedes cambiarlo en Ajustes."
-                // Show alert *after* requesting
                 showingAlert = true
             }
         }
@@ -205,7 +201,6 @@ struct NotificationsTab: View {
 
 // MARK: - Location Permission Tab
 struct LocationPermissionTab: View {
-    // Add binding to control the selected tab index
     @Binding var selectedIndex: Int
     @EnvironmentObject var locationManager: LocationManager
     @State private var showingThanksAlert = false
@@ -237,10 +232,8 @@ struct LocationPermissionTab: View {
             Spacer()
 
             Button("Permitir ubicación") {
-                locationManager.requestLocationAuthorization() // Request permission first
-                // Advance to the next tab immediately on tap
+                locationManager.requestLocationAuthorization()
                 selectedIndex += 1
-                 // Check status after a delay to show thanks if already granted
                  DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) { // Increased delay slightly
                      if locationManager.authorizationStatus == .authorizedWhenInUse || locationManager.authorizationStatus == .authorizedAlways {
                          showingThanksAlert = true
@@ -260,8 +253,7 @@ struct LocationPermissionTab: View {
         .padding(.horizontal)
          .onAppear {
               if locationManager.authorizationStatus == .notDetermined {
-                   // Requesting on appear might still be useful
-                   // locationManager.requestLocationAuthorization()
+                   locationManager.requestLocationAuthorization()
               }
          }
     }
@@ -269,7 +261,6 @@ struct LocationPermissionTab: View {
 
 // MARK: - Phone Position Tab
 struct PhonePositionTab: View {
-    // Add binding to control the selected tab index
     @Binding var selectedIndex: Int
 
     var body: some View {
@@ -299,7 +290,6 @@ struct PhonePositionTab: View {
             Spacer()
 
             Button("Entendido") {
-                 // Advance to the next tab on tap
                 selectedIndex += 1
             }
             .frame(width: OnboardingTextStyles.buttonWidth, height: OnboardingTextStyles.buttonHeight)
@@ -315,7 +305,6 @@ struct PhonePositionTab: View {
 
 // MARK: - Go Tab
 struct GoTab: View {
-    // This tab doesn't need to change the index, it completes onboarding
     @Binding var onboardingCompleted: Bool
 
     var body: some View {
@@ -345,7 +334,6 @@ struct GoTab: View {
             Spacer()
 
             Button("Comenzar") {
-                // This button finishes onboarding, doesn't change index
                 onboardingCompleted = true
             }
             .frame(width: OnboardingTextStyles.buttonWidth, height: OnboardingTextStyles.buttonHeight)

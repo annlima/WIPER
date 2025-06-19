@@ -6,12 +6,11 @@
 //
 
 import MapKit
-import Combine // Needed for ObservableObject
+import Combine
 
-// Helper class to manage MKLocalSearchCompleter
 class SearchCompleter: NSObject, ObservableObject, MKLocalSearchCompleterDelegate {
     @Published var searchQuery = ""
-    @Published var completions = [MKLocalSearchCompletion]() // Results to display
+    @Published var completions = [MKLocalSearchCompletion]()
     private var searchCompleter = MKLocalSearchCompleter()
     private var cancellable: AnyCancellable?
 
@@ -20,40 +19,34 @@ class SearchCompleter: NSObject, ObservableObject, MKLocalSearchCompleterDelegat
         searchCompleter.delegate = self
         searchCompleter.resultTypes = [.address, .pointOfInterest]
 
-        // Use Combine to debounce search query updates
         cancellable = $searchQuery
-            .debounce(for: .milliseconds(300), scheduler: RunLoop.main) // Add a small delay
-            .removeDuplicates() // Don't search if the query hasn't changed
+            .debounce(for: .milliseconds(300), scheduler: RunLoop.main)
+            .removeDuplicates()
             .sink { [weak self] query in
                 if !query.isEmpty {
                     self?.searchCompleter.queryFragment = query
-                    print("Updating query fragment: \(query)") // Debug print
+                    print("Updating query fragment: \(query)")
                 } else {
-                    // Clear results when query is empty
                     self?.completions = []
-                    print("Query empty, clearing completions.") // Debug print
+                    print("Query empty, clearing completions.")
                 }
             }
     }
 
-    // Delegate method when completions are updated
     func completerDidUpdateResults(_ completer: MKLocalSearchCompleter) {
-        // Update the published completions array on the main thread
         DispatchQueue.main.async {
             self.completions = completer.results
-             print("Received \(completer.results.count) completions.") // Debug print
+             print("Received \(completer.results.count) completions.")
         }
     }
 
-    // Delegate method for handling errors
     func completer(_ completer: MKLocalSearchCompleter, didFailWithError error: Error) {
         DispatchQueue.main.async {
             print("Search completer failed with error: \(error.localizedDescription)")
-            self.completions = [] // Clear completions on error
+            self.completions = [] 
         }
     }
 
-    // Optional: Set region for localized results
     func setRegion(_ region: MKCoordinateRegion) {
         searchCompleter.region = region
     }

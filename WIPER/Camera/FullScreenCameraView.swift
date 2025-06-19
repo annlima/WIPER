@@ -13,7 +13,7 @@ struct FullScreenCameraView: View {
     @Environment(\.presentationMode) var presentationMode
     @ObservedObject var cameraViewModel: CameraViewModel
     @ObservedObject var cameraManager: CameraManager
-    @ObservedObject var locationManager = LocationManager()
+    @ObservedObject var locationManager: LocationManager
     @State private var isNavigatingToMap = false
 
     // MARK: - Vista
@@ -43,66 +43,61 @@ struct FullScreenCameraView: View {
 
             SpeedOverlayView(speed: $locationManager.speed)
                 .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .bottomLeading)
-                .padding(.leading, 20) // Add specific padding
+                .padding(.leading, 20)
                 .padding(.bottom, 30)
 
             ForEach(cameraViewModel.detections, id: \.self) { rect in
                 Rectangle()
-                    .path(in: rect) // Assuming .path(in:) is a valid modifier for your CGRect extension
+                    .path(in: rect)
                     .stroke(Color.red, lineWidth: 2)
-                    .background(Rectangle().fill(Color.clear)) // Ensure background is clear
+                    .background(Rectangle().fill(Color.clear))
             }
 
-            // Navigation Instructions Overlay
             if let route = cameraViewModel.currentRoute, !cameraViewModel.currentInstruction.isEmpty {
                  VStack(alignment: .leading, spacing: 3) {
                       Text(formatDistance(cameraViewModel.distanceToNextManeuver))
-                          .font(.system(size: 18, weight: .bold)) // Reduced size
+                          .font(.system(size: 18, weight: .bold))
                           .foregroundColor(.white)
 
                       Text(cameraViewModel.currentInstruction)
-                           .font(.system(size: 22, weight: .semibold)) // Reduced size
+                           .font(.system(size: 22, weight: .semibold))
                           .foregroundColor(.white)
                           .lineLimit(2)
                           .minimumScaleFactor(0.7)
-                          .fixedSize(horizontal: false, vertical: true) // Allow vertical expansion
+                          .fixedSize(horizontal: false, vertical: true)
                  }
-                 .padding(.horizontal, 10) // Reduced padding
-                 .padding(.vertical, 6) // Reduced padding
+                 .padding(.horizontal, 10)
+                 .padding(.vertical, 6)
                  .background(Color.black.opacity(0.7))
-                 .cornerRadius(8) // Slightly smaller radius
+                 .cornerRadius(8)
                  .shadow(radius: 2)
-                 // --- POSITIONING CHANGES --
                  .frame(
-                     maxWidth: UIScreen.main.bounds.width * 0.5, // Limit width (e.g., 50% of screen)
-                     maxHeight: .infinity, // Allow height to adjust
-                     alignment: .topLeading // Align the frame itself
+                     maxWidth: UIScreen.main.bounds.width * 0.5,
+                     maxHeight: .infinity,
+                     alignment: .topLeading
                  )
-                 .padding(.leading, 20) // Padding from left edge
-                 .padding(.top, 40) // Padding from top edge (adjust as needed for safe area/notch)
+                 .padding(.leading, 20)
+                 .padding(.top, 40)
             }
 
-            // Controls Overlay (Buttons)
             VStack {
-                // Close Button
+                
                 HStack {
                     Button(action: { presentationMode.wrappedValue.dismiss() }) {
                         Text("Cerrar")
-                            .padding(EdgeInsets(top: 8, leading: 12, bottom: 8, trailing: 12)) // Adjust padding
+                            .padding(EdgeInsets(top: 8, leading: 12, bottom: 8, trailing: 12))
                             .background(Color.black.opacity(0.7))
                             .foregroundColor(.white)
                             .cornerRadius(8)
                     }
-                    Spacer() // Pushes button to the left
+                    Spacer()
                 }
-                .padding(.leading, 20) // Match instruction padding
-                .padding(.top, 40) // Match instruction padding
+                .padding(.leading, 20)
+                .padding(.top, 40)
 
-                Spacer() // Pushes record button down
-
-                // Record Button
+                Spacer()
                 HStack {
-                    Spacer() // Pushes button to the right
+                    Spacer()
                     Button(action: {
                         if cameraViewModel.isRecording {
                             cameraManager.stopRecording(cameraViewModel: cameraViewModel)
@@ -110,35 +105,33 @@ struct FullScreenCameraView: View {
                             cameraManager.startRecording(cameraViewModel: cameraViewModel)
                         }
                     }) {
-                        Image(systemName: cameraViewModel.isRecording ? "stop.circle.fill" : "record.circle") // Use filled stop icon
+                        Image(systemName: cameraViewModel.isRecording ? "stop.circle.fill" : "record.circle")
                             .resizable()
-                            .frame(width: 65, height: 65) // Slightly smaller
+                            .frame(width: 65, height: 65)
                             .foregroundColor(cameraViewModel.isRecording ? .red : .white)
-                           // .padding() // Remove default padding if needed
+                           
                     }
-                    .disabled(!cameraManager.isSessionRunning) // Use isSessionRunning from CameraManager
+                    .disabled(!cameraManager.isSessionRunning)
                 }
-                .padding(.trailing, 20) // Padding from right edge
-                .padding(.bottom, 30) // Padding from bottom edge
-            } // End Controls VStack
+                .padding(.trailing, 20)
+                .padding(.bottom, 30)
+            }
 
-        } // End ZStack
-        // --- ADDED: Manage Idle Timer based on recording state ---
+        } 
         .onChange(of: cameraViewModel.isRecording) { isRecording in
              UIApplication.shared.isIdleTimerDisabled = isRecording
              print("Idle Timer Disabled: \(isRecording)")
         }
-        // --- END ADDED ---
         .alert(isPresented: $cameraViewModel.showSaveDialog) {
             Alert(
                 title: Text("Guardar video"),
                 message: Text("¿Deseas guardar el video en la galería?"),
                 primaryButton: .default(Text("Guardar")) {
                     if let url = cameraViewModel.previewUrl { cameraViewModel.saveVideoToGallery(url: url) }
-                    isNavigatingToMap = true // Still navigate back after choice
+                    isNavigatingToMap = true
                 },
-                secondaryButton: .cancel(Text("Descartar")) { // Changed text for clarity
-                     // Optionally delete the temporary file if discarded
+                secondaryButton: .cancel(Text("Descartar")) {
+                    
                      if let url = cameraViewModel.previewUrl {
                          do {
                              try FileManager.default.removeItem(at: url)
@@ -146,14 +139,14 @@ struct FullScreenCameraView: View {
                              print("Error deleting discarded video: \(error)")
                          }
                      }
-                    isNavigatingToMap = true // Still navigate back
+                    isNavigatingToMap = true
                 }
             )
         }
-        .onChange(of: isNavigatingToMap) { navigate in // Use the new parameter name 'navigate'
+        .onChange(of: isNavigatingToMap) { navigate in
              if navigate {
                  navigateToMap()
-                 isNavigatingToMap = false // Reset flag
+                 isNavigatingToMap = false
              }
          }
         .navigationBarHidden(true)
@@ -162,53 +155,42 @@ struct FullScreenCameraView: View {
 
     // MARK: - Methods
 
-    /// Navigates back (dismisses the current view).
     func navigateToMap() {
         presentationMode.wrappedValue.dismiss()
     }
 
-    /// Locks/Unlocks screen orientation.
     func lockOrientation(_ orientation: UIInterfaceOrientationMask) {
-        // Ensure you have an AppDelegate class setup for this to work
         if let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene {
              windowScene.requestGeometryUpdate(.iOS(interfaceOrientations: orientation)) { error in
                  print("Orientation lock error: \(error.localizedDescription)")
              }
          }
-         // You might also need to set the orientation lock in your AppDelegate
          if let appDelegate = UIApplication.shared.delegate as? AppDelegate {
               appDelegate.orientationLock = orientation
          }
     }
 
-    /// Formats distance for display.
     private func formatDistance(_ distance: CLLocationDistance) -> String {
-        guard distance.isFinite && distance >= 0 else { return "-- m" } // Show placeholder
-
-        let measurement = Measurement(value: distance, unit: UnitLength.meters) // Use UnitLength.meters
+        guard distance.isFinite && distance >= 0 else { return "-- m" }
+        let measurement = Measurement(value: distance, unit: UnitLength.meters)
         let formatter = MeasurementFormatter()
-        formatter.unitOptions = .providedUnit // Use .providedUnit, we'll handle conversion manually
-        formatter.numberFormatter.maximumFractionDigits = 0 // Default to 0 decimal places for meters
-
-        // Decide whether to display in meters or kilometers
+        formatter.unitOptions = .providedUnit
+        formatter.numberFormatter.maximumFractionDigits = 0
         if distance >= 1000 {
-            // Convert to kilometers
-            let measurementInKm = measurement.converted(to: UnitLength.kilometers) // Use UnitLength.kilometers
-            formatter.numberFormatter.maximumFractionDigits = 1 // Allow one decimal for km
-            // Format "En 0.1 km" instead of "En 0 km" for small km values
+           
+            let measurementInKm = measurement.converted(to: UnitLength.kilometers)
+            formatter.numberFormatter.maximumFractionDigits = 1
             let valueToShow = max(measurementInKm.value, 0.1)
             let finalMeasurement = Measurement(value: valueToShow, unit: UnitLength.kilometers)
             return "En \(formatter.string(from: finalMeasurement))"
 
         } else {
-            // Display in meters, rounding to nearest 10m if >= 50m
             var valueToFormat = distance
             if distance >= 50 {
                  valueToFormat = (distance / 10).rounded() * 10
             }
-            // Ensure very small distances show as integer meters
             formatter.numberFormatter.maximumFractionDigits = 0
-            let roundedMeasurement = Measurement(value: valueToFormat, unit: UnitLength.meters) // Use UnitLength.meters
+            let roundedMeasurement = Measurement(value: valueToFormat, unit: UnitLength.meters)
             return "En \(formatter.string(from: roundedMeasurement))"
         }
     }
